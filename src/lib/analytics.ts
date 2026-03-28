@@ -1,0 +1,64 @@
+import { Platform } from 'react-native';
+
+type EventName =
+  | 'app_opened'
+  | 'document_uploaded'
+  | 'analysis_completed'
+  | 'chat_message_sent'
+  | 'paywall_shown'
+  | 'subscription_started'
+  | 'trial_started'
+  | 'onboarding_completed'
+  | 'document_shared'
+  | 'document_exported'
+  | 'ai_consent_given'
+  | 'registration_shown'
+  | 'registration_completed'
+  | 'demo_started'
+  | 'onboarding_skipped';
+
+let posthogClient: any = null;
+
+export async function initAnalytics(): Promise<void> {
+  const posthogKey = process.env.EXPO_PUBLIC_POSTHOG_KEY;
+
+  if (!posthogKey || posthogKey.includes('placeholder')) {
+    console.log('PostHog: using placeholder key, skipping initialization');
+    return;
+  }
+
+  try {
+    if (Platform.OS !== 'web') {
+      const { PostHog } = await import('posthog-react-native');
+      posthogClient = new PostHog(posthogKey, {
+        host: 'https://eu.posthog.com',
+      });
+    }
+  } catch {
+    console.log('PostHog: not available in this environment');
+  }
+}
+
+export function track(event: EventName, properties?: Record<string, any>): void {
+  try {
+    posthogClient?.capture(event, properties);
+  } catch {
+    // Silent — analytics is non-blocking
+  }
+}
+
+export function identify(userId: string, traits?: Record<string, any>): void {
+  try {
+    posthogClient?.identify(userId, traits);
+  } catch {
+    // Silent
+  }
+}
+
+export function resetAnalytics(): void {
+  try {
+    posthogClient?.reset();
+  } catch {
+    // Silent
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "cli": {
+    "version": ">= 13.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SENTRY_DSN": "https://placeholder@sentry.io/0",
+        "EXPO_PUBLIC_POSTHOG_KEY": "phc_placeholder",
+        "EXPO_PUBLIC_REVENUECAT_IOS_KEY": "appl_PLACEHOLDER",
+        "EXPO_PUBLIC_REVENUECAT_ANDROID_KEY": "goog_PLACEHOLDER"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      }
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "review@doclear.app",
+        "ascAppId": "REPLACE_WITH_APP_ID"
+      }
+    }
+  }
+}
