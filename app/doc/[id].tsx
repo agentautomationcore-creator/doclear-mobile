@@ -249,11 +249,21 @@ export default function DocumentDetailScreen() {
     setMenuVisible(false);
   }, [id, deleteDoc, router, t]);
 
+  // Track if auto-summary has been triggered for this document
+  const autoSummarySent = useRef(false);
+  const pendingAutoSummary = useRef(false);
+
   // Open chat modal
   const handleOpenChat = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setChatVisible(true);
-  }, []);
+
+    // Flag auto-summary for next render if chat is empty
+    if (messages.length === 0 && !autoSummarySent.current) {
+      autoSummarySent.current = true;
+      pendingAutoSummary.current = true;
+    }
+  }, [messages.length]);
 
   // Chat: send message with SSE streaming via expo/fetch
   const handleSendMessage = useCallback(
@@ -356,6 +366,14 @@ export default function DocumentDetailScreen() {
     },
     [handleSendMessage]
   );
+
+  // Auto-summary: send summary prompt when chat opens for first time
+  useEffect(() => {
+    if (pendingAutoSummary.current && chatVisible && doc && user && !isStreaming) {
+      pendingAutoSummary.current = false;
+      setTimeout(() => handleSendMessage(t('chat.prompt_summarize')), 400);
+    }
+  }, [chatVisible, doc, user, isStreaming, handleSendMessage, t]);
 
   // Citation press
   const handleCitationPress = useCallback((page: number) => {
