@@ -14,6 +14,16 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 // expo-file-system: dynamic import only on native (crashes on web)
+import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+  withDelay,
+  Easing,
+} from 'react-native-reanimated';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH, API_URL } from '../../src/lib/constants';
 import { compressImage, isFileSizeValid, FILE_SIZE_LIMIT_DISPLAY } from '../../src/lib/imageCompression';
 import { mmkvStorage, MMKV_KEYS } from '../../src/lib/mmkv';
@@ -25,7 +35,7 @@ import { Button } from '../../src/components/ui/Button';
 import { Skeleton } from '../../src/components/ui/Loading';
 import { PageContainer } from '../../src/components/layout/PageContainer';
 import { useResponsive } from '../../src/hooks/useResponsive';
-import { AI_CONSENT_KEY } from '../ai-consent';
+// AI consent key checked via AsyncStorage directly
 import { track } from '../../src/lib/analytics';
 import { scheduleDeadlineReminders, savePushToken } from '../../src/lib/notifications';
 
@@ -58,11 +68,12 @@ function getFileType(mimeType: string, name: string): string {
 }
 
 export default function ScanScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { canUpload, user } = useAuth();
   const { isDesktop } = useResponsive();
-  const locale = useUIStore((s) => s.locale);
+  const storeLocale = useUIStore((s) => s.locale);
+  const locale = i18n.language || storeLocale || 'fr';
   const [files, setFiles] = useState<SelectedFile[]>([]);
   const [step, setStep] = useState<AnalysisStep>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -190,34 +201,107 @@ export default function ScanScreen() {
     }
   }, [checkLimitAndProceed, t]);
 
-  const checkAIConsent = useCallback((): boolean => {
-    const consent = mmkvStorage.getBoolean(MMKV_KEYS.AI_CONSENT);
-    if (consent) return true;
-    router.push('/ai-consent');
-    return false;
-  }, [router]);
+  // AI consent check — uses AsyncStorage directly (sync MMKV cache unreliable at startup)
+  const [consentChecked, setConsentChecked] = useState(false);
+  const [hasConsent, setHasConsent] = useState(false);
 
-  const analyzeFiles = useCallback(async () => {
-    if (files.length === 0 || !user) return;
+  React.useEffect(() => {
+    // Load consent state from AsyncStorage on mount
+    import('@react-native-async-storage/async-storage').then(({ default: AS }) => {
+      AS.getItem('mmkv_ai_consent_accepted').then((val) => {
+        setHasConsent(val === 'true');
+        setConsentChecked(true);
+      });
+    });
+  }, []);
 
-    // Check AI consent before first analysis
-    const hasConsent = checkAIConsent();
-    if (!hasConsent) return;
+  // Ref to track pending files for consent return (avoids stale closure)
+  const pendingFilesRef = React.useRef<SelectedFile[]>([]);
 
+  // Re-check consent when returning from ai-consent screen (screen focus)
+  const consentReturnHandled = React.useRef(false);
+  React.useEffect(() => {
+    const checkOnFocus = async () => {
+      const AS = (await import('@react-native-async-storage/async-storage')).default;
+      const val = await AS.getItem('mmkv_ai_consent_accepted');
+      if (val === 'true' && !hasConsent) {
+        setHasConsent(true);
+
+        // Prevent double-trigger
+        if (consentReturnHandled.current) return;
+        consentReturnHandled.current = true;
+
+        // Restore pending files
+        let restoredFiles: SelectedFile[] = files;
+        if (restoredFiles.length === 0) {
+          try {
+            const saved = await AS.getItem('pending_scan_files');
+            if (saved) {
+              restoredFiles = JSON.parse(saved);
+              setFiles(restoredFiles);
+              pendingFilesRef.current = restoredFiles;
+              await AS.removeItem('pending_scan_files');
+            }
+          } catch {}
+        }
+
+        // Auto-analyze with restored files directly — pass as argument to avoid stale closure
+        if (restoredFiles.length > 0 && step === 'idle') {
+          setTimeout(() => {
+            analyzeFilesDirectly(restoredFiles);
+          }, 500);
+        }
+      }
+    };
+    checkOnFocus();
+  });
+
+  // Core analysis function (no consent check — called directly after consent granted)
+  // Accepts optional fileList override for consent-return flow (avoids stale closure)
+  const analyzeFilesDirectly = useCallback(async (fileListOverride?: SelectedFile[]) => {
+    const filesToProcess = fileListOverride || files;
+    console.log('[SCAN] analyzeFilesDirectly called', { filesCount: filesToProcess.length, userId: user?.id, isOverride: !!fileListOverride });
+    if (filesToProcess.length === 0) {
+      console.log('[SCAN] ABORT: no files');
+      return;
+    }
+
+    // Get user from Supabase session directly (Zustand store may not be updated yet for anonymous)
+    let userId = user?.id;
+    if (!userId) {
+      console.log('[SCAN] No user in store, checking Supabase session...');
+      const { data: { session } } = await supabase.auth.getSession();
+      userId = session?.user?.id;
+      if (!userId) {
+        console.log('[SCAN] No session either, signing in anonymously...');
+        const { data } = await supabase.auth.signInAnonymously();
+        userId = data?.user?.id;
+      }
+    }
+    if (!userId) {
+      console.log('[SCAN] ABORT: could not get userId');
+      setError('Authentication error. Please restart the app.');
+      return;
+    }
+    console.log('[SCAN] Using userId:', userId);
     setStep('uploading');
     setError(null);
 
     try {
-      for (const file of files) {
+      for (const file of filesToProcess) {
         // Check file size (max 15MB)
         if (!isFileSizeValid(file.size)) {
-          setError(`${t('error.file_too_large')} (max ${FILE_SIZE_LIMIT_DISPLAY})`);
+          setError(`${t('errors.file_too_large')} (max ${FILE_SIZE_LIMIT_DISPLAY})`);
           setStep('error');
           return;
         }
 
-        // Generate document ID
-        const documentId = crypto.randomUUID?.() ?? Date.now().toString(36) + Math.random().toString(36).slice(2);
+        // Generate UUID v4 (Supabase documents.id is UUID type)
+        const documentId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+          const r = (Math.random() * 16) | 0;
+          const v = c === 'x' ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
 
         // Read file as base64
         setStep('uploading');
@@ -265,6 +349,7 @@ export default function ScanScreen() {
         const { data: sessionData } = await supabase.auth.getSession();
         const token = sessionData?.session?.access_token;
 
+        console.log('[SCAN] Sending to API:', `${API_URL}/analyze`, { documentId, fileType: file.type, base64Length: base64.length });
         const response = await fetch(`${API_URL}/analyze`, {
           method: 'POST',
           headers: {
@@ -277,17 +362,20 @@ export default function ScanScreen() {
             isPdf,
             type: isPdf ? 'pdf' : isImage ? 'image' : 'text',
             textContent: file.type === 'text' ? atob(base64) : undefined,
-            userId: user.id,
+            userId,
             documentId,
           }),
         });
 
+        console.log('[SCAN] API response status:', response.status);
         if (!response.ok) {
           const errData = await response.json().catch(() => null);
+          console.log('[SCAN] API error:', errData);
           throw new Error(errData?.error ?? 'Analysis failed');
         }
 
         const analysisResult = await response.json().catch(() => null);
+        console.log('[SCAN] Analysis result:', analysisResult ? 'OK' : 'null', analysisResult?.document_title);
 
         setStep('done');
         track('analysis_completed');
@@ -301,8 +389,8 @@ export default function ScanScreen() {
         }
 
         // Save push token after first analysis (for future server push)
-        if (user.id) {
-          savePushToken(user.id).catch(() => {});
+        if (userId) {
+          savePushToken(userId).catch(() => {});
         }
 
         // Update scan count
@@ -328,17 +416,103 @@ export default function ScanScreen() {
         return;
       }
     } catch (err: any) {
+      console.log('[SCAN] ERROR:', err?.message, err);
       setError(err?.message ?? t('errors.analysis_failed'));
       setStep('error');
     }
   }, [files, user, locale, router, t]);
 
-  const STEP_LABELS: Record<string, string> = {
-    uploading: t('scanner.analyzing_steps.uploading'),
-    extracting: t('scanner.analyzing_steps.extracting'),
-    analyzing: t('scanner.analyzing_steps.analyzing'),
-    done: t('scanner.analyzing_steps.done'),
-  };
+  // Public analyze function — checks consent first, then calls analyzeFilesDirectly
+  const analyzeFiles = useCallback(async () => {
+    console.log('[SCAN] analyzeFiles called', { filesCount: files.length, userId: user?.id, hasConsent });
+    if (files.length === 0) {
+      console.log('[SCAN] ABORT: no files');
+      return;
+    }
+    if (!hasConsent) {
+      console.log('[SCAN] No consent, saving files and redirecting to ai-consent');
+      // Save pending files info so we can restore after consent
+      try {
+        const AS = (await import('@react-native-async-storage/async-storage')).default;
+        await AS.setItem('pending_scan_files', JSON.stringify(files.map(f => ({ uri: f.uri, name: f.name, size: f.size, type: f.type, mimeType: f.mimeType }))));
+      } catch {}
+      router.push('/ai-consent');
+      return;
+    }
+    await analyzeFilesDirectly();
+  }, [files, user, hasConsent, router, analyzeFilesDirectly]);
+
+  // Rotating loading messages
+  const LOADING_MESSAGES = [
+    t('scanner.analyzing_steps.uploading'),
+    t('scanner.analyzing_steps.extracting'),
+    t('scanner.analyzing_steps.analyzing'),
+    t('scanner.analyzing_steps.done'),
+  ];
+  const [loadingMsgIndex, setLoadingMsgIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    if (step === 'idle' || step === 'error' || step === 'done') return;
+    const interval = setInterval(() => {
+      setLoadingMsgIndex((prev) => (prev + 1) % (LOADING_MESSAGES.length - 1));
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [step]);
+
+  // Pulse animation for rings
+  const ring1 = useSharedValue(0);
+  const ring2 = useSharedValue(0);
+  const ring3 = useSharedValue(0);
+
+  React.useEffect(() => {
+    if (step !== 'idle' && step !== 'error') {
+      const duration = 2000;
+      ring1.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration, easing: Easing.out(Easing.ease) }),
+          withTiming(0, { duration: 0 })
+        ),
+        -1
+      );
+      ring2.value = withDelay(
+        400,
+        withRepeat(
+          withSequence(
+            withTiming(1, { duration, easing: Easing.out(Easing.ease) }),
+            withTiming(0, { duration: 0 })
+          ),
+          -1
+        )
+      );
+      ring3.value = withDelay(
+        800,
+        withRepeat(
+          withSequence(
+            withTiming(1, { duration, easing: Easing.out(Easing.ease) }),
+            withTiming(0, { duration: 0 })
+          ),
+          -1
+        )
+      );
+    } else {
+      ring1.value = 0;
+      ring2.value = 0;
+      ring3.value = 0;
+    }
+  }, [step]);
+
+  const ring1Style = useAnimatedStyle(() => ({
+    opacity: 0.15 * (1 - ring1.value),
+    transform: [{ scale: 1 + ring1.value * 0.4 }],
+  }));
+  const ring2Style = useAnimatedStyle(() => ({
+    opacity: 0.15 * (1 - ring2.value),
+    transform: [{ scale: 1 + ring2.value * 0.4 }],
+  }));
+  const ring3Style = useAnimatedStyle(() => ({
+    opacity: 0.15 * (1 - ring3.value),
+    transform: [{ scale: 1 + ring3.value * 0.4 }],
+  }));
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
@@ -347,32 +521,83 @@ export default function ScanScreen() {
         {/* Buttons */}
         {step === 'idle' || step === 'error' ? (
           <View style={{ gap: 12, marginBottom: 24, maxWidth: isDesktop ? 400 : undefined, alignSelf: isDesktop ? 'center' : undefined, width: '100%' }}>
-            <Button
-              title={t('scan.upload_file')}
-              onPress={pickDocument}
-              variant="primary"
-              style={{ minHeight: 56 }}
-            />
-            <Button
-              title={t('scan.take_photo')}
-              onPress={takePhoto}
-              variant="secondary"
-              style={{ minHeight: 56 }}
-            />
+            {/* Camera + Gallery horizontal — outline style */}
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <Pressable
+                onPress={takePhoto}
+                style={{
+                  flex: 1,
+                  height: 52,
+                  backgroundColor: '#FFFFFF',
+                  borderWidth: 1.5,
+                  borderColor: COLORS.border,
+                  borderRadius: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  gap: 6,
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={t('scanner.take_photo')}
+              >
+                <Ionicons name="camera-outline" size={20} color={COLORS.accent} />
+                <Text style={{ color: COLORS.textPrimary, fontSize: FONT_SIZE.caption, fontWeight: '600' }}>
+                  {t('scanner.take_photo')}
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={pickFromGallery}
+                style={{
+                  flex: 1,
+                  height: 52,
+                  backgroundColor: '#FFFFFF',
+                  borderWidth: 1.5,
+                  borderColor: COLORS.border,
+                  borderRadius: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  gap: 6,
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={t('scanner.choose_gallery')}
+              >
+                <Ionicons name="images-outline" size={20} color={COLORS.accent} />
+                <Text style={{ color: COLORS.textPrimary, fontSize: FONT_SIZE.caption, fontWeight: '600' }}>
+                  {t('scanner.choose_gallery')}
+                </Text>
+              </Pressable>
+            </View>
+
+            {/* Import file — full width, same outline style */}
             <Pressable
-              onPress={pickFromGallery}
+              onPress={pickDocument}
               style={{
-                minHeight: MIN_TOUCH,
+                height: 52,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1.5,
+                borderColor: COLORS.border,
+                borderRadius: 12,
                 alignItems: 'center',
                 justifyContent: 'center',
-                paddingVertical: 12,
+                flexDirection: 'row',
+                gap: 6,
               }}
               accessibilityRole="button"
+              accessibilityLabel={t('scanner.import_file')}
             >
-              <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.accent, fontWeight: '500' }}>
-                {t('scan.choose_gallery')}
+              <Ionicons name="document-attach-outline" size={20} color={COLORS.accent} />
+              <Text style={{ color: COLORS.textPrimary, fontSize: FONT_SIZE.caption, fontWeight: '600' }}>
+                {t('scanner.import_file')}
               </Text>
             </Pressable>
+
+            {/* Supported formats */}
+            <View style={{ marginTop: 4, paddingHorizontal: 4 }}>
+              <Text style={{ fontSize: 12, color: COLORS.textSecondary, textAlign: 'center', lineHeight: 18 }}>
+                PDF · DOCX · JPG · PNG · XLSX · HEIC · TXT
+              </Text>
+            </View>
           </View>
         ) : null}
 
@@ -421,7 +646,7 @@ export default function ScanScreen() {
                   onPress={() => setFiles((prev) => prev.filter((_, idx) => idx !== i))}
                   style={{ padding: 8 }}
                   accessibilityRole="button"
-                  accessibilityLabel="Remove file"
+                  accessibilityLabel={t('common.delete')}
                 >
                   <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
                     {'\u2715'}
@@ -438,60 +663,38 @@ export default function ScanScreen() {
           </View>
         ) : null}
 
-        {/* Progress */}
+        {/* Animated Loading Screen */}
         {step !== 'idle' && step !== 'error' ? (
-          <View style={{ gap: 16, marginTop: 24 }}>
-            {(['uploading', 'extracting', 'analyzing', 'done'] as const).map((s) => {
-              const isActive = s === step;
-              const isPast =
-                ['uploading', 'extracting', 'analyzing', 'done'].indexOf(s) <
-                ['uploading', 'extracting', 'analyzing', 'done'].indexOf(step);
-              const isFuture = !isActive && !isPast;
-              return (
-                <View
-                  key={s}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 12,
-                    opacity: isFuture ? 0.4 : 1,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 16,
-                      backgroundColor: isPast || (s === 'done' && step === 'done')
-                        ? COLORS.success
-                        : isActive
-                        ? COLORS.accent
-                        : '#E5E7EB',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14 }}>
-                      {isPast || (s === 'done' && step === 'done') ? '\u2713' : ''}
-                    </Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontSize: FONT_SIZE.body,
-                        fontWeight: isActive ? '600' : '400',
-                        color: isActive ? COLORS.textPrimary : COLORS.textSecondary,
-                      }}
-                    >
-                      {STEP_LABELS[s]}
-                    </Text>
-                    {isActive && s !== 'done' ? (
-                      <Skeleton width="80%" height={4} style={{ marginTop: 6 }} />
-                    ) : null}
-                  </View>
-                </View>
-              );
-            })}
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+            {/* Pulse rings + icon */}
+            <View style={{ width: 140, height: 140, alignItems: 'center', justifyContent: 'center' }}>
+              {[ring1Style, ring2Style, ring3Style].map((style, i) => (
+                <Animated.View
+                  key={i}
+                  style={[
+                    {
+                      position: 'absolute',
+                      width: 100 + i * 20,
+                      height: 100 + i * 20,
+                      borderRadius: 60 + i * 10,
+                      backgroundColor: '#4F46E5',
+                    },
+                    style,
+                  ]}
+                />
+              ))}
+              <Ionicons name="document-text-outline" size={48} color="#4F46E5" />
+            </View>
+
+            {/* Rotating text */}
+            <Text style={{ fontSize: 17, color: '#374151', fontWeight: '500', marginTop: 32, textAlign: 'center' }}>
+              {step === 'done' ? LOADING_MESSAGES[LOADING_MESSAGES.length - 1] : LOADING_MESSAGES[loadingMsgIndex]}
+            </Text>
+
+            {/* Subtext */}
+            <Text style={{ fontSize: 13, color: '#9CA3AF', marginTop: 8 }}>
+              {t('scanner.usually_takes')}
+            </Text>
           </View>
         ) : null}
 

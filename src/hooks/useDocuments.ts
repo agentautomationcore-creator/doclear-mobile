@@ -74,6 +74,8 @@ function mapSupabaseDoc(d: SupabaseDocument): Document {
     chatHistory: [],
     language: d.language,
     recommendations: d.recommendations ?? [],
+    specialistType: d.specialist_type ?? undefined,
+    specialistRecommendation: d.specialist_recommendation ?? undefined,
   };
 }
 
@@ -188,7 +190,7 @@ export function useDocument(id: string | undefined) {
       }
     },
     enabled: !!id && !!userId,
-    staleTime: 1000 * 60 * 10, // 10 min — processed documents rarely change
+    staleTime: 1000 * 30, // 30s — short stale time so chat history reloads on re-entry
   });
 }
 

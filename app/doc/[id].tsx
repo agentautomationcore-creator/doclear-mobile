@@ -15,9 +15,9 @@ import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
 import * as Linking from 'expo-linking';
 import * as Haptics from 'expo-haptics';
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { FlashList } from '@shopify/flash-list';
-import { KeyboardStickyView } from 'react-native-keyboard-controller';
+import * as Notifications from 'expo-notifications';
+// Bottom sheet replaced with Modal (gorhom not in current build)
+import { Modal, KeyboardAvoidingView, FlatList } from 'react-native';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH, API_URL } from '../../src/lib/constants';
 import { useDocument, useDeleteDocument } from '../../src/hooks/useDocuments';
 import { useAuth } from '../../src/hooks/useAuth';
@@ -37,16 +37,17 @@ import { PageContainer } from '../../src/components/layout/PageContainer';
 import { track } from '../../src/lib/analytics';
 import type { ChatMessage, RiskFlag, PositivePoint } from '../../src/types';
 
-const SHEET_SNAP_POINTS = ['1%', '50%', '95%'];
+// Chat modal state managed by chatVisible
 
 export default function DocumentDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const { user, canAskQuestion } = useAuth();
   const { isOffline: networkOffline } = useNetwork();
-  const locale = useUIStore((s) => s.locale);
+  const storeLocale = useUIStore((s) => s.locale);
+  const locale = i18n.language || storeLocale || 'fr';
   const { data: doc, isLoading, refetch } = useDocument(id);
   const deleteDoc = useDeleteDocument();
 
@@ -55,7 +56,10 @@ export default function DocumentDetailScreen() {
   const [streamText, setStreamText] = useState('');
   const [menuVisible, setMenuVisible] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false);
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [chatVisible, setChatVisible] = useState(false);
+  const [translationText, setTranslationText] = useState<string | null>(null);
+  const [translationLoading, setTranslationLoading] = useState(false);
+  const [translationVisible, setTranslationVisible] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const chatListRef = useRef(null);
 
@@ -66,20 +70,18 @@ export default function DocumentDetailScreen() {
     }
   }, [doc?.chatHistory]);
 
-  // Android back button: close bottom sheet before navigating back
+  // Android back button: close chat modal before navigating back
   useEffect(() => {
-    const onBackPress = () => {
-      const currentIndex = bottomSheetRef.current?.snapToIndex;
-      // If bottom sheet is expanded, collapse it
-      bottomSheetRef.current?.close();
-      return true; // Prevent default back behavior
-    };
-
-    if (Platform.OS === 'android') {
-      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
-      return () => subscription.remove();
-    }
-  }, []);
+    if (Platform.OS !== 'android') return;
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (chatVisible) {
+        setChatVisible(false);
+        return true;
+      }
+      return false;
+    });
+    return () => sub.remove();
+  }, [chatVisible]);
 
   // Share
   const handleShare = useCallback(async () => {
@@ -103,31 +105,81 @@ export default function DocumentDetailScreen() {
   const handleExportPDF = useCallback(async () => {
     if (!doc) return;
     track('document_exported', { format: 'pdf' });
+    const sections: string[] = [];
+
+    // Title + type
+    sections.push(`<h1>${doc.title}</h1>`);
+    sections.push(`<p style="color:#6b7280;margin-bottom:16px;">${doc.docTypeLabel ?? doc.docType ?? ''} ${doc.pageCount ? `&middot; ${doc.pageCount} pages` : ''}</p>`);
+
+    // Health Score
+    if (typeof doc.healthScore === 'number') {
+      const scoreColor = doc.healthScore >= 80 ? '#16a34a' : doc.healthScore >= 50 ? '#f59e0b' : '#dc2626';
+      sections.push(`<div class="section"><div class="score" style="color:${scoreColor}">${doc.healthScore}/100</div><p>${doc.healthScoreExplanation ?? ''}</p></div>`);
+    }
+
+    // What Is This
+    if (doc.whatIsThis) {
+      sections.push(`<div class="section"><h2>${t('document.what_is_this')}</h2><p>${doc.whatIsThis}</p></div>`);
+    }
+
+    // What It Says
+    if (doc.whatItSays) {
+      sections.push(`<div class="section"><h2>${t('document.what_it_says')}</h2><p>${doc.whatItSays}</p></div>`);
+    }
+
+    // What To Do
+    if (doc.whatToDo && doc.whatToDo.length > 0) {
+      sections.push(`<div class="section"><h2>${t('document.what_to_do')}</h2>${doc.whatToDo.map((s, i) => `<div class="fact"><strong>${i + 1}.</strong> ${s}</div>`).join('')}</div>`);
+    }
+
+    // Summary
+    if (doc.summary) {
+      sections.push(`<div class="section"><h2>Summary</h2><p>${doc.summary}</p></div>`);
+    }
+
+    // Key Facts
+    if (doc.keyFacts && doc.keyFacts.length > 0) {
+      sections.push(`<div class="section"><h2>${t('document.key_facts')}</h2>${doc.keyFacts.map((f, i) => `<div class="fact">${i + 1}. ${f}</div>`).join('')}</div>`);
+    }
+
+    // Risk Flags
+    if (doc.riskFlags && doc.riskFlags.length > 0) {
+      sections.push(`<div class="section"><h2>${t('document.risk_flags')}</h2>${doc.riskFlags.map((r) => `<div class="risk risk-${r.severity}"><strong>${r.title}</strong><p>${r.description}</p>${r.recommendation ? `<p style="font-style:italic;font-size:13px;">${r.recommendation}</p>` : ''}</div>`).join('')}</div>`);
+    }
+
+    // Positive Points
+    if (doc.positivePoints && doc.positivePoints.length > 0) {
+      sections.push(`<div class="section"><h2>${t('document.positive_points')}</h2>${doc.positivePoints.map((p) => `<div class="fact">\u2713 <strong>${p.title}</strong> — ${p.description}</div>`).join('')}</div>`);
+    }
+
+    // Deadline
+    if (doc.deadline) {
+      sections.push(`<div class="section" style="background:#fef3c7;padding:16px;border-radius:8px;"><h2 style="color:#92400e;margin-top:0;">${t('document.deadline')}</h2><p style="font-size:20px;font-weight:800;color:#dc2626;">${doc.deadline}</p>${doc.deadlineDescription ? `<p style="color:#92400e;">${doc.deadlineDescription}</p>` : ''}</div>`);
+    }
+
+    // Recommendations
+    if (doc.recommendations && doc.recommendations.length > 0) {
+      sections.push(`<div class="section"><h2>${t('document.recommendations')}</h2>${doc.recommendations.map((r) => `<div class="fact"><strong>${r.title}</strong><br/>${r.description}${r.url ? `<br/><a href="${r.url}" style="color:#1e293b;">${r.url}</a>` : ''}</div>`).join('')}</div>`);
+    }
+
     const html = `
       <html><head><meta charset="utf-8"><style>
-        body { font-family: -apple-system, sans-serif; padding: 40px; color: #1A1A2E; }
-        h1 { font-size: 24px; margin-bottom: 8px; }
-        .score { font-size: 48px; font-weight: 800; }
-        .section { margin-top: 24px; }
+        body { font-family: -apple-system, sans-serif; padding: 32px; color: #0f172a; font-size: 14px; line-height: 1.6; }
+        h1 { font-size: 22px; margin-bottom: 4px; }
+        h2 { font-size: 16px; margin-bottom: 10px; color: #1e293b; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+        .score { font-size: 42px; font-weight: 800; }
+        .section { margin-top: 20px; }
         .fact { margin-bottom: 8px; }
         .risk { padding: 12px; margin-bottom: 8px; border-radius: 8px; }
-        .risk-high { background: #fef2f2; }
-        .risk-medium { background: #fffbeb; }
-        .risk-low { background: #eff6ff; }
-        .disclaimer { margin-top: 20px; padding: 12px; background: #f8fafc; border-radius: 8px; font-size: 12px; color: #6b7280; }
+        .risk-high { background: #fef2f2; border-left: 4px solid #ef4444; }
+        .risk-medium { background: #fffbeb; border-left: 4px solid #f59e0b; }
+        .risk-low { background: #eff6ff; border-left: 4px solid #3b82f6; }
+        .disclaimer { margin-top: 24px; padding: 12px; background: #f8fafc; border-radius: 8px; font-size: 11px; color: #6b7280; }
       </style></head><body>
-        <h1>${doc.title}</h1>
-        <p>${doc.docTypeLabel ?? doc.docType ?? ''}</p>
-        <div class="section">
-          <div class="score" style="color: ${(doc.healthScore ?? 0) >= 80 ? '#16a34a' : (doc.healthScore ?? 0) >= 50 ? '#f59e0b' : '#dc2626'}">${doc.healthScore ?? '?'}/100</div>
-          <p>${doc.healthScoreExplanation ?? ''}</p>
-        </div>
-        ${doc.summary ? `<div class="section"><h2>Summary</h2><p>${doc.summary}</p></div>` : ''}
-        <div class="section"><h2>Key Facts</h2>${(doc.keyFacts ?? []).map((f, i) => `<div class="fact">${i + 1}. ${f}</div>`).join('')}</div>
-        <div class="section"><h2>Risk Flags</h2>${(doc.riskFlags ?? []).map((r) => `<div class="risk risk-${r.severity}"><strong>${r.title}</strong><p>${r.description}</p></div>`).join('')}</div>
-        <div class="section"><h2>Positive Points</h2>${(doc.positivePoints ?? []).map((p) => `<div class="fact">\u2713 ${p.title} - ${p.description}</div>`).join('')}</div>
+        ${sections.join('\n')}
+        ${translationText ? `<div class="section" style="background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e5e7eb;"><h2>${t('document.translation_result')}</h2><p style="white-space:pre-wrap;">${translationText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p></div>` : ''}
         <div class="disclaimer">This analysis was generated by AI (DocLear). It is for informational purposes only and does not constitute legal, medical, or financial advice. Always verify important details with a qualified professional.</div>
-        <p style="margin-top:40px;color:#6B7280;">Generated by DocLear - doclear.app</p>
+        <p style="margin-top:32px;color:#94a3b8;font-size:12px;">Generated by DocLear &mdash; doclear.app</p>
       </body></html>
     `;
     try {
@@ -197,16 +249,16 @@ export default function DocumentDetailScreen() {
     setMenuVisible(false);
   }, [id, deleteDoc, router, t]);
 
-  // Open chat bottom sheet
+  // Open chat modal
   const handleOpenChat = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    bottomSheetRef.current?.snapToIndex(1); // 50%
+    setChatVisible(true);
   }, []);
 
   // Chat: send message with SSE streaming via expo/fetch
   const handleSendMessage = useCallback(
     async (text: string) => {
-      if (!doc || !user || isStreaming) return;
+      if (!doc || !user || isStreaming || !text?.trim()) return;
 
       // Check question limit
       const store = useAuthStore.getState();
@@ -217,6 +269,14 @@ export default function DocumentDetailScreen() {
 
       const userMsg: ChatMessage = { role: 'user', content: text, timestamp: new Date().toISOString() };
       setMessages((prev) => [...prev, userMsg]);
+
+      // Save user message to Supabase (await to ensure persistence)
+      await supabase.from('chat_messages').insert({
+        user_id: user.id,
+        document_id: doc.id,
+        role: 'user',
+        content: text,
+      });
       setIsStreaming(true);
       setStreamText('');
 
@@ -254,6 +314,14 @@ export default function DocumentDetailScreen() {
             setIsStreaming(false);
             setStreamText('');
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+            // Save assistant message to Supabase
+            supabase.from('chat_messages').insert({
+              user_id: user?.id,
+              document_id: doc.id,
+              role: 'assistant',
+              content: filteredText,
+            }).then(() => {}, () => {}); // fire-and-forget but don't swallow errors silently
           },
           onError: (error) => {
             let errorContent = t('chat.error_generic');
@@ -273,7 +341,8 @@ export default function DocumentDetailScreen() {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
           },
         },
-        abortControllerRef.current.signal
+        abortControllerRef.current.signal,
+        locale
       );
     },
     [doc, user, isStreaming, messages, router, t]
@@ -282,7 +351,7 @@ export default function DocumentDetailScreen() {
   // Send suggested question
   const handleSuggestedQuestion = useCallback(
     (q: string) => {
-      bottomSheetRef.current?.snapToIndex(2); // full screen
+      setChatVisible(true);
       setTimeout(() => handleSendMessage(q), 300);
     },
     [handleSendMessage]
@@ -345,7 +414,7 @@ export default function DocumentDetailScreen() {
         }}
       >
         <Pressable
-          onPress={() => router.back()}
+          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           style={{ width: MIN_TOUCH, height: MIN_TOUCH, justifyContent: 'center' }}
           accessibilityRole="button"
           accessibilityLabel={t('common.back')}
@@ -436,7 +505,7 @@ export default function DocumentDetailScreen() {
 
       {/* Analysis Content (ScrollView) */}
       <ScrollView
-        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+        contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
       >
         {/* AI Analysis label + disclosure */}
@@ -680,23 +749,6 @@ export default function DocumentDetailScreen() {
           </Card>
         ) : null}
 
-        {/* Deadline */}
-        {doc.deadline ? (
-          <Card style={{ marginBottom: 16, backgroundColor: '#FEF3C7' }}>
-            <Text style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: '#92400E', marginBottom: 4 }}>
-              {t('document.deadline')}
-            </Text>
-            <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: '#DC2626' }}>
-              {doc.deadline}
-            </Text>
-            {doc.deadlineDescription ? (
-              <Text style={{ fontSize: FONT_SIZE.caption, color: '#92400E', marginTop: 4 }}>
-                {doc.deadlineDescription}
-              </Text>
-            ) : null}
-          </Card>
-        ) : null}
-
         {/* Suggested Questions */}
         {doc.suggestedQuestions && doc.suggestedQuestions.length > 0 ? (
           <View style={{ marginBottom: 16 }}>
@@ -754,6 +806,235 @@ export default function DocumentDetailScreen() {
             ))}
           </Card>
         ) : null}
+
+        {/* Deadline with Reminder */}
+        {doc.deadline ? (
+          <Card style={{ marginBottom: 16, backgroundColor: '#FEF3C7' }}>
+            <Text style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: '#92400E', marginBottom: 4 }}>
+              {t('document.deadline')}
+            </Text>
+            <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: '#DC2626' }}>
+              {doc.deadline}
+            </Text>
+            {doc.deadlineDescription ? (
+              <Text style={{ fontSize: FONT_SIZE.caption, color: '#92400E', marginTop: 4 }}>
+                {doc.deadlineDescription}
+              </Text>
+            ) : null}
+            <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
+              <Pressable
+                onPress={async () => {
+                  const { status } = await Notifications.requestPermissionsAsync();
+                  if (status !== 'granted') {
+                    Alert.alert(t('common.error'), t('document.notifications_disabled'));
+                    return;
+                  }
+                  const deadlineDate = new Date(doc.deadline!);
+                  const trigger3 = new Date(deadlineDate);
+                  trigger3.setDate(trigger3.getDate() - 3);
+                  if (trigger3 > new Date()) {
+                    await Notifications.scheduleNotificationAsync({
+                      content: {
+                        title: `${doc.title}`,
+                        body: doc.whatToDo?.[0] || t('document.check_document'),
+                      },
+                      trigger: { date: trigger3 } as any,
+                    });
+                  }
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  Alert.alert(t('document.reminder_set'), t('document.reminder_3days'));
+                }}
+                style={{
+                  flex: 1,
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: RADIUS.button,
+                  paddingVertical: 10,
+                  alignItems: 'center',
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={t('document.remind_3days')}
+              >
+                <Text style={{ fontSize: 13, fontWeight: '600', color: '#92400E' }}>
+                  {t('document.remind_3days')}
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={async () => {
+                  const { status } = await Notifications.requestPermissionsAsync();
+                  if (status !== 'granted') {
+                    Alert.alert(t('common.error'), t('document.notifications_disabled'));
+                    return;
+                  }
+                  const deadlineDate = new Date(doc.deadline!);
+                  const trigger1 = new Date(deadlineDate);
+                  trigger1.setDate(trigger1.getDate() - 1);
+                  if (trigger1 > new Date()) {
+                    await Notifications.scheduleNotificationAsync({
+                      content: {
+                        title: `${doc.title}`,
+                        body: doc.whatToDo?.[0] || t('document.check_document'),
+                      },
+                      trigger: { date: trigger1 } as any,
+                    });
+                  }
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  Alert.alert(t('document.reminder_set'), t('document.reminder_1day'));
+                }}
+                style={{
+                  flex: 1,
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: RADIUS.button,
+                  paddingVertical: 10,
+                  alignItems: 'center',
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={t('document.remind_1day')}
+              >
+                <Text style={{ fontSize: 13, fontWeight: '600', color: '#92400E' }}>
+                  {t('document.remind_1day')}
+                </Text>
+              </Pressable>
+            </View>
+          </Card>
+        ) : null}
+
+        {/* Find Specialist — Google Maps */}
+        {doc.specialistType && doc.specialistType !== 'none' && doc.specialistType !== 'null' ? (
+          <Card style={{ marginBottom: 16 }}>
+            <Text style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 8 }}>
+              {t('document.need_specialist')}
+            </Text>
+            {doc.specialistRecommendation ? (
+              <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, marginBottom: 12, lineHeight: 20 }}>
+                {doc.specialistRecommendation}
+              </Text>
+            ) : null}
+            <Pressable
+              onPress={async () => {
+                // Get user city from Supabase profile for localized search
+                let city = '';
+                try {
+                  const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('city, country')
+                    .eq('id', user?.id)
+                    .single();
+                  city = profile?.city || '';
+                } catch {}
+                const specialist = doc.specialistType || doc.docTypeLabel || doc.docType || '';
+                const searchQuery = encodeURIComponent(
+                  city ? `${specialist} ${city}` : specialist
+                );
+                const url = `https://www.google.com/maps/search/${searchQuery}`;
+                Linking.openURL(url);
+              }}
+              style={{
+                backgroundColor: COLORS.accent,
+                borderRadius: RADIUS.button,
+                paddingVertical: 12,
+                alignItems: 'center',
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={t('document.find_specialist')}
+            >
+              <Text style={{ color: '#FFFFFF', fontSize: FONT_SIZE.caption, fontWeight: '600' }}>
+                {t('document.find_specialist_nearby')}
+              </Text>
+            </Pressable>
+          </Card>
+        ) : null}
+
+        {/* Translate Document — show when rawText OR analysis text exists */}
+        {(doc.rawText || doc.whatIsThis || doc.whatItSays) ? (
+          <Card style={{ marginBottom: 16 }}>
+            <Text style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 8 }}>
+              {t('document.translate_title')}
+            </Text>
+
+            {/* Translate button */}
+            <Pressable
+              onPress={async () => {
+                // If cached, show modal immediately
+                if (translationText) {
+                  setTranslationVisible(true);
+                  return;
+                }
+                setTranslationLoading(true);
+                try {
+                  const langName = locale === 'fr' ? 'français' : locale === 'en' ? 'English' : locale === 'ru' ? 'русский' : locale === 'de' ? 'Deutsch' : locale === 'es' ? 'español' : locale === 'it' ? 'italiano' : locale === 'ar' ? 'العربية' : locale === 'pt' ? 'português' : locale === 'tr' ? 'Türkçe' : locale === 'zh' ? '中文' : locale;
+                  const rawText = doc.rawText || [doc.whatIsThis, doc.whatItSays, doc.summary, ...(doc.keyFacts || [])].filter(Boolean).join('\n\n');
+                  const prompt = `Переведи следующий текст документа на ${langName}. Сохрани структуру, абзацы и форматирование. Не добавляй комментарии, только перевод.\n\n${rawText}`;
+
+                  const { data: sessionData } = await supabase.auth.getSession();
+                  const token = sessionData?.session?.access_token;
+
+                  const response = await fetch(`${API_URL}/chat`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    },
+                    body: JSON.stringify({
+                      documentId: doc.id,
+                      question: prompt,
+                      chatHistory: [],
+                      language: locale,
+                      useSupabase: false,
+                    }),
+                  });
+
+                  if (!response.ok) throw new Error('Translation failed');
+
+                  const text = await response.text();
+                  let fullText = '';
+                  const lines = text.split('\n');
+                  for (const line of lines) {
+                    if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                      try {
+                        const json = JSON.parse(line.slice(6));
+                        const content = json?.choices?.[0]?.delta?.content || json?.content || json?.text || '';
+                        fullText += content;
+                      } catch {
+                        fullText += line.slice(6);
+                      }
+                    }
+                  }
+                  if (!fullText && text) {
+                    try {
+                      const json = JSON.parse(text);
+                      fullText = json?.choices?.[0]?.message?.content || json?.content || text;
+                    } catch {
+                      fullText = text;
+                    }
+                  }
+
+                  setTranslationText(fullText);
+                  setTranslationVisible(true);
+                } catch {
+                  Alert.alert(t('common.error'), t('common.retry'));
+                } finally {
+                  setTranslationLoading(false);
+                }
+              }}
+              disabled={translationLoading}
+              style={{
+                borderWidth: 1.5,
+                borderColor: COLORS.accent,
+                backgroundColor: '#FFFFFF',
+                borderRadius: RADIUS.button,
+                paddingVertical: 12,
+                alignItems: 'center',
+                opacity: translationLoading ? 0.6 : 1,
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={t('document.translate_button')}
+            >
+              <Text style={{ color: COLORS.accent, fontSize: FONT_SIZE.caption, fontWeight: '600' }}>
+                {translationLoading ? t('document.translating') : translationText ? t('document.show_translation') : t('document.translate_button')}
+              </Text>
+            </Pressable>
+          </Card>
+        ) : null}
       </ScrollView>
 
       {/* Sticky "Ask a question" button */}
@@ -785,18 +1066,14 @@ export default function DocumentDetailScreen() {
         </Pressable>
       </View>
 
-      {/* Bottom Sheet Chat */}
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        snapPoints={SHEET_SNAP_POINTS}
-        enablePanDownToClose
-        enableContentPanningGesture
-        keyboardBehavior="extend"
-        keyboardBlurBehavior="restore"
-        backgroundStyle={{ backgroundColor: '#FFFFFF', borderRadius: 20 }}
-        handleIndicatorStyle={{ backgroundColor: '#D1D5DB', width: 40 }}
+      {/* Chat Modal */}
+      <Modal
+        visible={chatVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setChatVisible(false)}
       >
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
         {/* Chat header */}
         <View
           style={{
@@ -804,13 +1081,21 @@ export default function DocumentDetailScreen() {
             alignItems: 'center',
             justifyContent: 'space-between',
             paddingHorizontal: 16,
-            paddingBottom: 8,
+            paddingVertical: 12,
             borderBottomWidth: 1,
             borderBottomColor: 'rgba(0,0,0,0.06)',
           }}
         >
-          <Text style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: COLORS.textPrimary }}>
-            {t('document.chat_title')}
+          <Pressable
+            onPress={() => setChatVisible(false)}
+            style={{ width: 44, height: 44, justifyContent: 'center' }}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.close')}
+          >
+            <Text style={{ fontSize: 20, color: COLORS.textSecondary }}>{'\u2715'}</Text>
+          </Pressable>
+          <Text numberOfLines={1} style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: COLORS.textPrimary, flex: 1, textAlign: 'center', marginHorizontal: 8 }}>
+            {doc.title}
           </Text>
           {networkOffline ? (
             <View
@@ -830,8 +1115,9 @@ export default function DocumentDetailScreen() {
         </View>
 
         {/* Chat messages */}
-        <BottomSheetScrollView
+        <ScrollView
           contentContainerStyle={{ padding: 16, paddingBottom: 80 }}
+          keyboardShouldPersistTaps="handled"
         >
           {allMessages.length === 0 ? (
             <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>
@@ -910,15 +1196,18 @@ export default function DocumentDetailScreen() {
                 }}
               >
                 <Text style={{ color: COLORS.textSecondary, fontSize: FONT_SIZE.body }}>
-                  {t('chat.thinking')}
+                  ...
                 </Text>
               </View>
             </View>
           ) : null}
-        </BottomSheetScrollView>
+        </ScrollView>
 
-        {/* Message input - sticky at bottom of sheet */}
-        <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
+        {/* Message input */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+        >
           <View
             style={{
               borderTopWidth: 1,
@@ -933,10 +1222,56 @@ export default function DocumentDetailScreen() {
               disabled={isStreaming || networkOffline}
             />
           </View>
-        </KeyboardStickyView>
-      </BottomSheet>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+      </Modal>
 
       {/* Soft Registration Modal */}
+      {/* Translation Modal */}
+      <Modal
+        visible={translationVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setTranslationVisible(false)}
+      >
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+          {/* Header */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.06)' }}>
+            <Pressable
+              onPress={() => setTranslationVisible(false)}
+              style={{ width: 44, height: 44, justifyContent: 'center' }}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
+            >
+              <Text style={{ fontSize: 20, color: COLORS.textSecondary }}>{'\u2715'}</Text>
+            </Pressable>
+            <Text numberOfLines={1} style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: COLORS.textPrimary, flex: 1, textAlign: 'center' }}>
+              {t('document.translation_result')}
+            </Text>
+            <Pressable
+              onPress={async () => {
+                if (!translationText) return;
+                try {
+                  const html = `<html><head><meta charset="utf-8"><style>body{font-family:-apple-system,sans-serif;padding:32px;color:#0f172a;font-size:14px;line-height:1.8;}h1{font-size:20px;margin-bottom:16px;}</style></head><body><h1>${doc.title} — ${t('document.translation_result')}</h1><div style="white-space:pre-wrap;">${translationText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div><p style="margin-top:32px;color:#94a3b8;font-size:12px;">DocLear — doclear.app</p></body></html>`;
+                  await Print.printAsync({ html });
+                } catch {}
+              }}
+              style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}
+              accessibilityRole="button"
+              accessibilityLabel="PDF"
+            >
+              <Text style={{ fontSize: 14, color: COLORS.accent, fontWeight: '600' }}>PDF</Text>
+            </Pressable>
+          </View>
+          {/* Content */}
+          <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+            <Text style={{ fontSize: 15, color: COLORS.textPrimary, lineHeight: 24 }} selectable>
+              {translationText || ''}
+            </Text>
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
+
       <SoftRegistrationModal
         visible={showRegistration}
         onDismiss={() => setShowRegistration(false)}
