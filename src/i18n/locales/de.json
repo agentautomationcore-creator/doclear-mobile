@@ -340,7 +340,8 @@
       "extracting": "Text extrahieren...",
       "analyzing": "KI-Analyse...",
       "done": "Fertig!"
-    }
+    },
+    "privacy_badge": "Ihre Dokumente sind verschlüsselt und werden nicht zum Trainieren der KI verwendet"
   },
   "common": {
     "loading": "Laden...",
@@ -372,7 +373,8 @@
     "error_rate_limited": "Zu viele Anfragen. Bitte warten.",
     "prompt_summarize": "Fassen Sie dieses Dokument zusammen",
     "prompt_risks": "Welche Risiken gibt es?",
-    "prompt_actions": "Was soll ich tun?"
+    "prompt_actions": "Was soll ich tun?",
+    "ai_disclaimer_input": "Antworten werden von KI generiert und können Fehler enthalten. Überprüfen Sie wichtige Informationen."
   },
   "soft_reg": {
     "title": "Dokumente speichern",
@@ -381,6 +383,9 @@
     "google": "Weiter mit Google",
     "email": "Per E-Mail registrieren",
     "skip": "Später"
+  },
+  "welcome": {
+    "free_limit": "3 kostenlose Analysen ohne Anmeldung"
   },
   "offline": {
     "banner": "Keine Internetverbindung — Cache-Dokumente"

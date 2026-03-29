@@ -1222,6 +1222,9 @@ export default function DocumentDetailScreen() {
               onSend={handleSendMessage}
               disabled={isStreaming || networkOffline}
             />
+            <Text style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center', paddingHorizontal: 16, paddingBottom: 4 }}>
+              {t('chat.ai_disclaimer_input')}
+            </Text>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>

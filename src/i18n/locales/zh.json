@@ -308,7 +308,8 @@
       "extracting": "提取文本...",
       "analyzing": "AI分析中...",
       "done": "完成！"
-    }
+    },
+    "privacy_badge": "您的文件已加密，不会用于训练AI"
   },
   "common": {
     "loading": "加载中...",
@@ -328,7 +329,8 @@
     "verify": "请核实重要细节",
     "report_title": "举报此回复",
     "report_desc": "此AI回复是否不准确？",
-    "report": "举报"
+    "report": "举报",
+    "ai_disclaimer_input": "回复由AI生成，可能包含错误。请核实重要信息。"
   },
   "soft_reg": {
     "title": "保存您的文档",
@@ -337,6 +339,9 @@
     "google": "使用Google继续",
     "email": "使用邮箱注册",
     "skip": "稍后"
+  },
+  "welcome": {
+    "free_limit": "无需注册，3次免费分析"
   },
   "offline": {
     "banner": "无网络连接 — 显示缓存文档"

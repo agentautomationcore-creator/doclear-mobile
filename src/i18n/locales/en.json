@@ -327,7 +327,8 @@
       "analyzing": "Preparing recommendations...",
       "done": "Done!"
     },
-    "usually_takes": "Usually takes 10–20 seconds"
+    "usually_takes": "Usually takes 10–20 seconds",
+    "privacy_badge": "Your documents are encrypted and not used to train AI"
   },
   "common": {
     "loading": "Loading...",
@@ -429,7 +430,8 @@
     "signal_instant": "Instant results",
     "scan_first": "Scan my first document",
     "try_demo": "Try the demo",
-    "have_account": "Already have an account? Sign in"
+    "have_account": "Already have an account? Sign in",
+    "free_limit": "3 free analyses without registration"
   },
   "overview": {
     "documents_analyzed": "{{count}} documents analyzed",
@@ -459,7 +461,8 @@
     "error_rate_limited": "Too many requests. Please wait.",
     "prompt_summarize": "Summarize this document",
     "prompt_risks": "What are the risks?",
-    "prompt_actions": "What should I do?"
+    "prompt_actions": "What should I do?",
+    "ai_disclaimer_input": "Responses are AI-generated and may contain errors. Verify important information."
   },
   "soft_reg": {
     "title": "Save your documents",

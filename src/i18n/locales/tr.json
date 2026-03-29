@@ -308,7 +308,8 @@
       "extracting": "Metin çıkarılıyor...",
       "analyzing": "Yapay zeka analiz ediyor...",
       "done": "Tamamlandı!"
-    }
+    },
+    "privacy_badge": "Belgeleriniz şifrelenir ve yapay zekayı eğitmek için kullanılmaz"
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -328,7 +329,8 @@
     "verify": "Önemli ayrıntıları doğrulayın",
     "report_title": "Bu yanıtı bildir",
     "report_desc": "Bu yapay zeka yanıtı yanlış mı?",
-    "report": "Bildir"
+    "report": "Bildir",
+    "ai_disclaimer_input": "Yanıtlar yapay zeka tarafından oluşturulur ve hatalar içerebilir. Önemli bilgileri doğrulayın."
   },
   "soft_reg": {
     "title": "Belgelerinizi kaydedin",
@@ -337,6 +339,9 @@
     "google": "Google ile devam et",
     "email": "E-posta ile kaydol",
     "skip": "Sonra"
+  },
+  "welcome": {
+    "free_limit": "Kayıt olmadan 3 ücretsiz analiz"
   },
   "offline": {
     "banner": "İnternet bağlantısı yok — önbellek belgeler"

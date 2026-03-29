@@ -310,7 +310,8 @@
       "extracting": "Extraindo texto...",
       "analyzing": "IA analisando...",
       "done": "Pronto!"
-    }
+    },
+    "privacy_badge": "Os seus documentos são encriptados e não são usados para treinar a IA"
   },
   "common": {
     "loading": "Carregando...",
@@ -330,7 +331,8 @@
     "verify": "Verifique detalhes importantes",
     "report_title": "Reportar resposta",
     "report_desc": "Essa resposta é imprecisa?",
-    "report": "Reportar"
+    "report": "Reportar",
+    "ai_disclaimer_input": "As respostas são geradas por IA e podem conter erros. Verifique as informações importantes."
   },
   "soft_reg": {
     "title": "Salve seus documentos",
@@ -339,6 +341,9 @@
     "google": "Continuar com Google",
     "email": "Registrar por email",
     "skip": "Depois"
+  },
+  "welcome": {
+    "free_limit": "3 análises gratuitas sem registo"
   },
   "offline": {
     "banner": "Sem conexão — documentos em cache"

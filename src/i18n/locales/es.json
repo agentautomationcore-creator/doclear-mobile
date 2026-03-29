@@ -340,7 +340,8 @@
       "extracting": "Extrayendo texto...",
       "analyzing": "IA analizando...",
       "done": "¡Listo!"
-    }
+    },
+    "privacy_badge": "Sus documentos están cifrados y no se utilizan para entrenar la IA"
   },
   "common": {
     "loading": "Cargando...",
@@ -372,7 +373,8 @@
     "error_rate_limited": "Demasiadas solicitudes. Espera un momento.",
     "prompt_summarize": "Resume este documento",
     "prompt_risks": "¿Cuáles son los riesgos?",
-    "prompt_actions": "¿Qué debo hacer?"
+    "prompt_actions": "¿Qué debo hacer?",
+    "ai_disclaimer_input": "Las respuestas son generadas por IA y pueden contener errores. Verifique la información importante."
   },
   "soft_reg": {
     "title": "Guarda tus documentos",
@@ -381,6 +383,9 @@
     "google": "Continuar con Google",
     "email": "Registrarse por email",
     "skip": "Más tarde"
+  },
+  "welcome": {
+    "free_limit": "3 análisis gratuitos sin registro"
   },
   "offline": {
     "banner": "Sin conexión — documentos en caché"
