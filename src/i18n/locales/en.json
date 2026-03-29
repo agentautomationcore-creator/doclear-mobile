@@ -78,7 +78,13 @@
     "status_eu_citizen": "EU citizen",
     "status_pending": "Pending application",
     "status_citizen": "Citizen",
-    "other_country": "Other"
+    "other_country": "Other",
+    "usecase_title": "How will you use DocLear?",
+    "usecase_study": "Study",
+    "usecase_work": "Work",
+    "usecase_personal": "Personal",
+    "ready_title": "All set!",
+    "ready_desc": "All set! Your documents are under control."
   },
   "timeline": {
     "title": "My documents",
@@ -126,7 +132,7 @@
     "ai_disclaimer": "For informational purposes only",
     "health_score": "Health Score",
     "risk_flags": "Risk Flags",
-    "positive_points": "Positive Points",
+    "positive_points": "Positive points",
     "suggested_questions": "Ask about this document:",
     "chat_title": "Chat with document",
     "pages": "pages",
@@ -135,7 +141,23 @@
     "export_excel": "Export Excel",
     "delete": "Delete",
     "delete_title": "Delete document?",
-    "delete_confirm": "This action cannot be undone."
+    "delete_confirm": "This action cannot be undone.",
+    "need_specialist": "Need a specialist?",
+    "find_specialist_nearby": "Find a specialist nearby",
+    "translate_title": "Document translation",
+    "translate_button": "Translate to my language",
+    "translating": "Translating...",
+    "translation_result": "Document translation",
+    "hide_translation": "Hide translation",
+    "show_translation": "View translation",
+    "translate_prompt": "Translate this entire document to {{language}}",
+    "remind_3days": "3 days before",
+    "remind_1day": "1 day before",
+    "reminder_set": "Reminder set",
+    "reminder_3days": "You'll be notified 3 days before the deadline.",
+    "reminder_1day": "You'll be notified 1 day before the deadline.",
+    "notifications_disabled": "Enable notifications in your device settings.",
+    "check_document": "Check this document"
   },
   "settings": {
     "title": "Settings",
@@ -157,6 +179,8 @@
     "terms": "Terms of use",
     "privacy": "Privacy policy",
     "country": "Country",
+    "city": "City",
+    "city_placeholder": "Your city (e.g. London, Berlin...)",
     "status": "Status",
     "sign_in_google": "Sign in with Google",
     "sign_out": "Sign out",
@@ -184,11 +208,33 @@
     "feature_priority": "Priority AI analysis",
     "feature_history": "Full document history",
     "feature_export": "PDF export",
-    "subscribe": "Upgrade",
+    "subscribe": "Upgrade to Pro",
     "coming_soon": "Redirecting to payment...",
     "back_to_docs": "Back to documents",
     "scans_low": "Only {remaining} scan(s) left",
-    "upgrade_banner": "Upgrade to Pro for unlimited scans"
+    "upgrade_banner": "Upgrade to Pro for unlimited scans",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "per_month": "month",
+    "per_year": "year",
+    "best_value": "BEST VALUE",
+    "save_42": "Save 42%",
+    "feature_questions": "Unlimited AI questions",
+    "feature_formats": "All formats (PDF, DOCX, XLSX, photos)",
+    "restore": "Restore purchases",
+    "restored": "Purchases restored",
+    "restored_desc": "Your purchases have been restored.",
+    "no_purchases": "No purchases found",
+    "no_purchases_desc": "No active subscriptions found.",
+    "store_unavailable": "Store not available. Try again later.",
+    "purchase_failed": "Purchase failed. Please try again.",
+    "trust_cancel": "Cancel anytime, no hidden charges",
+    "trust_guarantee": "14-day money-back guarantee",
+    "trust_no_training": "Documents not used for AI training",
+    "anon_trial_hint": "Create an account and get 7 days of Pro for free"
+  },
+  "scan_counter": {
+    "docs_month": "free documents / month"
   },
   "categories": {
     "taxes": "Taxes",
@@ -240,6 +286,7 @@
     "documents": "Documents",
     "scanner": "Scanner",
     "assistant": "Assistant",
+    "overview": "Overview",
     "profile": "Profile"
   },
   "profile": {
@@ -260,6 +307,8 @@
     "trust_no_training": "Data not used for AI training",
     "trust_gdpr": "EU servers (GDPR compliant)",
     "support": "Support",
+    "docs_per_month": "free documents / month",
+    "questions_reset_daily": "Questions reset daily",
     "report_problem": "Report a problem",
     "app_version": "App version"
   },
@@ -273,11 +322,12 @@
     "deleted_after": "Processed and deleted from memory",
     "analyze": "Analyze",
     "analyzing_steps": {
-      "uploading": "Uploading...",
-      "extracting": "Extracting text...",
-      "analyzing": "AI analyzing...",
+      "uploading": "Reading document...",
+      "extracting": "Analyzing content...",
+      "analyzing": "Preparing recommendations...",
       "done": "Done!"
-    }
+    },
+    "usually_takes": "Usually takes 10–20 seconds"
   },
   "common": {
     "loading": "Loading...",
@@ -350,7 +400,46 @@
     "new_password_placeholder": "New password (min 6 characters)",
     "update_password": "Update password",
     "password_updated": "Password updated! Redirecting...",
-    "password_min_length": "Password must be at least 6 characters"
+    "password_min_length": "Password must be at least 6 characters",
+    "confirmed_login": "I confirmed, log me in",
+    "email_taken": "An account with this email already exists"
+  },
+  "consent": {
+    "title": "How DocLear analyzes your documents",
+    "ai_title": "AI-Powered Analysis",
+    "ai_desc": "Your document is sent to Claude AI for analysis.",
+    "training_title": "Not used for training",
+    "training_desc": "Documents are not stored by Anthropic and not used to train AI.",
+    "encrypted_title": "Encrypted & deleted",
+    "encrypted_desc": "Content is encrypted in transit. No copies retained after analysis.",
+    "eu_title": "EU data protection",
+    "eu_desc": "Results stored on EU servers. GDPR compliant.",
+    "agree": "I agree",
+    "learn_more": "Learn more about our privacy practices"
+  },
+  "trial": {
+    "badge": "Free Pro Trial",
+    "days_left": "{{count}} days left",
+    "expired": "Your Pro trial has ended. Upgrade to Pro to continue without limits."
+  },
+  "welcome": {
+    "title": "Understand any document in 30 seconds",
+    "signal_languages": "10 languages supported",
+    "signal_encrypted": "Data encrypted",
+    "signal_instant": "Instant results",
+    "scan_first": "Scan my first document",
+    "try_demo": "Try the demo",
+    "have_account": "Already have an account? Sign in"
+  },
+  "overview": {
+    "documents_analyzed": "{{count}} documents analyzed",
+    "by_category": "By category",
+    "deadlines": "Upcoming deadlines",
+    "finances": "Finances",
+    "to_pay": "To pay",
+    "to_receive": "To receive",
+    "recommendation": "AI recommendation",
+    "empty": "Upload a document to see your overview"
   },
   "assistant": {
     "title": "Assistant",

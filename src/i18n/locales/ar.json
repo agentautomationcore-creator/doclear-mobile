@@ -78,7 +78,9 @@
     "status_eu_citizen": "مواطن أوروبي",
     "status_pending": "طلب قيد المعالجة",
     "status_citizen": "مواطن",
-    "other_country": "أخرى"
+    "other_country": "أخرى",
+    "ready_title": "كل شيء جاهز!",
+    "ready_desc": "كل شيء جاهز! وثائقك تحت السيطرة."
   },
   "timeline": {
     "title": "مستنداتي",

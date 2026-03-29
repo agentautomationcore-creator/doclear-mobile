@@ -76,7 +76,9 @@
     "status_eu_citizen": "AB vatandasi",
     "status_pending": "Basvuru beklemede",
     "status_citizen": "Vatandas",
-    "other_country": "Diger"
+    "other_country": "Diger",
+    "ready_title": "Hazır!",
+    "ready_desc": "Hazır! Belgeleriniz kontrol altında."
   },
   "timeline": {
     "title": "Belgelerim",

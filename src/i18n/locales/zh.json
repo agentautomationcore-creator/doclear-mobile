@@ -76,7 +76,9 @@
     "status_eu_citizen": "欧盟公民",
     "status_pending": "申请审理中",
     "status_citizen": "公民",
-    "other_country": "其他"
+    "other_country": "其他",
+    "ready_title": "一切就绪！",
+    "ready_desc": "一切就绪！您的文件尽在掌控。"
   },
   "timeline": {
     "title": "我的文件",

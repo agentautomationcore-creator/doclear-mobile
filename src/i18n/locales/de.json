@@ -78,7 +78,9 @@
     "status_eu_citizen": "EU-Bürger",
     "status_pending": "Antrag in Bearbeitung",
     "status_citizen": "Staatsbürger",
-    "other_country": "Anderes"
+    "other_country": "Anderes",
+    "ready_title": "Alles bereit!",
+    "ready_desc": "Alles bereit! Ihre Dokumente sind unter Kontrolle."
   },
   "timeline": {
     "title": "Meine Dokumente",

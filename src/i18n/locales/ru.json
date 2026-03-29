@@ -78,7 +78,13 @@
     "status_eu_citizen": "Гражданин ЕС",
     "status_pending": "Заявка на рассмотрении",
     "status_citizen": "Гражданин",
-    "other_country": "Другая"
+    "other_country": "Другая",
+    "usecase_title": "Как вы будете использовать DocLear?",
+    "usecase_study": "Учёба",
+    "usecase_work": "Работа",
+    "usecase_personal": "Личное",
+    "ready_title": "Всё готово!",
+    "ready_desc": "Всё готово! Ваши документы под контролем."
   },
   "timeline": {
     "title": "Мои документы",
@@ -121,7 +127,37 @@
     "recommendations": "Рекомендации",
     "visit_portal": "Перейти",
     "find_specialist": "Найти специалиста",
-    "key_facts": "5 ключевых фактов"
+    "key_facts": "5 ключевых фактов",
+    "ai_analysis": "Анализ ИИ",
+    "ai_disclaimer": "Только для информации",
+    "health_score": "Оценка документа",
+    "risk_flags": "Риски",
+    "positive_points": "Позитивные моменты",
+    "suggested_questions": "Задайте вопрос о документе:",
+    "chat_title": "Чат с документом",
+    "pages": "страниц",
+    "page": "стр.",
+    "export_pdf": "Экспорт PDF",
+    "export_excel": "Экспорт Excel",
+    "delete": "Удалить",
+    "delete_title": "Удалить документ?",
+    "delete_confirm": "Это действие нельзя отменить.",
+    "need_specialist": "Нужен специалист?",
+    "find_specialist_nearby": "Найти специалиста рядом",
+    "translate_title": "Перевод документа",
+    "translate_button": "Перевести на мой язык",
+    "translating": "Переводим...",
+    "translation_result": "Перевод документа",
+    "hide_translation": "Скрыть перевод",
+    "show_translation": "Показать перевод",
+    "translate_prompt": "Переведи весь документ на {{language}}",
+    "remind_3days": "За 3 дня",
+    "remind_1day": "За 1 день",
+    "reminder_set": "Напоминание установлено",
+    "reminder_3days": "Уведомим за 3 дня до дедлайна.",
+    "reminder_1day": "Уведомим за 1 день до дедлайна.",
+    "notifications_disabled": "Включите уведомления в настройках.",
+    "check_document": "Проверьте документ"
   },
   "settings": {
     "title": "Настройки",
@@ -143,6 +179,8 @@
     "terms": "Условия использования",
     "privacy": "Политика конфиденциальности",
     "country": "Страна",
+    "city": "Город",
+    "city_placeholder": "Ваш город (напр. Ницца, Париж...)",
     "status": "Статус",
     "sign_in_google": "Войти через Google",
     "sign_out": "Выйти",
@@ -170,11 +208,33 @@
     "feature_priority": "Приоритетный ИИ",
     "feature_history": "Полная история",
     "feature_export": "Экспорт PDF",
-    "subscribe": "Подписаться на Pro",
+    "subscribe": "Оформить Pro",
     "coming_soon": "Скоро! Мы сообщим когда Pro будет доступен.",
     "back_to_docs": "К документам",
     "scans_low": "Осталось {remaining} скан(ов)",
-    "upgrade_banner": "Pro — безлимитные сканы"
+    "upgrade_banner": "Pro — безлимитные сканы",
+    "monthly": "Ежемесячно",
+    "annual": "Ежегодно",
+    "per_month": "мес",
+    "per_year": "год",
+    "best_value": "ЛУЧШАЯ ЦЕНА",
+    "save_42": "Экономия 42%",
+    "feature_questions": "Безлимитные вопросы ИИ",
+    "feature_formats": "Все форматы (PDF, DOCX, XLSX, фото)",
+    "restore": "Восстановить покупки",
+    "restored": "Покупки восстановлены",
+    "restored_desc": "Ваши покупки восстановлены.",
+    "no_purchases": "Покупки не найдены",
+    "no_purchases_desc": "Активных подписок не найдено.",
+    "store_unavailable": "Магазин недоступен. Попробуйте позже.",
+    "purchase_failed": "Покупка не удалась. Повторите.",
+    "trust_cancel": "Отмена в любой момент",
+    "trust_guarantee": "Гарантия возврата 14 дней",
+    "trust_no_training": "Документы не для обучения ИИ",
+    "anon_trial_hint": "Создайте аккаунт и получите 7 дней Pro бесплатно"
+  },
+  "scan_counter": {
+    "docs_month": "бесплатных документов / мес"
   },
   "categories": {
     "taxes": "Налоги",
@@ -265,12 +325,15 @@
     "new_password_placeholder": "Новый пароль (мин. 6 символов)",
     "update_password": "Обновить пароль",
     "password_updated": "Пароль обновлён! Перенаправление...",
-    "password_min_length": "Пароль должен содержать не менее 6 символов"
+    "password_min_length": "Пароль должен содержать не менее 6 символов",
+    "confirmed_login": "Я подтвердил, войти",
+    "email_taken": "Аккаунт с этим email уже существует"
   },
   "tabs": {
     "documents": "Документы",
     "scanner": "Сканер",
     "assistant": "Ассистент",
+    "overview": "Обзор",
     "profile": "Профиль"
   },
   "profile": {
@@ -291,6 +354,8 @@
     "trust_no_training": "Не используется для обучения ИИ",
     "trust_gdpr": "Серверы в ЕС (GDPR)",
     "support": "Поддержка",
+    "docs_per_month": "бесплатных документов / мес",
+    "questions_reset_daily": "Вопросы обновляются ежедневно",
     "report_problem": "Сообщить о проблеме",
     "app_version": "Версия приложения"
   },
@@ -304,11 +369,12 @@
     "deleted_after": "Обработано и удалено",
     "analyze": "Анализировать",
     "analyzing_steps": {
-      "uploading": "Загрузка...",
-      "extracting": "Извлечение текста...",
-      "analyzing": "Анализ ИИ...",
+      "uploading": "Читаем документ...",
+      "extracting": "Анализируем содержание...",
+      "analyzing": "Готовим рекомендации...",
       "done": "Готово!"
-    }
+    },
+    "usually_takes": "Обычно занимает 10–20 секунд"
   },
   "common": {
     "loading": "Загрузка...",
@@ -317,7 +383,63 @@
     "cancel": "Отмена",
     "save": "Сохранить",
     "delete": "Удалить",
-    "back": "Назад"
+    "back": "Назад",
+    "menu": "Меню",
+    "offline": "Офлайн",
+    "close": "Закрыть"
+  },
+  "error": {
+    "no_internet": "Нет интернета",
+    "no_internet_desc": "Проверьте подключение и повторите.",
+    "server": "Ошибка сервера",
+    "server_desc": "Проблемы на сервере. Попробуйте позже.",
+    "ai_overloaded": "ИИ перегружен",
+    "ai_overloaded_desc": "Слишком много запросов. Повторите через минуту.",
+    "upload_failed": "Загрузка не удалась",
+    "upload_failed_desc": "Не удалось отправить файл. Повторите.",
+    "file_too_large": "Файл слишком большой",
+    "file_too_large_desc": "Максимальный размер 15 МБ.",
+    "generic": "Что-то пошло не так",
+    "generic_desc": "Произошла ошибка. Повторите.",
+    "retry": "Повторить",
+    "offline_mode": "Офлайн — показываем кэш"
+  },
+  "consent": {
+    "title": "Как DocLear анализирует документы",
+    "ai_title": "Анализ с помощью ИИ",
+    "ai_desc": "Документ отправляется на анализ в ИИ Claude.",
+    "training_title": "Не для обучения ИИ",
+    "training_desc": "Документы не хранятся и не используются для обучения.",
+    "encrypted_title": "Зашифровано и удалено",
+    "encrypted_desc": "Содержимое зашифровано при передаче. Копии не сохраняются.",
+    "eu_title": "Защита данных ЕС",
+    "eu_desc": "Результаты на серверах ЕС. Соответствие GDPR.",
+    "agree": "Я согласен",
+    "learn_more": "Подробнее о политике конфиденциальности"
+  },
+  "trial": {
+    "badge": "Пробный Pro",
+    "days_left": "Осталось {{count}} дней",
+    "expired": "Пробный период закончился. Оформите Pro для безлимитного доступа."
+  },
+  "welcome": {
+    "title": "Поймите любой документ за 30 секунд",
+    "signal_languages": "10 языков",
+    "signal_encrypted": "Данные зашифрованы",
+    "signal_instant": "Мгновенный результат",
+    "scan_first": "Сканировать первый документ",
+    "try_demo": "Попробовать демо",
+    "have_account": "Уже есть аккаунт? Войти"
+  },
+  "overview": {
+    "documents_analyzed": "{{count}} документов проанализировано",
+    "by_category": "По категориям",
+    "deadlines": "Ближайшие дедлайны",
+    "finances": "Финансы",
+    "to_pay": "К оплате",
+    "to_receive": "К получению",
+    "recommendation": "Рекомендация ИИ",
+    "empty": "Загрузите документ чтобы увидеть обзор"
   },
   "assistant": {
     "title": "Ассистент",
@@ -328,7 +450,16 @@
     "verify": "Проверьте важные детали",
     "report_title": "Пожаловаться",
     "report_desc": "Этот ответ неточен?",
-    "report": "Пожаловаться"
+    "report": "Пожаловаться",
+    "report_thanks": "Спасибо за жалобу.",
+    "report_error": "Не удалось отправить.",
+    "thinking": "DocLear думает...",
+    "error_generic": "Не удалось обработать вопрос. Попробуйте снова.",
+    "error_overloaded": "ИИ перегружен. Попробуйте через минуту.",
+    "error_rate_limited": "Слишком много запросов. Подождите.",
+    "prompt_summarize": "Резюмируй документ",
+    "prompt_risks": "Какие риски?",
+    "prompt_actions": "Что мне делать?"
   },
   "soft_reg": {
     "title": "Сохраните документы",

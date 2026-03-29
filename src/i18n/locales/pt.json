@@ -78,7 +78,9 @@
     "status_eu_citizen": "Cidadao da UE",
     "status_pending": "Pedido em andamento",
     "status_citizen": "Cidadao",
-    "other_country": "Outro"
+    "other_country": "Outro",
+    "ready_title": "Tudo pronto!",
+    "ready_desc": "Tudo pronto! Os seus documentos estão sob controlo."
   },
   "timeline": {
     "title": "Meus documentos",
