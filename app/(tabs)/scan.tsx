@@ -660,19 +660,15 @@ export default function ScanScreen() {
           </View>
         ) : null}
 
-        {/* Trust signals */}
+        {/* Privacy badge */}
         {step === 'idle' || step === 'error' ? (
-          <View style={{ marginTop: 32, gap: 8 }}>
-            {[
-              t('scanner.encrypted'),
-              t('scanner.no_training'),
-              t('scanner.deleted_after'),
-            ].map((text, i) => (
-              <View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: 12, color: COLORS.success, marginRight: 6 }}>{'\u2713'}</Text>
-                <Text style={{ fontSize: 13, color: COLORS.textSecondary }}>{text}</Text>
-              </View>
-            ))}
+          <View style={{ marginTop: 32 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F8FAFC', borderRadius: 10, padding: 12, gap: 8 }}>
+              <Ionicons name="lock-closed-outline" size={16} color={COLORS.textSecondary} />
+              <Text style={{ flex: 1, fontSize: 12, color: COLORS.textSecondary, lineHeight: 17 }}>
+                {t('scanner.privacy_badge')}
+              </Text>
+            </View>
           </View>
         ) : null}
       </ScrollView>
