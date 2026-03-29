@@ -705,6 +705,11 @@ function NativeWelcomeScreen({ onStart, onLogin }: { onStart: () => void; onLogi
           </Text>
         </Pressable>
 
+        {/* Free limit hint */}
+        <Text style={{ fontSize: 13, color: '#94A3B8', textAlign: 'center' }}>
+          {t('welcome.free_limit')}
+        </Text>
+
         {/* Login link */}
         <Pressable
           onPress={onLogin}
