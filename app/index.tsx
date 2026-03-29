@@ -639,29 +639,153 @@ function WebLandingPage() {
   );
 }
 
+function NativeWelcomeScreen({ onStart, onLogin }: { onStart: () => void; onLogin: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <View style={{ flex: 1 }}>
+      {/* Gradient-like dark background */}
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#1E293B',
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingHorizontal: 32,
+        }}
+      >
+        {/* Logo placeholder */}
+        <View
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: 20,
+            backgroundColor: '#334155',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 32,
+          }}
+        >
+          <Text style={{ fontSize: 40, fontWeight: '800', color: '#FFFFFF' }}>D</Text>
+        </View>
+
+        <Text style={{ fontSize: 28, fontWeight: '800', color: '#FFFFFF', textAlign: 'center', marginBottom: 16, lineHeight: 36 }}>
+          {t('welcome.title')}
+        </Text>
+
+        {/* Trust signals */}
+        <View style={{ gap: 8, marginBottom: 40 }}>
+          {[
+            t('welcome.signal_languages'),
+            t('welcome.signal_encrypted'),
+            t('welcome.signal_instant'),
+          ].map((text, i) => (
+            <View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 14, color: '#10B981', marginRight: 8 }}>{'\u2713'}</Text>
+              <Text style={{ fontSize: 15, color: '#CBD5E1' }}>{text}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* CTA */}
+        <Pressable
+          onPress={onStart}
+          style={{
+            width: '100%',
+            backgroundColor: '#FFFFFF',
+            borderRadius: 12,
+            paddingVertical: 16,
+            alignItems: 'center',
+            marginBottom: 16,
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={t('welcome.scan_first')}
+        >
+          <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E293B' }}>
+            {t('welcome.scan_first')}
+          </Text>
+        </Pressable>
+
+        {/* Login link */}
+        <Pressable
+          onPress={onLogin}
+          style={{ paddingVertical: 12, marginTop: 8, opacity: 0.6 }}
+          accessibilityRole="button"
+          accessibilityLabel={t('welcome.have_account')}
+        >
+          <Text style={{ fontSize: 14, color: '#CBD5E1' }}>
+            {t('welcome.have_account')}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
 export default function Index() {
   const { isAuthenticated, isLoading } = useAuth();
   const [signingIn, setSigningIn] = useState(false);
   const [langLoaded, setLangLoaded] = useState(false);
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const router = useRouter();
 
   // Load saved language on mount
   useEffect(() => {
     loadSavedLanguage().finally(() => setLangLoaded(true));
   }, []);
 
+  // Check onboarding status from MMKV
   useEffect(() => {
-    // On native: auto sign in anonymously if not authenticated
-    if (!isLoading && !isAuthenticated && Platform.OS !== 'web' && !signingIn) {
+    (async () => {
+      try {
+        const { mmkvStorage, MMKV_KEYS } = await import('../src/lib/mmkv');
+        const done = mmkvStorage.getBoolean(MMKV_KEYS.ONBOARDING_DONE);
+        if (!done && Platform.OS !== 'web') {
+          setShowWelcome(true);
+          setNeedsOnboarding(true);
+        }
+      } catch {
+        // MMKV not available, skip
+      }
+      setOnboardingChecked(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    // On native: auto sign in anonymously if not authenticated (and not showing welcome)
+    if (!isLoading && !isAuthenticated && Platform.OS !== 'web' && !signingIn && !showWelcome) {
       setSigningIn(true);
       supabase.auth.signInAnonymously().catch(() => {}).finally(() => setSigningIn(false));
     }
-  }, [isLoading, isAuthenticated, signingIn]);
+  }, [isLoading, isAuthenticated, signingIn, showWelcome]);
 
-  if (isLoading || signingIn || !langLoaded) {
+  if (isLoading || signingIn || !langLoaded || !onboardingChecked) {
     return (
       <View style={{ flex: 1, backgroundColor: '#FFFFFF', justifyContent: 'center' }}>
         <ListSkeleton count={3} />
       </View>
+    );
+  }
+
+  // Native: show welcome screen for first-time users
+  if (showWelcome && Platform.OS !== 'web') {
+    return (
+      <NativeWelcomeScreen
+        onStart={async () => {
+          setShowWelcome(false);
+          // Sign in anonymously
+          setSigningIn(true);
+          await supabase.auth.signInAnonymously().catch(() => {});
+          setSigningIn(false);
+          // Show AI consent screen first, then onboarding
+          router.replace('/ai-consent');
+        }}
+        onLogin={() => {
+          setShowWelcome(false);
+          router.push('/(auth)/login');
+        }}
+      />
     );
   }
 
@@ -673,6 +797,11 @@ export default function Index() {
   if (!isAuthenticated) {
     // Fallback: if anonymous sign-in failed, redirect to login
     return <Redirect href="/(auth)/login" />;
+  }
+
+  // Check if onboarding needed (first time after auth)
+  if (needsOnboarding) {
+    return <Redirect href="/onboarding" />;
   }
 
   return <Redirect href="/(tabs)" />;

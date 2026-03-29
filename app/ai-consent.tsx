@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import * as Linking from 'expo-linking';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH } from '../src/lib/constants';
 import { Button } from '../src/components/ui/Button';
@@ -11,152 +12,109 @@ export const AI_CONSENT_KEY = MMKV_KEYS.AI_CONSENT;
 
 export default function AIConsentScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
-  const handleAgree = () => {
+  const handleAgree = async () => {
+    // Write to both MMKV and AsyncStorage
     mmkvStorage.setBoolean(MMKV_KEYS.AI_CONSENT, true);
-    router.back();
+    try {
+      const AS = (await import('@react-native-async-storage/async-storage')).default;
+      await AS.setItem('mmkv_ai_consent_accepted', 'true');
+    } catch {}
+
+    // Check if onboarding is needed (first launch) or returning user
+    const onboardingDone = mmkvStorage.getBoolean(MMKV_KEYS.ONBOARDING_DONE);
+    if (!onboardingDone) {
+      // First launch: consent → onboarding → tabs
+      router.replace('/onboarding');
+    } else {
+      // Returning user: go to tabs
+      router.replace('/(tabs)');
+    }
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
-      <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 120 }}>
         {/* Header */}
-        <View style={{ alignItems: 'center', marginBottom: 32 }}>
+        <View style={{ alignItems: 'center', marginBottom: 24 }}>
           <View
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: 32,
+              width: 56,
+              height: 56,
+              borderRadius: 28,
               backgroundColor: COLORS.accent + '15',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: 16,
+              marginBottom: 12,
             }}
           >
-            <Text style={{ fontSize: 28 }}>AI</Text>
+            <Text style={{ fontSize: 24, fontWeight: '700', color: COLORS.accent }}>AI</Text>
           </View>
           <Text
             style={{
-              fontSize: FONT_SIZE.heading,
-              fontWeight: '800',
+              fontSize: 20,
+              fontWeight: '700',
               color: COLORS.textPrimary,
               textAlign: 'center',
-              marginBottom: 8,
             }}
           >
-            How DocLear analyzes your documents
+            {t('consent.title')}
           </Text>
         </View>
 
-        {/* Explanation */}
-        <View style={{ gap: 20, marginBottom: 32 }}>
-          <View>
-            <Text
-              style={{
-                fontSize: FONT_SIZE.body,
-                fontWeight: '700',
-                color: COLORS.textPrimary,
-                marginBottom: 6,
-              }}
-            >
-              AI-Powered Analysis
-            </Text>
-            <Text
-              style={{
-                fontSize: FONT_SIZE.caption,
-                color: COLORS.textSecondary,
-                lineHeight: 22,
-              }}
-            >
-              DocLear uses Anthropic's Claude AI to analyze your documents. When you upload a document, its contents are sent to Anthropic's API for processing.
-            </Text>
-          </View>
-
-          <View>
-            <Text
-              style={{
-                fontSize: FONT_SIZE.body,
-                fontWeight: '700',
-                color: COLORS.textPrimary,
-                marginBottom: 6,
-              }}
-            >
-              Your data is not used for training
-            </Text>
-            <Text
-              style={{
-                fontSize: FONT_SIZE.caption,
-                color: COLORS.textSecondary,
-                lineHeight: 22,
-              }}
-            >
-              Your documents are processed solely to provide you with analysis results. They are not stored by Anthropic and are not used to train AI models.
-            </Text>
-          </View>
-
-          <View>
-            <Text
-              style={{
-                fontSize: FONT_SIZE.body,
-                fontWeight: '700',
-                color: COLORS.textPrimary,
-                marginBottom: 6,
-              }}
-            >
-              Processing only
-            </Text>
-            <Text
-              style={{
-                fontSize: FONT_SIZE.caption,
-                color: COLORS.textSecondary,
-                lineHeight: 22,
-              }}
-            >
-              Document content is transmitted securely (encrypted in transit) and processed in real-time. No copies are retained after analysis is complete.
-            </Text>
-          </View>
-
-          <View>
-            <Text
-              style={{
-                fontSize: FONT_SIZE.body,
-                fontWeight: '700',
-                color: COLORS.textPrimary,
-                marginBottom: 6,
-              }}
-            >
-              EU data protection
-            </Text>
-            <Text
-              style={{
-                fontSize: FONT_SIZE.caption,
-                color: COLORS.textSecondary,
-                lineHeight: 22,
-              }}
-            >
-              Your analyzed results are stored on EU servers (Supabase). DocLear complies with GDPR requirements.
-            </Text>
-          </View>
+        {/* Compact explanation */}
+        <View style={{ gap: 16 }}>
+          {[
+            { title: t('consent.ai_title'), desc: t('consent.ai_desc') },
+            { title: t('consent.training_title'), desc: t('consent.training_desc') },
+            { title: t('consent.encrypted_title'), desc: t('consent.encrypted_desc') },
+            { title: t('consent.eu_title'), desc: t('consent.eu_desc') },
+          ].map((item, i) => (
+            <View key={i}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 4 }}>
+                {item.title}
+              </Text>
+              <Text style={{ fontSize: 14, color: COLORS.textSecondary, lineHeight: 20 }}>
+                {item.desc}
+              </Text>
+            </View>
+          ))}
         </View>
+      </ScrollView>
 
-        {/* Agree button */}
+      {/* Fixed bottom buttons */}
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: COLORS.background,
+          paddingHorizontal: 24,
+          paddingTop: 12,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 16,
+          borderTopWidth: 1,
+          borderTopColor: COLORS.border,
+        }}
+      >
         <Button
-          title="I agree"
+          title={t('consent.agree')}
           onPress={handleAgree}
-          style={{ marginBottom: 16 }}
+          style={{ marginBottom: 8 }}
         />
-
-        {/* Learn more */}
         <Pressable
           onPress={() => Linking.openURL('https://doclear.app/privacy')}
-          style={{ alignItems: 'center', paddingVertical: 12, minHeight: MIN_TOUCH }}
+          style={{ alignItems: 'center', paddingVertical: 8, minHeight: MIN_TOUCH }}
           accessibilityRole="link"
+          accessibilityLabel={t('consent.learn_more')}
         >
-          <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.accent }}>
-            Learn more about our privacy practices
+          <Text style={{ fontSize: 13, color: COLORS.textSecondary }}>
+            {t('consent.learn_more')}
           </Text>
         </Pressable>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

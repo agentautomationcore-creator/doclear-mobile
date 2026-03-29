@@ -201,60 +201,8 @@ export default function ScanScreen() {
     }
   }, [checkLimitAndProceed, t]);
 
-  // AI consent check — uses AsyncStorage directly (sync MMKV cache unreliable at startup)
-  const [consentChecked, setConsentChecked] = useState(false);
-  const [hasConsent, setHasConsent] = useState(false);
-
-  React.useEffect(() => {
-    // Load consent state from AsyncStorage on mount
-    import('@react-native-async-storage/async-storage').then(({ default: AS }) => {
-      AS.getItem('mmkv_ai_consent_accepted').then((val) => {
-        setHasConsent(val === 'true');
-        setConsentChecked(true);
-      });
-    });
-  }, []);
-
-  // Ref to track pending files for consent return (avoids stale closure)
-  const pendingFilesRef = React.useRef<SelectedFile[]>([]);
-
-  // Re-check consent when returning from ai-consent screen (screen focus)
-  const consentReturnHandled = React.useRef(false);
-  React.useEffect(() => {
-    const checkOnFocus = async () => {
-      const AS = (await import('@react-native-async-storage/async-storage')).default;
-      const val = await AS.getItem('mmkv_ai_consent_accepted');
-      if (val === 'true' && !hasConsent) {
-        setHasConsent(true);
-
-        // Prevent double-trigger
-        if (consentReturnHandled.current) return;
-        consentReturnHandled.current = true;
-
-        // Restore pending files
-        let restoredFiles: SelectedFile[] = files;
-        if (restoredFiles.length === 0) {
-          try {
-            const saved = await AS.getItem('pending_scan_files');
-            if (saved) {
-              restoredFiles = JSON.parse(saved);
-              setFiles(restoredFiles);
-              pendingFilesRef.current = restoredFiles;
-              await AS.removeItem('pending_scan_files');
-            }
-          } catch {}
-        }
-
-        // Auto-analyze with restored files directly — pass as argument to avoid stale closure
-        if (restoredFiles.length > 0 && step === 'idle') {
-          setTimeout(() => {
-            analyzeFilesDirectly(restoredFiles);
-          }, 500);
-        }
-      }
-    };
-    checkOnFocus();
-  });
+  // AI consent is now handled at app startup (welcome/onboarding flow).
+  // Scanner no longer checks or redirects — consent is always granted by the time user reaches tabs.
 
   // Core analysis function (no consent check — called directly after consent granted)
   // Accepts optional fileList override for consent-return flow (avoids stale closure)
@@ -422,25 +370,15 @@ export default function ScanScreen() {
     }
   }, [files, user, locale, router, t]);
 
-  // Public analyze function — checks consent first, then calls analyzeFilesDirectly
+  // Public analyze function — consent already granted at app startup
   const analyzeFiles = useCallback(async () => {
-    console.log('[SCAN] analyzeFiles called', { filesCount: files.length, userId: user?.id, hasConsent });
+    console.log('[SCAN] analyzeFiles called', { filesCount: files.length, userId: user?.id });
     if (files.length === 0) {
       console.log('[SCAN] ABORT: no files');
       return;
     }
-    if (!hasConsent) {
-      console.log('[SCAN] No consent, saving files and redirecting to ai-consent');
-      // Save pending files info so we can restore after consent
-      try {
-        const AS = (await import('@react-native-async-storage/async-storage')).default;
-        await AS.setItem('pending_scan_files', JSON.stringify(files.map(f => ({ uri: f.uri, name: f.name, size: f.size, type: f.type, mimeType: f.mimeType }))));
-      } catch {}
-      router.push('/ai-consent');
-      return;
-    }
     await analyzeFilesDirectly();
-  }, [files, user, hasConsent, router, analyzeFilesDirectly]);
+  }, [files, user, analyzeFilesDirectly]);
 
   // Rotating loading messages
   const LOADING_MESSAGES = [
