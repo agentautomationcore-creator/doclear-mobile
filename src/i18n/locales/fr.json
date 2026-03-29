@@ -328,7 +328,8 @@
       "done": "Terminé !"
     },
     "usually_takes": "Cela prend habituellement 10 à 20 secondes",
-    "privacy_badge": "Vos documents sont chiffrés et ne sont pas utilisés pour entraîner l'IA"
+    "privacy_badge": "Vos documents sont chiffrés et ne sont pas utilisés pour entraîner l'IA",
+    "try_demo": "Essayer avec un document démo"
   },
   "common": {
     "loading": "Chargement...",

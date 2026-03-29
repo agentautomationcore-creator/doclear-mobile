@@ -328,7 +328,8 @@
       "done": "Done!"
     },
     "usually_takes": "Usually takes 10–20 seconds",
-    "privacy_badge": "Your documents are encrypted and not used to train AI"
+    "privacy_badge": "Your documents are encrypted and not used to train AI",
+    "try_demo": "Try with a demo document"
   },
   "common": {
     "loading": "Loading...",

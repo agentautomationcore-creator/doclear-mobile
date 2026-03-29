@@ -341,7 +341,8 @@
       "analyzing": "IA analizando...",
       "done": "¡Listo!"
     },
-    "privacy_badge": "Sus documentos están cifrados y no se utilizan para entrenar la IA"
+    "privacy_badge": "Sus documentos están cifrados y no se utilizan para entrenar la IA",
+    "try_demo": "Probar con un documento de demostración"
   },
   "common": {
     "loading": "Cargando...",

@@ -311,7 +311,8 @@
       "analyzing": "IA in analisi...",
       "done": "Fatto!"
     },
-    "privacy_badge": "I tuoi documenti sono crittografati e non vengono usati per addestrare l'IA"
+    "privacy_badge": "I tuoi documenti sono crittografati e non vengono usati per addestrare l'IA",
+    "try_demo": "Prova con un documento demo"
   },
   "common": {
     "loading": "Caricamento...",

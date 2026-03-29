@@ -204,6 +204,99 @@ export default function ScanScreen() {
   // AI consent is now handled at app startup (welcome/onboarding flow).
   // Scanner no longer checks or redirects — consent is always granted by the time user reaches tabs.
 
+  const scanCount = useAuthStore((s) => s.scanCount);
+
+  // Demo document — hardcoded French bail contract
+  const handleDemo = useCallback(async () => {
+    if (!checkLimitAndProceed()) return;
+
+    setStep('analyzing');
+    setError(null);
+
+    try {
+      let userId = user?.id;
+      if (!userId) {
+        const { data: { session } } = await supabase.auth.getSession();
+        userId = session?.user?.id;
+        if (!userId) {
+          const { data } = await supabase.auth.signInAnonymously();
+          userId = data?.user?.id;
+        }
+      }
+      if (!userId) { setError('Auth error'); setStep('error'); return; }
+
+      const documentId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+
+      const demoText = `CONTRAT DE LOCATION - BAIL D'HABITATION
+Loi n° 89-462 du 6 juillet 1989
+
+Entre les soussignés:
+Le bailleur: SCI RIVIERA IMMO, 15 avenue des Fleurs, 06000 Nice
+Le locataire: M. Jean DUPONT
+
+DÉSIGNATION DU BIEN LOUÉ
+Appartement de type T3 situé au 2ème étage, 28 boulevard Victor Hugo, 06000 Nice.
+Surface habitable: 65 m². Parking n°12 inclus.
+
+DURÉE ET DATE D'EFFET
+Le présent bail est consenti pour une durée de 3 ans à compter du 1er avril 2026.
+Date limite de signature: 25 mars 2026.
+
+LOYER ET CHARGES
+Loyer mensuel: 1 250,00 € hors charges.
+Provisions pour charges: 150,00 € par mois.
+Total mensuel: 1 400,00 €.
+Dépôt de garantie: 1 250,00 € (un mois de loyer).
+Paiement: par virement avant le 5 de chaque mois.
+
+CLAUSE RÉSOLUTOIRE
+À défaut de paiement du loyer pendant 2 mois, le bail sera résilié de plein droit.
+
+DIAGNOSTICS TECHNIQUES
+DPE: Classe C (émissions: 18 kg CO2/m²/an).
+Amiante: Négatif. Plomb: Négatif.
+
+Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+
+      const response = await fetch(`${API_URL}/analyze`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          type: 'text',
+          textContent: demoText,
+          language: locale,
+          isPdf: false,
+          userId,
+          documentId,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Demo analysis failed');
+
+      const result = await response.json();
+      track('demo_document_used');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      const store = useAuthStore.getState();
+      store.setScanCount(store.scanCount + 1);
+
+      setTimeout(() => router.replace(`/doc/${documentId}`), 500);
+    } catch (err: any) {
+      setError(err?.message ?? t('errors.analysis_failed'));
+      setStep('error');
+    }
+  }, [user, locale, router, checkLimitAndProceed, t]);
+
   // Core analysis function (no consent check — called directly after consent granted)
   // Accepts optional fileList override for consent-return flow (avoids stale closure)
   const analyzeFilesDirectly = useCallback(async (fileListOverride?: SelectedFile[]) => {
@@ -536,6 +629,32 @@ export default function ScanScreen() {
                 PDF · DOCX · JPG · PNG · XLSX · HEIC · TXT
               </Text>
             </View>
+
+            {/* Demo document button — show only when user has 0 documents */}
+            {scanCount === 0 ? (
+              <Pressable
+                onPress={handleDemo}
+                style={{
+                  marginTop: 8,
+                  height: 44,
+                  backgroundColor: '#FFFFFF',
+                  borderWidth: 1.5,
+                  borderColor: COLORS.border,
+                  borderRadius: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  gap: 6,
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={t('scanner.try_demo')}
+              >
+                <Ionicons name="sparkles-outline" size={16} color={COLORS.textSecondary} />
+                <Text style={{ color: COLORS.textSecondary, fontSize: FONT_SIZE.caption, fontWeight: '500' }}>
+                  {t('scanner.try_demo')}
+                </Text>
+              </Pressable>
+            ) : null}
           </View>
         ) : null}
 

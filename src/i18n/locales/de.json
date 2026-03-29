@@ -341,7 +341,8 @@
       "analyzing": "KI-Analyse...",
       "done": "Fertig!"
     },
-    "privacy_badge": "Ihre Dokumente sind verschlüsselt und werden nicht zum Trainieren der KI verwendet"
+    "privacy_badge": "Ihre Dokumente sind verschlüsselt und werden nicht zum Trainieren der KI verwendet",
+    "try_demo": "Mit einem Demo-Dokument testen"
   },
   "common": {
     "loading": "Laden...",

@@ -15,6 +15,7 @@ type EventName =
   | 'registration_shown'
   | 'registration_completed'
   | 'demo_started'
+  | 'demo_document_used'
   | 'onboarding_skipped';
 
 let posthogClient: any = null;

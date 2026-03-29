@@ -309,7 +309,8 @@
       "analyzing": "Yapay zeka analiz ediyor...",
       "done": "Tamamlandı!"
     },
-    "privacy_badge": "Belgeleriniz şifrelenir ve yapay zekayı eğitmek için kullanılmaz"
+    "privacy_badge": "Belgeleriniz şifrelenir ve yapay zekayı eğitmek için kullanılmaz",
+    "try_demo": "Demo belgeyle deneyin"
   },
   "common": {
     "loading": "Yükleniyor...",

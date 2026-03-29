@@ -309,7 +309,8 @@
       "analyzing": "AI分析中...",
       "done": "完成！"
     },
-    "privacy_badge": "您的文件已加密，不会用于训练AI"
+    "privacy_badge": "您的文件已加密，不会用于训练AI",
+    "try_demo": "试用演示文档"
   },
   "common": {
     "loading": "加载中...",
