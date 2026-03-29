@@ -3,6 +3,7 @@ import {
   View,
   Text,
   ScrollView,
+  TextInput,
   Pressable,
   Alert,
   Modal,
@@ -12,10 +13,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as Linking from 'expo-linking';
+import * as Updates from 'expo-updates';
 import Constants from 'expo-constants';
+import { I18nManager } from 'react-native';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH, API_URL } from '../../src/lib/constants';
 import { useAuth } from '../../src/hooks/useAuth';
-import { useAuthStore, type Plan, FREE_DOC_LIMIT, REGISTERED_FREE_DOC_LIMIT, FREE_QUESTION_LIMIT } from '../../src/store/auth.store';
+import { useAuthStore, type Plan, FREE_DOC_LIMIT, FREE_QUESTION_LIMIT, TRIAL_DAYS } from '../../src/store/auth.store';
 import { useUIStore } from '../../src/store/ui.store';
 import { supabase } from '../../src/lib/supabase';
 import { Card } from '../../src/components/ui/Card';
@@ -41,27 +44,28 @@ const STATUS_OPTIONS: { key: ImmigrationStatus; labelKey: string }[] = [
 
 const PLAN_LABELS: Record<Plan, string> = {
   free: 'Free',
-  starter: 'Starter',
   pro: 'Pro',
   year: 'Pro (Annual)',
-  lifetime: 'Pro (Lifetime)',
-  trial: 'Pro (Trial)',
+  trial: 'Pro Trial',
 };
 
 export default function ProfileScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
-  const { user, plan, scanCount, scanLimit, isAnonymous, dailyQuestions } = useAuth();
-  const locale = useUIStore((s) => s.locale);
+  const { user, plan, scanCount, scanLimit, isAnonymous, dailyQuestions, trialDaysLeft } = useAuth();
+  const storeLocale = useUIStore((s) => s.locale);
   const setLocale = useUIStore((s) => s.setLocale);
+  // Use i18next current language as source of truth (fixes "English" showing for FR)
+  const locale = (i18n.language as Locale) || storeLocale;
   const [langModalVisible, setLangModalVisible] = useState(false);
   const [countryModalVisible, setCountryModalVisible] = useState(false);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [userCountry, setUserCountry] = useState<CountryCode>('FR');
+  const [userCity, setUserCity] = useState('');
   const [userStatus, setUserStatus] = useState<ImmigrationStatus>('citizen');
 
-  const docLimit = isAnonymous ? FREE_DOC_LIMIT : (plan === 'free' || plan === 'starter') ? REGISTERED_FREE_DOC_LIMIT : Infinity;
+  const docLimit = (plan === 'pro' || plan === 'year' || plan === 'trial') ? Infinity : FREE_DOC_LIMIT;
 
   const initials = (() => {
     if (isAnonymous) return '?';
@@ -74,11 +78,12 @@ export default function ProfileScreen() {
     if (!user?.id || isAnonymous) return;
     supabase
       .from('profiles')
-      .select('country, status')
+      .select('country, city, status')
       .eq('id', user.id)
       .single()
       .then(({ data }) => {
         if (data?.country) setUserCountry(data.country as CountryCode);
+        if (data?.city) setUserCity(data.city);
         if (data?.status) setUserStatus(data.status as ImmigrationStatus);
       });
   }, [user?.id, isAnonymous]);
@@ -88,6 +93,15 @@ export default function ProfileScreen() {
     setCountryModalVisible(false);
     if (user?.id) {
       await supabase.from('profiles').update({ country, updated_at: new Date().toISOString() }).eq('id', user.id);
+    }
+  }, [user?.id]);
+
+  const handleCitySave = useCallback(async (city: string) => {
+    const trimmed = city.trim();
+    if (!trimmed) return; // Don't save empty city
+    setUserCity(trimmed);
+    if (user?.id) {
+      await supabase.from('profiles').update({ city: trimmed, updated_at: new Date().toISOString() }).eq('id', user.id);
     }
   }, [user?.id]);
 
@@ -162,12 +176,39 @@ export default function ProfileScreen() {
 
   const handleLanguageSelect = useCallback(
     async (lang: Locale) => {
+      const currentIsRTL = I18nManager.isRTL;
+      const newIsRTL = lang === 'ar';
+      const needsReload = currentIsRTL !== newIsRTL;
+
       const { setLanguage } = await import('../../src/i18n');
       await setLanguage(lang);
       setLocale(lang);
       setLangModalVisible(false);
+
+      // RTL change requires app restart
+      if (needsReload && Platform.OS !== 'web') {
+        Alert.alert(
+          lang === 'ar' ? 'إعادة تشغيل' : t('common.loading'),
+          lang === 'ar'
+            ? 'لتطبيق التغييرات، سيتم إعادة تشغيل التطبيق.'
+            : t('settings.language_restart_required') || 'The app will restart to apply the layout change.',
+          [
+            {
+              text: 'OK',
+              onPress: async () => {
+                try {
+                  await Updates.reloadAsync();
+                } catch {
+                  // Fallback for dev builds where Updates.reloadAsync is not available
+                  Alert.alert('', lang === 'ar' ? 'أغلق التطبيق وأعد فتحه.' : 'Please close and reopen the app.');
+                }
+              },
+            },
+          ]
+        );
+      }
     },
-    [setLocale]
+    [setLocale, t]
   );
 
   const usagePercent = docLimit === Infinity ? 0 : Math.min(100, (scanCount / docLimit) * 100);
@@ -239,13 +280,37 @@ export default function ProfileScreen() {
           <Text style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 12 }}>
             {t('profile.subscription')}
           </Text>
-          {plan === 'free' || plan === 'starter' ? (
+          {plan === 'trial' ? (
+            <>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                <View style={{ backgroundColor: '#dbeafe', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '600', color: '#1e40af' }}>
+                    {t('trial.badge')}
+                  </Text>
+                </View>
+                <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, marginLeft: 8 }}>
+                  {t('trial.days_left', { count: trialDaysLeft })}
+                </Text>
+              </View>
+              <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.success, fontWeight: '500', marginBottom: 12 }}>
+                {t('paywall.feature_unlimited')}
+              </Text>
+              <Button
+                title={t('profile.subscribe_pro')}
+                onPress={() => router.push('/paywall')}
+                variant="secondary"
+              />
+            </>
+          ) : plan === 'free' ? (
             <>
               <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, marginBottom: 4 }}>
-                {t('profile.free_documents', { used: scanCount, total: docLimit })}
+                {scanCount}/{docLimit} {t('profile.docs_per_month')}
               </Text>
-              <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, marginBottom: 12 }}>
-                {t('profile.questions_today')}: {dailyQuestions} / {FREE_QUESTION_LIMIT}
+              <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, marginBottom: 4 }}>
+                {t('profile.questions_today')}: {dailyQuestions}/{FREE_QUESTION_LIMIT}
+              </Text>
+              <Text style={{ fontSize: 11, color: COLORS.textSecondary, marginBottom: 12 }}>
+                {t('profile.questions_reset_daily')}
               </Text>
               {/* Usage bar */}
               <View
@@ -325,6 +390,33 @@ export default function ProfileScreen() {
                 <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginStart: 8 }}>{'\u203A'}</Text>
               </View>
             </Pressable>
+          </Card>
+        ) : null}
+
+        {/* City (registered users only) */}
+        {!isAnonymous ? (
+          <Card style={{ marginBottom: 16 }}>
+            <Text style={{ fontSize: FONT_SIZE.body, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 8 }}>
+              {t('settings.city')}
+            </Text>
+            <TextInput
+              value={userCity}
+              onChangeText={setUserCity}
+              onBlur={() => handleCitySave(userCity)}
+              placeholder={t('settings.city_placeholder')}
+              placeholderTextColor={COLORS.textSecondary}
+              style={{
+                height: 44,
+                borderWidth: 1.5,
+                borderColor: 'rgba(0,0,0,0.08)',
+                borderRadius: 12,
+                paddingHorizontal: 16,
+                fontSize: FONT_SIZE.body,
+                color: COLORS.textPrimary,
+                backgroundColor: '#F9FAFB',
+              }}
+              accessibilityLabel={t('settings.city')}
+            />
           </Card>
         ) : null}
 
@@ -456,14 +548,8 @@ export default function ProfileScreen() {
           DocLear v{Constants.expoConfig?.version ?? '1.0.0'}
         </Text>
 
-        {/* Sign out / Create account — context-dependent */}
-        {isAnonymous ? (
-          <Button
-            title={t('profile.create_account')}
-            onPress={() => router.push('/(auth)/register')}
-            variant="primary"
-          />
-        ) : (
+        {/* Sign out / Delete account — for registered users */}
+        {isAnonymous ? null : (
           <>
             <Pressable
               onPress={handleSignOut}
