@@ -962,8 +962,9 @@ export default function DocumentDetailScreen() {
                 setTranslationLoading(true);
                 try {
                   const langName = locale === 'fr' ? 'français' : locale === 'en' ? 'English' : locale === 'ru' ? 'русский' : locale === 'de' ? 'Deutsch' : locale === 'es' ? 'español' : locale === 'it' ? 'italiano' : locale === 'ar' ? 'العربية' : locale === 'pt' ? 'português' : locale === 'tr' ? 'Türkçe' : locale === 'zh' ? '中文' : locale;
-                  const rawText = doc.rawText || [doc.whatIsThis, doc.whatItSays, doc.summary, ...(doc.keyFacts || [])].filter(Boolean).join('\n\n');
-                  const prompt = `Переведи следующий текст документа на ${langName}. Сохрани структуру, абзацы и форматирование. Не добавляй комментарии, только перевод.\n\n${rawText}`;
+                  // Use Supabase to get the full document context on backend
+                  // The prompt asks to translate the ORIGINAL document content, not the analysis
+                  const prompt = `Translate the FULL ORIGINAL document text into ${langName}. Use the source text from the document context. Keep the structure, paragraphs and formatting. Output ONLY the translation, no comments or explanations.`;
 
                   const { data: sessionData } = await supabase.auth.getSession();
                   const token = sessionData?.session?.access_token;
@@ -979,7 +980,7 @@ export default function DocumentDetailScreen() {
                       question: prompt,
                       chatHistory: [],
                       language: locale,
-                      useSupabase: false,
+                      useSupabase: true,
                     }),
                   });
 
