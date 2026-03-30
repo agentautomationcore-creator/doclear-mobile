@@ -432,7 +432,7 @@
     "scan_first": "Scan my first document",
     "try_demo": "Try the demo",
     "have_account": "Already have an account? Sign in",
-    "free_limit": "3 free analyses without registration"
+    "free_limit": "3 free analyses · Pro: €9.99/mo or €69.99/yr"
   },
   "overview": {
     "documents_analyzed": "{{count}} documents analyzed",
