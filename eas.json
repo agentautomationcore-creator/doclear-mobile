@@ -19,14 +19,20 @@
       "channel": "preview"
     },
     "production": {
+      "ios": {
+        "distribution": "store",
+        "credentialsSource": "remote"
+      },
+      "channel": "production",
       "autoIncrement": true
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "appleId": "review@doclear.app",
-        "ascAppId": "REPLACE_WITH_APP_ID"
+        "appleId": "sergeevspo@yahoo.com",
+        "ascAppId": "6761265052",
+        "appleTeamId": "PT88KA7TD8"
       }
     }
   }

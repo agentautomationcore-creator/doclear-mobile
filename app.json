@@ -15,6 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.doclear.mobile",
+      "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "DocLear needs camera access to scan documents",
         "NSPhotoLibraryUsageDescription": "DocLear needs photo library access to upload documents",
