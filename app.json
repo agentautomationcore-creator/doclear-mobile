@@ -170,16 +170,14 @@
           "color": "#1E293B"
         }
       ],
-      "expo-apple-authentication",
-      [
-        "@sentry/react-native/expo",
-        {
-          "organization": "doclear",
-          "project": "doclear-mobile"
-        }
-      ],
-      "@sentry/react-native"
+      "expo-apple-authentication"
     ],
+    "updates": {
+      "url": "https://u.expo.dev/6456e134-bd4c-49cb-b234-8f343d9d8d6a"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "experiments": {
       "typedRoutes": true
     },
