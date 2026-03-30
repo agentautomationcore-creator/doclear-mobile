@@ -193,7 +193,7 @@
   },
   "paywall": {
     "title": "Понравилось?",
-    "subtitle": "DocLear Pro скоро. Оставьте email для скидки 50% при запуске.",
+    "subtitle": "Перейдите на DocLear Pro для неограниченных документов и приоритетной обработки ИИ.",
     "email_placeholder": "Ваш email",
     "submit": "Подписаться",
     "thanks": "Спасибо! Мы свяжемся с вами.",
@@ -209,7 +209,7 @@
     "feature_history": "Полная история",
     "feature_export": "Экспорт PDF",
     "subscribe": "Оформить Pro",
-    "coming_soon": "Скоро! Мы сообщим когда Pro будет доступен.",
+    "coming_soon": "Перенаправление на оплату...",
     "back_to_docs": "К документам",
     "scans_low": "Осталось {remaining} скан(ов)",
     "upgrade_banner": "Pro — безлимитные сканы",

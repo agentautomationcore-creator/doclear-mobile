@@ -39,7 +39,9 @@
     "trust_secure": "Verileriniz AB sunucularında şifrelenmiş",
     "trust_fast": "5 saniyeden kısa sürede sonuç",
     "trust_languages": "FR / EN / RU / AR / IT / ZH / PT / TR",
+    "hero_secondary": "Jargon yok, karışıklık yok.",
     "footer_tagline": "herhangi bir belgeyi anlayın",
+    "footer_copyright": "\u00a9 2026  Privacy  Terms",
     "title": "Bir belge yükleyin. Saniyeler içinde cevap alın.",
     "subtitle": "Kayıt gerekmez. Ücretsiz.",
     "try_free": "Ücretsiz deneyin",
@@ -78,7 +80,11 @@
     "status_citizen": "Vatandas",
     "other_country": "Diger",
     "ready_title": "Hazır!",
-    "ready_desc": "Hazır! Belgeleriniz kontrol altında."
+    "ready_desc": "Hazır! Belgeleriniz kontrol altında.",
+    "usecase_title": "DocLear'ı nasıl kullanacaksınız?",
+    "usecase_study": "Eğitim",
+    "usecase_work": "İş",
+    "usecase_personal": "Kişisel"
   },
   "timeline": {
     "title": "Belgelerim",
@@ -121,7 +127,37 @@
     "recommendations": "Oneriler",
     "visit_portal": "Ziyaret et",
     "find_specialist": "Uzman bul",
-    "key_facts": "5 önemli nokta"
+    "key_facts": "5 önemli nokta",
+    "ai_analysis": "Yapay Zeka Analizi",
+    "ai_disclaimer": "Yalnızca bilgi amaçlıdır",
+    "health_score": "Sağlık puanı",
+    "risk_flags": "Risk uyarıları",
+    "positive_points": "Olumlu noktalar",
+    "suggested_questions": "Bu belge hakkında soru sorun:",
+    "chat_title": "Belgeyle sohbet",
+    "pages": "sayfa",
+    "page": "sayfa",
+    "export_pdf": "PDF olarak dışa aktar",
+    "export_excel": "Excel olarak dışa aktar",
+    "delete": "Sil",
+    "delete_title": "Belge silinsin mi?",
+    "delete_confirm": "Bu işlem geri alınamaz.",
+    "need_specialist": "Bir uzmana mı ihtiyacınız var?",
+    "find_specialist_nearby": "Yakındaki uzmanları bulun",
+    "translate_title": "Belge çevirisi",
+    "translate_button": "Dilime çevir",
+    "translating": "Çevriliyor...",
+    "translation_result": "Belge çevirisi",
+    "hide_translation": "Çeviriyi gizle",
+    "show_translation": "Çeviriyi göster",
+    "translate_prompt": "Bu belgenin tamamını {{language}} diline çevir",
+    "remind_3days": "3 gün önce",
+    "remind_1day": "1 gün önce",
+    "reminder_set": "Hatırlatma ayarlandı",
+    "reminder_3days": "Son tarihten 3 gün önce bildirim alacaksınız.",
+    "reminder_1day": "Son tarihten 1 gün önce bildirim alacaksınız.",
+    "notifications_disabled": "Lütfen ayarlardan bildirimleri etkinleştirin.",
+    "check_document": "Bu belgeyi kontrol edin"
   },
   "settings": {
     "title": "Ayarlar",
@@ -151,11 +187,13 @@
     "delete_yes": "Evet, sil",
     "cancel": "İptal",
     "sign_in_apple": "Apple ile giriş yap",
-    "sign_in_email": "E-posta ile giriş yap"
+    "sign_in_email": "E-posta ile giriş yap",
+    "city": "Şehir",
+    "city_placeholder": "Şehriniz (ör: İstanbul, Ankara...)"
   },
   "paywall": {
     "title": "Beğendiniz mi?",
-    "subtitle": "DocLear Pro yakında. Lansmanda %50 indirim için e-postanızı bırakın.",
+    "subtitle": "Sınırsız belge ve öncelikli yapay zeka işleme için DocLear Pro'ya yükseltin.",
     "email_placeholder": "E-postanız",
     "submit": "Kaydol",
     "thanks": "Teşekkürler! Sizinle iletişime geçeceğiz.",
@@ -171,10 +209,32 @@
     "feature_history": "Tam geçmiş",
     "feature_export": "PDF dışa aktarma",
     "subscribe": "Pro'ya abone ol",
-    "coming_soon": "Yakında!",
+    "coming_soon": "Ödemeye yönlendiriliyor...",
     "back_to_docs": "Belgelere dön",
     "scans_low": "Sadece {remaining} tarama kaldı",
-    "upgrade_banner": "Pro — sınırsız tarama"
+    "upgrade_banner": "Pro — sınırsız tarama",
+    "monthly": "Aylık",
+    "annual": "Yıllık",
+    "per_month": "ay",
+    "per_year": "yıl",
+    "best_value": "EN İYİ FİYAT",
+    "save_42": "%42 tasarruf edin",
+    "feature_questions": "Sınırsız yapay zeka soruları",
+    "feature_formats": "Tüm formatlar (PDF, DOCX, XLSX, fotoğraflar)",
+    "restore": "Satın alımları geri yükle",
+    "restored": "Satın alımlar geri yüklendi",
+    "restored_desc": "Satın alımlarınız geri yüklendi.",
+    "no_purchases": "Satın alım bulunamadı",
+    "no_purchases_desc": "Aktif abonelik bulunamadı.",
+    "store_unavailable": "Mağaza kullanılamıyor. Tekrar deneyin.",
+    "purchase_failed": "Satın alma başarısız. Tekrar deneyin.",
+    "trust_cancel": "İstediğiniz zaman iptal edin",
+    "trust_guarantee": "14 gün para iade garantisi",
+    "trust_no_training": "Belgeler yapay zeka eğitimi için kullanılmaz",
+    "anon_trial_hint": "Hesap oluşturun ve 7 gün ücretsiz Pro kazanın"
+  },
+  "scan_counter": {
+    "docs_month": "ücretsiz belge / ay"
   },
   "categories": {
     "taxes": "Vergi",
@@ -205,6 +265,22 @@
     "zip_too_large": "ZIP dosyasi cok buyuk (maks 50 MB)",
     "zip_too_many": "ZIP'te cok fazla dosya var (maks 20)",
     "zip_pro_only": "ZIP analizi DocLear Pro'da mevcut"
+  },
+  "error": {
+    "no_internet": "İnternet bağlantısı yok",
+    "no_internet_desc": "Bağlantınızı kontrol edin ve tekrar deneyin.",
+    "server": "Sunucu hatası",
+    "server_desc": "Sunucularımızda bir sorun var. Birazdan tekrar deneyin.",
+    "ai_overloaded": "Yapay zeka servisi aşırı yüklü",
+    "ai_overloaded_desc": "Çok fazla istek. Bir dakika içinde tekrar deneyin.",
+    "upload_failed": "Yükleme başarısız",
+    "upload_failed_desc": "Dosya gönderilemedi. Tekrar deneyin.",
+    "file_too_large": "Dosya çok büyük",
+    "file_too_large_desc": "Maksimum boyut 15 MB.",
+    "generic": "Bir hata oluştu",
+    "generic_desc": "Bir şeyler ters gitti. Tekrar deneyin.",
+    "retry": "Tekrar dene",
+    "offline_mode": "Çevrimdışı mod — önbellekteki belgeler"
   },
   "nav": {
     "docs": "Belgeler",
@@ -265,12 +341,33 @@
     "new_password_placeholder": "Yeni şifre (min 6 karakter)",
     "update_password": "Güncelle",
     "password_updated": "Şifre güncellendi!",
-    "password_min_length": "Şifre en az 6 karakter olmalıdır"
+    "password_min_length": "Şifre en az 6 karakter olmalıdır",
+    "confirmed_login": "Onayladım, giriş yap",
+    "email_taken": "Bu e-posta ile zaten bir hesap var"
+  },
+  "consent": {
+    "title": "DocLear belgelerinizi nasıl analiz eder",
+    "ai_title": "Yapay Zeka Analizi",
+    "ai_desc": "Belgeniz analiz için Claude yapay zekasına gönderilir.",
+    "training_title": "Eğitim için kullanılmaz",
+    "training_desc": "Belgeler Anthropic tarafından saklanmaz ve yapay zeka eğitimi için kullanılmaz.",
+    "encrypted_title": "Şifrelenmiş ve silinmiş",
+    "encrypted_desc": "İçerik aktarım sırasında şifrelenir. Analizden sonra hiçbir kopya saklanmaz.",
+    "eu_title": "AB Veri Koruması",
+    "eu_desc": "Sonuçlar AB sunucularında saklanır. KVKK uyumlu.",
+    "agree": "Kabul ediyorum",
+    "learn_more": "Gizlilik politikamız hakkında daha fazla bilgi edinin"
+  },
+  "trial": {
+    "badge": "Ücretsiz Pro deneme",
+    "days_left": "{{count}} gün kaldı",
+    "expired": "Pro denemeniz sona erdi. Sınırsız devam etmek için Pro'ya yükseltin."
   },
   "tabs": {
     "documents": "Belgeler",
     "scanner": "Tarayıcı",
     "assistant": "Asistan",
+    "overview": "Genel Bakış",
     "profile": "Profil"
   },
   "profile": {
@@ -292,7 +389,9 @@
     "trust_gdpr": "AB sunucuları (GDPR uyumlu)",
     "support": "Destek",
     "report_problem": "Sorun bildir",
-    "app_version": "Uygulama sürümü"
+    "app_version": "Uygulama sürümü",
+    "docs_per_month": "ücretsiz belge / ay",
+    "questions_reset_daily": "Sorular her gün sıfırlanır"
   },
   "scanner": {
     "title": "Tarayıcı",
@@ -310,7 +409,8 @@
       "done": "Tamamlandı!"
     },
     "privacy_badge": "Belgeleriniz şifrelenir ve yapay zekayı eğitmek için kullanılmaz",
-    "try_demo": "Demo belgeyle deneyin"
+    "try_demo": "Demo belgeyle deneyin",
+    "usually_takes": "Genellikle 10 ila 20 saniye sürer"
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -319,7 +419,10 @@
     "cancel": "İptal",
     "save": "Kaydet",
     "delete": "Sil",
-    "back": "Geri"
+    "back": "Geri",
+    "menu": "Menü",
+    "offline": "Çevrimdışı",
+    "close": "Kapat"
   },
   "assistant": {
     "title": "Asistan",
@@ -331,6 +434,15 @@
     "report_title": "Bu yanıtı bildir",
     "report_desc": "Bu yapay zeka yanıtı yanlış mı?",
     "report": "Bildir",
+    "report_thanks": "Bildiriminiz için teşekkürler.",
+    "report_error": "Bildirim gönderilemedi.",
+    "thinking": "DocLear düşünüyor...",
+    "error_generic": "Sorunuz işlenemedi. Tekrar deneyin.",
+    "error_overloaded": "Yapay zeka servisi aşırı yüklü. Bir dakika içinde tekrar deneyin.",
+    "error_rate_limited": "Çok fazla istek. Lütfen bekleyin.",
+    "prompt_summarize": "Bu belgeyi özetle",
+    "prompt_risks": "Riskler neler?",
+    "prompt_actions": "Ne yapmalıyım?",
     "ai_disclaimer_input": "Yanıtlar yapay zeka tarafından oluşturulur ve hatalar içerebilir. Önemli bilgileri doğrulayın."
   },
   "soft_reg": {
@@ -341,7 +453,24 @@
     "email": "E-posta ile kaydol",
     "skip": "Sonra"
   },
+  "overview": {
+    "documents_analyzed": "{{count}} belge analiz edildi",
+    "by_category": "Kategoriye göre",
+    "deadlines": "Yaklaşan son tarihler",
+    "finances": "Finans",
+    "to_pay": "Ödenecek",
+    "to_receive": "Alınacak",
+    "recommendation": "Yapay zeka önerisi",
+    "empty": "Genel bakışı görmek için bir belge yükleyin"
+  },
   "welcome": {
+    "title": "Her belgeyi 30 saniyede anlayın",
+    "signal_languages": "10 dil destekleniyor",
+    "signal_encrypted": "Veriler şifrelenmiş",
+    "signal_instant": "Anında sonuç",
+    "scan_first": "İlk belgemi tara",
+    "try_demo": "Demoyu dene",
+    "have_account": "Zaten hesabınız var mı? Giriş yapın",
     "free_limit": "Kayıt olmadan 3 ücretsiz analiz"
   },
   "offline": {

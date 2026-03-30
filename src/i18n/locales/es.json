@@ -80,7 +80,11 @@
     "status_citizen": "Ciudadano",
     "other_country": "Otro",
     "ready_title": "¡Todo listo!",
-    "ready_desc": "¡Todo listo! Sus documentos están bajo control."
+    "ready_desc": "¡Todo listo! Sus documentos están bajo control.",
+    "usecase_title": "¿Cómo usarás DocLear?",
+    "usecase_study": "Estudios",
+    "usecase_work": "Trabajo",
+    "usecase_personal": "Personal"
   },
   "timeline": {
     "title": "Mis documentos",
@@ -137,7 +141,23 @@
     "export_excel": "Exportar Excel",
     "delete": "Eliminar",
     "delete_title": "¿Eliminar documento?",
-    "delete_confirm": "Esta acción no se puede deshacer."
+    "delete_confirm": "Esta acción no se puede deshacer.",
+    "need_specialist": "¿Necesitas un especialista?",
+    "find_specialist_nearby": "Encontrar un especialista cerca",
+    "translate_title": "Traducción del documento",
+    "translate_button": "Traducir a mi idioma",
+    "translating": "Traduciendo...",
+    "translation_result": "Traducción del documento",
+    "hide_translation": "Ocultar traducción",
+    "show_translation": "Ver traducción",
+    "translate_prompt": "Traduce este documento completo a {{language}}",
+    "remind_3days": "3 días antes",
+    "remind_1day": "1 día antes",
+    "reminder_set": "Recordatorio programado",
+    "reminder_3days": "Se te notificará 3 días antes del plazo.",
+    "reminder_1day": "Se te notificará 1 día antes del plazo.",
+    "notifications_disabled": "Activa las notificaciones en los ajustes.",
+    "check_document": "Revisa este documento"
   },
   "settings": {
     "title": "Ajustes",
@@ -167,11 +187,13 @@
     "delete_yes": "Sí, eliminar",
     "cancel": "Cancelar",
     "sign_in_apple": "Iniciar sesión con Apple",
-    "sign_in_email": "Iniciar sesión con email"
+    "sign_in_email": "Iniciar sesión con email",
+    "city": "Ciudad",
+    "city_placeholder": "Tu ciudad (ej: Madrid, Barcelona...)"
   },
   "paywall": {
     "title": "¿Te ha gustado?",
-    "subtitle": "DocLear Pro llega pronto. Deja tu email para un 50% de descuento en el lanzamiento.",
+    "subtitle": "Actualice a DocLear Pro para documentos ilimitados y procesamiento IA prioritario.",
     "email_placeholder": "Tu email",
     "submit": "Registrarse",
     "thanks": "¡Gracias! Te contactaremos.",
@@ -190,7 +212,29 @@
     "coming_soon": "Redirigiendo al pago...",
     "back_to_docs": "Volver a documentos",
     "scans_low": "Solo quedan {remaining} escaneo(s)",
-    "upgrade_banner": "Mejora a Pro para escaneos ilimitados"
+    "upgrade_banner": "Mejora a Pro para escaneos ilimitados",
+    "monthly": "Mensual",
+    "annual": "Anual",
+    "per_month": "mes",
+    "per_year": "año",
+    "best_value": "MEJOR PRECIO",
+    "save_42": "Ahorra 42%",
+    "feature_questions": "Preguntas IA ilimitadas",
+    "feature_formats": "Todos los formatos (PDF, DOCX, XLSX, fotos)",
+    "restore": "Restaurar compras",
+    "restored": "Compras restauradas",
+    "restored_desc": "Tus compras han sido restauradas.",
+    "no_purchases": "No se encontraron compras",
+    "no_purchases_desc": "No se encontró suscripción activa.",
+    "store_unavailable": "Tienda no disponible. Inténtalo de nuevo.",
+    "purchase_failed": "Compra fallida. Inténtalo de nuevo.",
+    "trust_cancel": "Cancela en cualquier momento",
+    "trust_guarantee": "Garantía de devolución de 14 días",
+    "trust_no_training": "Los documentos no se usan para entrenar la IA",
+    "anon_trial_hint": "Crea una cuenta y obtén 7 días de Pro gratis"
+  },
+  "scan_counter": {
+    "docs_month": "documentos gratis / mes"
   },
   "categories": {
     "taxes": "Impuestos",
@@ -297,12 +341,33 @@
     "new_password_placeholder": "Nueva contraseña (mín. 6 caracteres)",
     "update_password": "Actualizar contraseña",
     "password_updated": "¡Contraseña actualizada! Redirigiendo...",
-    "password_min_length": "La contraseña debe tener al menos 6 caracteres"
+    "password_min_length": "La contraseña debe tener al menos 6 caracteres",
+    "confirmed_login": "Ya confirmé, iniciar sesión",
+    "email_taken": "Ya existe una cuenta con este email"
+  },
+  "consent": {
+    "title": "Cómo DocLear analiza tus documentos",
+    "ai_title": "Análisis por IA",
+    "ai_desc": "Tu documento se envía a la IA Claude para su análisis.",
+    "training_title": "No se usa para entrenamiento",
+    "training_desc": "Los documentos no se almacenan en Anthropic ni se usan para entrenar la IA.",
+    "encrypted_title": "Cifrado y eliminado",
+    "encrypted_desc": "El contenido se cifra en tránsito. No se conservan copias después del análisis.",
+    "eu_title": "Protección de datos UE",
+    "eu_desc": "Resultados almacenados en servidores UE. Cumple con el RGPD.",
+    "agree": "Acepto",
+    "learn_more": "Más información sobre nuestra política de privacidad"
+  },
+  "trial": {
+    "badge": "Prueba Pro gratuita",
+    "days_left": "{{count}} días restantes",
+    "expired": "Tu prueba Pro ha terminado. Mejora a Pro para continuar sin límites."
   },
   "tabs": {
     "documents": "Documentos",
     "scanner": "Escáner",
     "assistant": "Asistente",
+    "overview": "Resumen",
     "profile": "Perfil"
   },
   "profile": {
@@ -324,7 +389,9 @@
     "trust_gdpr": "Servidores UE (RGPD)",
     "support": "Soporte",
     "report_problem": "Reportar un problema",
-    "app_version": "Versión de la app"
+    "app_version": "Versión de la app",
+    "docs_per_month": "documentos gratis / mes",
+    "questions_reset_daily": "Las preguntas se reinician cada día"
   },
   "scanner": {
     "title": "Escáner",
@@ -342,7 +409,8 @@
       "done": "¡Listo!"
     },
     "privacy_badge": "Sus documentos están cifrados y no se utilizan para entrenar la IA",
-    "try_demo": "Probar con un documento de demostración"
+    "try_demo": "Probar con un documento de demostración",
+    "usually_takes": "Suele tardar de 10 a 20 segundos"
   },
   "common": {
     "loading": "Cargando...",
@@ -385,7 +453,24 @@
     "email": "Registrarse por email",
     "skip": "Más tarde"
   },
+  "overview": {
+    "documents_analyzed": "{{count}} documentos analizados",
+    "by_category": "Por categoría",
+    "deadlines": "Próximos plazos",
+    "finances": "Finanzas",
+    "to_pay": "Por pagar",
+    "to_receive": "Por cobrar",
+    "recommendation": "Recomendación IA",
+    "empty": "Sube un documento para ver el resumen"
+  },
   "welcome": {
+    "title": "Entiende cualquier documento en 30 segundos",
+    "signal_languages": "10 idiomas",
+    "signal_encrypted": "Datos cifrados",
+    "signal_instant": "Resultado instantáneo",
+    "scan_first": "Escanear mi primer documento",
+    "try_demo": "Probar la demo",
+    "have_account": "¿Ya tienes cuenta? Iniciar sesión",
     "free_limit": "3 análisis gratuitos sin registro"
   },
   "offline": {

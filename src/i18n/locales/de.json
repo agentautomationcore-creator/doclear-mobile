@@ -80,7 +80,11 @@
     "status_citizen": "Staatsbürger",
     "other_country": "Anderes",
     "ready_title": "Alles bereit!",
-    "ready_desc": "Alles bereit! Ihre Dokumente sind unter Kontrolle."
+    "ready_desc": "Alles bereit! Ihre Dokumente sind unter Kontrolle.",
+    "usecase_title": "Wie werden Sie DocLear nutzen?",
+    "usecase_study": "Studium",
+    "usecase_work": "Arbeit",
+    "usecase_personal": "Persönlich"
   },
   "timeline": {
     "title": "Meine Dokumente",
@@ -137,7 +141,23 @@
     "export_excel": "Excel exportieren",
     "delete": "Löschen",
     "delete_title": "Dokument löschen?",
-    "delete_confirm": "Diese Aktion kann nicht rückgängig gemacht werden."
+    "delete_confirm": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "need_specialist": "Brauchen Sie einen Spezialisten?",
+    "find_specialist_nearby": "Spezialisten in Ihrer Nähe finden",
+    "translate_title": "Dokumentübersetzung",
+    "translate_button": "In meine Sprache übersetzen",
+    "translating": "Übersetzung läuft...",
+    "translation_result": "Dokumentübersetzung",
+    "hide_translation": "Übersetzung ausblenden",
+    "show_translation": "Übersetzung anzeigen",
+    "translate_prompt": "Übersetze dieses gesamte Dokument auf {{language}}",
+    "remind_3days": "3 Tage vorher",
+    "remind_1day": "1 Tag vorher",
+    "reminder_set": "Erinnerung gesetzt",
+    "reminder_3days": "Sie werden 3 Tage vor der Frist benachrichtigt.",
+    "reminder_1day": "Sie werden 1 Tag vor der Frist benachrichtigt.",
+    "notifications_disabled": "Bitte aktivieren Sie Benachrichtigungen in den Einstellungen.",
+    "check_document": "Überprüfen Sie dieses Dokument"
   },
   "settings": {
     "title": "Einstellungen",
@@ -167,11 +187,13 @@
     "delete_yes": "Ja, löschen",
     "cancel": "Abbrechen",
     "sign_in_apple": "Mit Apple anmelden",
-    "sign_in_email": "Mit E-Mail anmelden"
+    "sign_in_email": "Mit E-Mail anmelden",
+    "city": "Stadt",
+    "city_placeholder": "Ihre Stadt (z.B. Berlin, München...)"
   },
   "paywall": {
     "title": "Hat es gefallen?",
-    "subtitle": "DocLear Pro kommt bald. Hinterlassen Sie Ihre E-Mail für 50% Rabatt beim Start.",
+    "subtitle": "Upgraden Sie auf DocLear Pro für unbegrenzte Dokumente und bevorzugte KI-Verarbeitung.",
     "email_placeholder": "Ihre E-Mail",
     "submit": "Anmelden",
     "thanks": "Danke! Wir melden uns.",
@@ -190,7 +212,29 @@
     "coming_soon": "Weiterleitung zur Zahlung...",
     "back_to_docs": "Zurück zu Dokumenten",
     "scans_low": "Nur noch {remaining} Scan(s)",
-    "upgrade_banner": "Auf Pro upgraden für unbegrenzte Scans"
+    "upgrade_banner": "Auf Pro upgraden für unbegrenzte Scans",
+    "monthly": "Monatlich",
+    "annual": "Jährlich",
+    "per_month": "Monat",
+    "per_year": "Jahr",
+    "best_value": "BESTES ANGEBOT",
+    "save_42": "42% sparen",
+    "feature_questions": "Unbegrenzte KI-Fragen",
+    "feature_formats": "Alle Formate (PDF, DOCX, XLSX, Fotos)",
+    "restore": "Käufe wiederherstellen",
+    "restored": "Käufe wiederhergestellt",
+    "restored_desc": "Ihre Käufe wurden wiederhergestellt.",
+    "no_purchases": "Keine Käufe gefunden",
+    "no_purchases_desc": "Kein aktives Abonnement gefunden.",
+    "store_unavailable": "Store nicht verfügbar. Versuchen Sie es erneut.",
+    "purchase_failed": "Kauf fehlgeschlagen. Versuchen Sie es erneut.",
+    "trust_cancel": "Jederzeit kündbar",
+    "trust_guarantee": "14 Tage Geld-zurück-Garantie",
+    "trust_no_training": "Dokumente werden nicht für KI-Training verwendet",
+    "anon_trial_hint": "Erstellen Sie ein Konto und erhalten Sie 7 Tage Pro gratis"
+  },
+  "scan_counter": {
+    "docs_month": "kostenlose Dokumente / Monat"
   },
   "categories": {
     "taxes": "Steuern",
@@ -297,12 +341,33 @@
     "new_password_placeholder": "Neues Passwort (min. 6 Zeichen)",
     "update_password": "Passwort aktualisieren",
     "password_updated": "Passwort aktualisiert! Weiterleitung...",
-    "password_min_length": "Passwort muss mindestens 6 Zeichen lang sein"
+    "password_min_length": "Passwort muss mindestens 6 Zeichen lang sein",
+    "confirmed_login": "Ich habe bestätigt, jetzt anmelden",
+    "email_taken": "Ein Konto mit dieser E-Mail existiert bereits"
+  },
+  "consent": {
+    "title": "Wie DocLear Ihre Dokumente analysiert",
+    "ai_title": "KI-Analyse",
+    "ai_desc": "Ihr Dokument wird zur Analyse an die KI Claude gesendet.",
+    "training_title": "Nicht für Training verwendet",
+    "training_desc": "Dokumente werden nicht von Anthropic gespeichert oder zum KI-Training verwendet.",
+    "encrypted_title": "Verschlüsselt und gelöscht",
+    "encrypted_desc": "Der Inhalt wird bei der Übertragung verschlüsselt. Nach der Analyse werden keine Kopien aufbewahrt.",
+    "eu_title": "EU-Datenschutz",
+    "eu_desc": "Ergebnisse auf EU-Servern gespeichert. DSGVO-konform.",
+    "agree": "Ich stimme zu",
+    "learn_more": "Mehr über unsere Datenschutzrichtlinie erfahren"
+  },
+  "trial": {
+    "badge": "Kostenlose Pro-Testversion",
+    "days_left": "{{count}} Tage verbleibend",
+    "expired": "Ihre Pro-Testversion ist abgelaufen. Upgraden Sie auf Pro, um ohne Einschränkungen fortzufahren."
   },
   "tabs": {
     "documents": "Dokumente",
     "scanner": "Scanner",
     "assistant": "Assistent",
+    "overview": "Übersicht",
     "profile": "Profil"
   },
   "profile": {
@@ -324,7 +389,9 @@
     "trust_gdpr": "EU-Server (DSGVO-konform)",
     "support": "Support",
     "report_problem": "Problem melden",
-    "app_version": "App-Version"
+    "app_version": "App-Version",
+    "docs_per_month": "kostenlose Dokumente / Monat",
+    "questions_reset_daily": "Fragen werden täglich zurückgesetzt"
   },
   "scanner": {
     "title": "Scanner",
@@ -342,7 +409,8 @@
       "done": "Fertig!"
     },
     "privacy_badge": "Ihre Dokumente sind verschlüsselt und werden nicht zum Trainieren der KI verwendet",
-    "try_demo": "Mit einem Demo-Dokument testen"
+    "try_demo": "Mit einem Demo-Dokument testen",
+    "usually_takes": "Dauert normalerweise 10 bis 20 Sekunden"
   },
   "common": {
     "loading": "Laden...",
@@ -385,7 +453,24 @@
     "email": "Per E-Mail registrieren",
     "skip": "Später"
   },
+  "overview": {
+    "documents_analyzed": "{{count}} Dokumente analysiert",
+    "by_category": "Nach Kategorie",
+    "deadlines": "Nächste Fristen",
+    "finances": "Finanzen",
+    "to_pay": "Zu zahlen",
+    "to_receive": "Zu erhalten",
+    "recommendation": "KI-Empfehlung",
+    "empty": "Laden Sie ein Dokument hoch, um die Übersicht zu sehen"
+  },
   "welcome": {
+    "title": "Verstehen Sie jedes Dokument in 30 Sekunden",
+    "signal_languages": "10 Sprachen unterstützt",
+    "signal_encrypted": "Daten verschlüsselt",
+    "signal_instant": "Sofortiges Ergebnis",
+    "scan_first": "Mein erstes Dokument scannen",
+    "try_demo": "Demo testen",
+    "have_account": "Bereits ein Konto? Anmelden",
     "free_limit": "3 kostenlose Analysen ohne Anmeldung"
   },
   "offline": {

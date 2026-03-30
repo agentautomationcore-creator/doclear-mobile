@@ -193,7 +193,7 @@
   },
   "paywall": {
     "title": "أعجبك؟",
-    "subtitle": "DocLear Pro قادم قريباً. اترك بريدك للحصول على خصم 50% عند الإطلاق.",
+    "subtitle": "ترقّ إلى DocLear Pro لمستندات غير محدودة ومعالجة ذكاء اصطناعي أولوية.",
     "email_placeholder": "بريدك الإلكتروني",
     "submit": "اشترك",
     "thanks": "شكراً! سنتواصل معك.",
@@ -209,7 +209,7 @@
     "feature_history": "سجل كامل",
     "feature_export": "تصدير PDF",
     "subscribe": "اشترك في Pro",
-    "coming_soon": "قريباً! سنبلغك عند إطلاق Pro.",
+    "coming_soon": "جاري التحويل إلى الدفع...",
     "back_to_docs": "العودة للمستندات",
     "scans_low": "{remaining} مسح متبقي",
     "upgrade_banner": "ترقّ إلى Pro لمسح غير محدود",

@@ -39,7 +39,9 @@
     "trust_secure": "数据加密存储在欧盟服务器",
     "trust_fast": "5秒内获得结果",
     "trust_languages": "FR / EN / RU / AR / IT / ZH / PT / TR",
+    "hero_secondary": "告别术语，告别困惑。",
     "footer_tagline": "读懂任何文件",
+    "footer_copyright": "\u00a9 2026  Privacy  Terms",
     "title": "上传文档，秒获答案。",
     "subtitle": "无需注册。免费。",
     "try_free": "免费试用",
@@ -78,7 +80,11 @@
     "status_citizen": "公民",
     "other_country": "其他",
     "ready_title": "一切就绪！",
-    "ready_desc": "一切就绪！您的文件尽在掌控。"
+    "ready_desc": "一切就绪！您的文件尽在掌控。",
+    "usecase_title": "您会如何使用DocLear？",
+    "usecase_study": "学习",
+    "usecase_work": "工作",
+    "usecase_personal": "个人"
   },
   "timeline": {
     "title": "我的文件",
@@ -121,7 +127,37 @@
     "recommendations": "建议",
     "visit_portal": "访问",
     "find_specialist": "找专家",
-    "key_facts": "5个关键要点"
+    "key_facts": "5个关键要点",
+    "ai_analysis": "AI分析",
+    "ai_disclaimer": "仅供参考",
+    "health_score": "健康评分",
+    "risk_flags": "风险提示",
+    "positive_points": "积极要点",
+    "suggested_questions": "关于此文件提问：",
+    "chat_title": "与文档对话",
+    "pages": "页",
+    "page": "页",
+    "export_pdf": "导出PDF",
+    "export_excel": "导出Excel",
+    "delete": "删除",
+    "delete_title": "删除文档？",
+    "delete_confirm": "此操作不可撤销。",
+    "need_specialist": "需要专家帮助？",
+    "find_specialist_nearby": "查找附近的专家",
+    "translate_title": "文档翻译",
+    "translate_button": "翻译为我的语言",
+    "translating": "翻译中...",
+    "translation_result": "文档翻译",
+    "hide_translation": "隐藏翻译",
+    "show_translation": "显示翻译",
+    "translate_prompt": "将整个文档翻译为{{language}}",
+    "remind_3days": "提前3天",
+    "remind_1day": "提前1天",
+    "reminder_set": "提醒已设置",
+    "reminder_3days": "截止日期前3天将通知您。",
+    "reminder_1day": "截止日期前1天将通知您。",
+    "notifications_disabled": "请在设置中启用通知。",
+    "check_document": "检查此文档"
   },
   "settings": {
     "title": "设置",
@@ -151,11 +187,13 @@
     "delete_yes": "是的，删除",
     "cancel": "取消",
     "sign_in_apple": "使用Apple登录",
-    "sign_in_email": "使用邮箱登录"
+    "sign_in_email": "使用邮箱登录",
+    "city": "城市",
+    "city_placeholder": "您的城市（例：北京、上海...）"
   },
   "paywall": {
     "title": "喜欢吗？",
-    "subtitle": "DocLear Pro即将推出。留下邮箱，上线时享50%折扣。",
+    "subtitle": "升级到DocLear Pro，享受无限文档和优先AI处理。",
     "email_placeholder": "你的邮箱",
     "submit": "订阅",
     "thanks": "谢谢！我们会联系你。",
@@ -171,10 +209,32 @@
     "feature_history": "完整历史",
     "feature_export": "PDF导出",
     "subscribe": "订阅Pro",
-    "coming_soon": "即将推出！",
+    "coming_soon": "正在跳转到支付...",
     "back_to_docs": "返回文档",
     "scans_low": "剩余{remaining}次扫描",
-    "upgrade_banner": "Pro——无限扫描"
+    "upgrade_banner": "Pro——无限扫描",
+    "monthly": "月付",
+    "annual": "年付",
+    "per_month": "月",
+    "per_year": "年",
+    "best_value": "最划算",
+    "save_42": "节省42%",
+    "feature_questions": "无限AI提问",
+    "feature_formats": "所有格式（PDF、DOCX、XLSX、照片）",
+    "restore": "恢复购买",
+    "restored": "购买已恢复",
+    "restored_desc": "您的购买已恢复。",
+    "no_purchases": "未找到购买记录",
+    "no_purchases_desc": "未找到活跃订阅。",
+    "store_unavailable": "商店不可用，请重试。",
+    "purchase_failed": "购买失败，请重试。",
+    "trust_cancel": "随时可取消",
+    "trust_guarantee": "14天退款保证",
+    "trust_no_training": "文档不会用于AI训练",
+    "anon_trial_hint": "创建账户，免费获得7天Pro体验"
+  },
+  "scan_counter": {
+    "docs_month": "免费文档 / 月"
   },
   "categories": {
     "taxes": "税务",
@@ -205,6 +265,22 @@
     "zip_too_large": "ZIP文件过大（最大50MB）",
     "zip_too_many": "ZIP中文件过多（最多20个）",
     "zip_pro_only": "ZIP分析仅在DocLear Pro中可用"
+  },
+  "error": {
+    "no_internet": "无网络连接",
+    "no_internet_desc": "请检查您的网络连接后重试。",
+    "server": "服务器错误",
+    "server_desc": "我们的服务器出现了问题，请稍后重试。",
+    "ai_overloaded": "AI服务超载",
+    "ai_overloaded_desc": "请求过多，请一分钟后重试。",
+    "upload_failed": "上传失败",
+    "upload_failed_desc": "文件未能发送，请重试。",
+    "file_too_large": "文件过大",
+    "file_too_large_desc": "最大文件大小为15MB。",
+    "generic": "发生了错误",
+    "generic_desc": "出了点问题，请重试。",
+    "retry": "重试",
+    "offline_mode": "离线模式——显示缓存文档"
   },
   "nav": {
     "docs": "文档",
@@ -265,12 +341,33 @@
     "new_password_placeholder": "新密码（至少6位）",
     "update_password": "更新密码",
     "password_updated": "密码已更新！",
-    "password_min_length": "密码至少需要6个字符"
+    "password_min_length": "密码至少需要6个字符",
+    "confirmed_login": "已确认，立即登录",
+    "email_taken": "此邮箱已注册账户"
+  },
+  "consent": {
+    "title": "DocLear如何分析您的文档",
+    "ai_title": "AI分析",
+    "ai_desc": "您的文档将发送至Claude AI进行分析。",
+    "training_title": "不用于训练",
+    "training_desc": "文档不会被Anthropic存储，也不会用于AI训练。",
+    "encrypted_title": "加密并删除",
+    "encrypted_desc": "内容在传输中加密。分析后不保留任何副本。",
+    "eu_title": "欧盟数据保护",
+    "eu_desc": "结果存储在欧盟服务器。符合GDPR规定。",
+    "agree": "我同意",
+    "learn_more": "了解更多关于我们的隐私政策"
+  },
+  "trial": {
+    "badge": "免费Pro试用",
+    "days_left": "剩余{{count}}天",
+    "expired": "您的Pro试用已结束。升级到Pro以无限制继续使用。"
   },
   "tabs": {
     "documents": "文档",
     "scanner": "扫描",
     "assistant": "助手",
+    "overview": "概览",
     "profile": "个人资料"
   },
   "profile": {
@@ -292,7 +389,9 @@
     "trust_gdpr": "欧盟服务器（符合GDPR）",
     "support": "支持",
     "report_problem": "报告问题",
-    "app_version": "应用版本"
+    "app_version": "应用版本",
+    "docs_per_month": "免费文档 / 月",
+    "questions_reset_daily": "提问次数每天重置"
   },
   "scanner": {
     "title": "扫描",
@@ -310,7 +409,8 @@
       "done": "完成！"
     },
     "privacy_badge": "您的文件已加密，不会用于训练AI",
-    "try_demo": "试用演示文档"
+    "try_demo": "试用演示文档",
+    "usually_takes": "通常需要10到20秒"
   },
   "common": {
     "loading": "加载中...",
@@ -319,7 +419,10 @@
     "cancel": "取消",
     "save": "保存",
     "delete": "删除",
-    "back": "返回"
+    "back": "返回",
+    "menu": "菜单",
+    "offline": "离线",
+    "close": "关闭"
   },
   "assistant": {
     "title": "助手",
@@ -331,6 +434,15 @@
     "report_title": "举报此回复",
     "report_desc": "此AI回复是否不准确？",
     "report": "举报",
+    "report_thanks": "感谢您的举报。",
+    "report_error": "无法发送举报。",
+    "thinking": "DocLear正在思考...",
+    "error_generic": "无法处理您的问题，请重试。",
+    "error_overloaded": "AI服务超载，请一分钟后重试。",
+    "error_rate_limited": "请求过于频繁，请稍候。",
+    "prompt_summarize": "总结这份文档",
+    "prompt_risks": "有哪些风险？",
+    "prompt_actions": "我该怎么做？",
     "ai_disclaimer_input": "回复由AI生成，可能包含错误。请核实重要信息。"
   },
   "soft_reg": {
@@ -341,7 +453,24 @@
     "email": "使用邮箱注册",
     "skip": "稍后"
   },
+  "overview": {
+    "documents_analyzed": "已分析{{count}}份文档",
+    "by_category": "按类别",
+    "deadlines": "即将到期",
+    "finances": "财务",
+    "to_pay": "待支付",
+    "to_receive": "待收款",
+    "recommendation": "AI建议",
+    "empty": "上传文档以查看概览"
+  },
   "welcome": {
+    "title": "30秒理解任何文档",
+    "signal_languages": "支持10种语言",
+    "signal_encrypted": "数据加密",
+    "signal_instant": "即时结果",
+    "scan_first": "扫描我的第一份文档",
+    "try_demo": "试用演示",
+    "have_account": "已有账户？登录",
     "free_limit": "无需注册，3次免费分析"
   },
   "offline": {

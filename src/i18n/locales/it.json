@@ -80,7 +80,11 @@
     "status_citizen": "Cittadino",
     "other_country": "Altro",
     "ready_title": "Tutto pronto!",
-    "ready_desc": "Tutto pronto! I tuoi documenti sono sotto controllo."
+    "ready_desc": "Tutto pronto! I tuoi documenti sono sotto controllo.",
+    "usecase_title": "Come userai DocLear?",
+    "usecase_study": "Studio",
+    "usecase_work": "Lavoro",
+    "usecase_personal": "Personale"
   },
   "timeline": {
     "title": "I miei documenti",
@@ -123,7 +127,37 @@
     "recommendations": "Raccomandazioni",
     "visit_portal": "Visita",
     "find_specialist": "Trova uno specialista",
-    "key_facts": "5 punti chiave"
+    "key_facts": "5 punti chiave",
+    "ai_analysis": "Analisi IA",
+    "ai_disclaimer": "Solo a scopo informativo",
+    "health_score": "Punteggio di salute",
+    "risk_flags": "Segnali di rischio",
+    "positive_points": "Punti positivi",
+    "suggested_questions": "Fai una domanda su questo documento:",
+    "chat_title": "Chat con il documento",
+    "pages": "pagine",
+    "page": "pagina",
+    "export_pdf": "Esporta PDF",
+    "export_excel": "Esporta Excel",
+    "delete": "Elimina",
+    "delete_title": "Eliminare il documento?",
+    "delete_confirm": "Questa azione è irreversibile.",
+    "need_specialist": "Hai bisogno di uno specialista?",
+    "find_specialist_nearby": "Trova uno specialista vicino a te",
+    "translate_title": "Traduzione del documento",
+    "translate_button": "Traduci nella mia lingua",
+    "translating": "Traduzione in corso...",
+    "translation_result": "Traduzione del documento",
+    "hide_translation": "Nascondi traduzione",
+    "show_translation": "Mostra traduzione",
+    "translate_prompt": "Traduci l'intero documento in {{language}}",
+    "remind_3days": "3 giorni prima",
+    "remind_1day": "1 giorno prima",
+    "reminder_set": "Promemoria impostato",
+    "reminder_3days": "Sarai avvisato 3 giorni prima della scadenza.",
+    "reminder_1day": "Sarai avvisato 1 giorno prima della scadenza.",
+    "notifications_disabled": "Attiva le notifiche nelle impostazioni.",
+    "check_document": "Controlla questo documento"
   },
   "settings": {
     "title": "Impostazioni",
@@ -153,11 +187,13 @@
     "delete_yes": "Sì, elimina",
     "cancel": "Annulla",
     "sign_in_apple": "Accedi con Apple",
-    "sign_in_email": "Accedi con Email"
+    "sign_in_email": "Accedi con Email",
+    "city": "Città",
+    "city_placeholder": "La tua città (es: Roma, Milano...)"
   },
   "paywall": {
     "title": "Ti è piaciuto?",
-    "subtitle": "DocLear Pro arriva presto. Lascia la tua email per il 50% di sconto al lancio.",
+    "subtitle": "Passa a DocLear Pro per documenti illimitati e elaborazione IA prioritaria.",
     "email_placeholder": "La tua email",
     "submit": "Iscriviti",
     "thanks": "Grazie! Ti contatteremo.",
@@ -173,10 +209,32 @@
     "feature_history": "Cronologia completa",
     "feature_export": "Esporta PDF",
     "subscribe": "Abbonati a Pro",
-    "coming_soon": "In arrivo!",
+    "coming_soon": "Reindirizzamento al pagamento...",
     "back_to_docs": "Torna ai documenti",
     "scans_low": "Solo {remaining} scansione/i rimaste",
-    "upgrade_banner": "Pro — scansioni illimitate"
+    "upgrade_banner": "Pro — scansioni illimitate",
+    "monthly": "Mensile",
+    "annual": "Annuale",
+    "per_month": "mese",
+    "per_year": "anno",
+    "best_value": "MIGLIOR PREZZO",
+    "save_42": "Risparmia il 42%",
+    "feature_questions": "Domande IA illimitate",
+    "feature_formats": "Tutti i formati (PDF, DOCX, XLSX, foto)",
+    "restore": "Ripristina acquisti",
+    "restored": "Acquisti ripristinati",
+    "restored_desc": "I tuoi acquisti sono stati ripristinati.",
+    "no_purchases": "Nessun acquisto trovato",
+    "no_purchases_desc": "Nessun abbonamento attivo trovato.",
+    "store_unavailable": "Store non disponibile. Riprova.",
+    "purchase_failed": "Acquisto fallito. Riprova.",
+    "trust_cancel": "Annulla in qualsiasi momento",
+    "trust_guarantee": "Garanzia soddisfatti o rimborsati 14 giorni",
+    "trust_no_training": "I documenti non vengono usati per addestrare l'IA",
+    "anon_trial_hint": "Crea un account e ottieni 7 giorni di Pro gratis"
+  },
+  "scan_counter": {
+    "docs_month": "documenti gratuiti / mese"
   },
   "categories": {
     "taxes": "Tasse",
@@ -207,6 +265,22 @@
     "zip_too_large": "File ZIP troppo grande (max 50 MB)",
     "zip_too_many": "Troppi file nello ZIP (max 20)",
     "zip_pro_only": "Analisi ZIP disponibile in DocLear Pro"
+  },
+  "error": {
+    "no_internet": "Nessuna connessione internet",
+    "no_internet_desc": "Controlla la connessione e riprova.",
+    "server": "Errore del server",
+    "server_desc": "I nostri server hanno un problema. Riprova tra poco.",
+    "ai_overloaded": "Servizio IA sovraccarico",
+    "ai_overloaded_desc": "Troppe richieste. Riprova tra un minuto.",
+    "upload_failed": "Caricamento fallito",
+    "upload_failed_desc": "Il file non è stato inviato. Riprova.",
+    "file_too_large": "File troppo grande",
+    "file_too_large_desc": "La dimensione massima è 15 MB.",
+    "generic": "Si è verificato un errore",
+    "generic_desc": "Qualcosa è andato storto. Riprova.",
+    "retry": "Riprova",
+    "offline_mode": "Modalità offline — documenti in cache"
   },
   "nav": {
     "docs": "Documenti",
@@ -267,12 +341,33 @@
     "new_password_placeholder": "Nuova password (min 6 caratteri)",
     "update_password": "Aggiorna",
     "password_updated": "Password aggiornata!",
-    "password_min_length": "La password deve avere almeno 6 caratteri"
+    "password_min_length": "La password deve avere almeno 6 caratteri",
+    "confirmed_login": "Ho confermato, accedi",
+    "email_taken": "Esiste già un account con questa email"
+  },
+  "consent": {
+    "title": "Come DocLear analizza i tuoi documenti",
+    "ai_title": "Analisi IA",
+    "ai_desc": "Il tuo documento viene inviato all'IA Claude per l'analisi.",
+    "training_title": "Non usato per l'addestramento",
+    "training_desc": "I documenti non vengono conservati da Anthropic né usati per addestrare l'IA.",
+    "encrypted_title": "Crittografato e cancellato",
+    "encrypted_desc": "Il contenuto viene crittografato in transito. Nessuna copia conservata dopo l'analisi.",
+    "eu_title": "Protezione dati UE",
+    "eu_desc": "Risultati archiviati su server UE. Conforme al GDPR.",
+    "agree": "Accetto",
+    "learn_more": "Scopri di più sulla nostra politica sulla privacy"
+  },
+  "trial": {
+    "badge": "Prova Pro gratuita",
+    "days_left": "{{count}} giorni rimanenti",
+    "expired": "La tua prova Pro è terminata. Passa a Pro per continuare senza limiti."
   },
   "tabs": {
     "documents": "Documenti",
     "scanner": "Scanner",
     "assistant": "Assistente",
+    "overview": "Panoramica",
     "profile": "Profilo"
   },
   "profile": {
@@ -294,7 +389,9 @@
     "trust_gdpr": "Server UE (conforme GDPR)",
     "support": "Supporto",
     "report_problem": "Segnala un problema",
-    "app_version": "Versione app"
+    "app_version": "Versione app",
+    "docs_per_month": "documenti gratuiti / mese",
+    "questions_reset_daily": "Le domande si azzerano ogni giorno"
   },
   "scanner": {
     "title": "Scanner",
@@ -312,7 +409,8 @@
       "done": "Fatto!"
     },
     "privacy_badge": "I tuoi documenti sono crittografati e non vengono usati per addestrare l'IA",
-    "try_demo": "Prova con un documento demo"
+    "try_demo": "Prova con un documento demo",
+    "usually_takes": "Di solito richiede da 10 a 20 secondi"
   },
   "common": {
     "loading": "Caricamento...",
@@ -321,7 +419,10 @@
     "cancel": "Annulla",
     "save": "Salva",
     "delete": "Elimina",
-    "back": "Indietro"
+    "back": "Indietro",
+    "menu": "Menu",
+    "offline": "Offline",
+    "close": "Chiudi"
   },
   "assistant": {
     "title": "Assistente",
@@ -333,6 +434,15 @@
     "report_title": "Segnala risposta",
     "report_desc": "Questa risposta è imprecisa?",
     "report": "Segnala",
+    "report_thanks": "Grazie per la tua segnalazione.",
+    "report_error": "Impossibile inviare la segnalazione.",
+    "thinking": "DocLear sta pensando...",
+    "error_generic": "Impossibile elaborare la tua domanda. Riprova.",
+    "error_overloaded": "Il servizio IA è sovraccarico. Riprova tra un minuto.",
+    "error_rate_limited": "Troppe richieste. Attendi un momento.",
+    "prompt_summarize": "Riassumi questo documento",
+    "prompt_risks": "Quali sono i rischi?",
+    "prompt_actions": "Cosa devo fare?",
     "ai_disclaimer_input": "Le risposte sono generate dall'IA e possono contenere errori. Verifica le informazioni importanti."
   },
   "soft_reg": {
@@ -343,7 +453,24 @@
     "email": "Registrati via email",
     "skip": "Più tardi"
   },
+  "overview": {
+    "documents_analyzed": "{{count}} documenti analizzati",
+    "by_category": "Per categoria",
+    "deadlines": "Prossime scadenze",
+    "finances": "Finanze",
+    "to_pay": "Da pagare",
+    "to_receive": "Da ricevere",
+    "recommendation": "Raccomandazione IA",
+    "empty": "Carica un documento per vedere la panoramica"
+  },
   "welcome": {
+    "title": "Comprendi qualsiasi documento in 30 secondi",
+    "signal_languages": "10 lingue supportate",
+    "signal_encrypted": "Dati crittografati",
+    "signal_instant": "Risultato istantaneo",
+    "scan_first": "Scansiona il mio primo documento",
+    "try_demo": "Prova la demo",
+    "have_account": "Hai già un account? Accedi",
     "free_limit": "3 analisi gratuite senza registrazione"
   },
   "offline": {

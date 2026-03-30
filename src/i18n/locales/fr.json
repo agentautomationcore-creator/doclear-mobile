@@ -193,7 +193,7 @@
   },
   "paywall": {
     "title": "Vous avez aimé ?",
-    "subtitle": "DocLear Pro arrive bientôt. Laissez votre email pour obtenir 50% de réduction au lancement.",
+    "subtitle": "Passez à DocLear Pro pour des documents illimités et une analyse IA prioritaire.",
     "email_placeholder": "Votre email",
     "submit": "M'inscrire",
     "thanks": "Merci ! Nous vous contacterons.",
@@ -209,7 +209,7 @@
     "feature_history": "Historique complet",
     "feature_export": "Export PDF",
     "subscribe": "S'abonner à Pro",
-    "coming_soon": "Bientôt disponible ! Nous vous préviendrons quand Pro sera lancé.",
+    "coming_soon": "Redirection vers le paiement...",
     "back_to_docs": "Retour aux documents",
     "scans_low": "Plus que {remaining} scan(s)",
     "upgrade_banner": "Passez à Pro pour des scans illimités",
