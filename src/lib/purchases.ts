@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { log } from './debug';
 
 // RevenueCat setup — ALL platforms (iOS, Android, Web)
 // Web uses RevenueCat Web Billing with Stripe as billing provider
@@ -18,16 +19,16 @@ export async function configurePurchases(userId?: string): Promise<void> {
       : Platform.OS === 'android' ? ANDROID_KEY
       : WEB_KEY;
 
-    // Skip if using placeholder keys
-    if (apiKey.includes('PLACEHOLDER')) {
-      console.log('RevenueCat: using placeholder keys, skipping configuration');
+    // Skip if using placeholder or test keys
+    if (apiKey.includes('PLACEHOLDER') || apiKey.startsWith('test_')) {
+      log('RevenueCat: using placeholder/test keys, skipping configuration');
       return;
     }
 
     Purchases.configure({ apiKey, appUserID: userId ?? undefined });
     purchasesConfigured = true;
   } catch (error) {
-    console.log('RevenueCat: not available in this environment');
+    log('RevenueCat: not available in this environment');
   }
 }
 

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { log } from '../../src/lib/debug';
 import {
   View,
   Text,
@@ -301,30 +302,30 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
   // Accepts optional fileList override for consent-return flow (avoids stale closure)
   const analyzeFilesDirectly = useCallback(async (fileListOverride?: SelectedFile[]) => {
     const filesToProcess = fileListOverride || files;
-    console.log('[SCAN] analyzeFilesDirectly called', { filesCount: filesToProcess.length, userId: user?.id, isOverride: !!fileListOverride });
+    log('[SCAN] analyzeFilesDirectly called', { filesCount: filesToProcess.length, userId: user?.id, isOverride: !!fileListOverride });
     if (filesToProcess.length === 0) {
-      console.log('[SCAN] ABORT: no files');
+      log('[SCAN] ABORT: no files');
       return;
     }
 
     // Get user from Supabase session directly (Zustand store may not be updated yet for anonymous)
     let userId = user?.id;
     if (!userId) {
-      console.log('[SCAN] No user in store, checking Supabase session...');
+      log('[SCAN] No user in store, checking Supabase session...');
       const { data: { session } } = await supabase.auth.getSession();
       userId = session?.user?.id;
       if (!userId) {
-        console.log('[SCAN] No session either, signing in anonymously...');
+        log('[SCAN] No session either, signing in anonymously...');
         const { data } = await supabase.auth.signInAnonymously();
         userId = data?.user?.id;
       }
     }
     if (!userId) {
-      console.log('[SCAN] ABORT: could not get userId');
+      log('[SCAN] ABORT: could not get userId');
       setError('Authentication error. Please restart the app.');
       return;
     }
-    console.log('[SCAN] Using userId:', userId);
+    log('[SCAN] Using userId:', userId);
     setStep('uploading');
     setError(null);
 
@@ -390,7 +391,7 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
         const { data: sessionData } = await supabase.auth.getSession();
         const token = sessionData?.session?.access_token;
 
-        console.log('[SCAN] Sending to API:', `${API_URL}/analyze`, { documentId, fileType: file.type, base64Length: base64.length });
+        log('[SCAN] Sending to API:', `${API_URL}/analyze`, { documentId, fileType: file.type, base64Length: base64.length });
         const response = await fetch(`${API_URL}/analyze`, {
           method: 'POST',
           headers: {
@@ -408,15 +409,15 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
           }),
         });
 
-        console.log('[SCAN] API response status:', response.status);
+        log('[SCAN] API response status:', response.status);
         if (!response.ok) {
           const errData = await response.json().catch(() => null);
-          console.log('[SCAN] API error:', errData);
+          log('[SCAN] API error:', errData);
           throw new Error(errData?.error ?? 'Analysis failed');
         }
 
         const analysisResult = await response.json().catch(() => null);
-        console.log('[SCAN] Analysis result:', analysisResult ? 'OK' : 'null', analysisResult?.document_title);
+        log('[SCAN] Analysis result:', analysisResult ? 'OK' : 'null', analysisResult?.document_title);
 
         setStep('done');
         track('analysis_completed');
@@ -457,7 +458,7 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
         return;
       }
     } catch (err: any) {
-      console.log('[SCAN] ERROR:', err?.message, err);
+      log('[SCAN] ERROR:', err?.message, err);
       setError(err?.message ?? t('errors.analysis_failed'));
       setStep('error');
     }
@@ -465,9 +466,9 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
 
   // Public analyze function — consent already granted at app startup
   const analyzeFiles = useCallback(async () => {
-    console.log('[SCAN] analyzeFiles called', { filesCount: files.length, userId: user?.id });
+    log('[SCAN] analyzeFiles called', { filesCount: files.length, userId: user?.id });
     if (files.length === 0) {
-      console.log('[SCAN] ABORT: no files');
+      log('[SCAN] ABORT: no files');
       return;
     }
     await analyzeFilesDirectly();

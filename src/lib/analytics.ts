@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { log } from './debug';
 
 type EventName =
   | 'app_opened'
@@ -24,7 +25,7 @@ export async function initAnalytics(): Promise<void> {
   const posthogKey = process.env.EXPO_PUBLIC_POSTHOG_KEY;
 
   if (!posthogKey || posthogKey.includes('placeholder')) {
-    console.log('PostHog: using placeholder key, skipping initialization');
+    log('PostHog: using placeholder key, skipping initialization');
     return;
   }
 
@@ -36,7 +37,7 @@ export async function initAnalytics(): Promise<void> {
       });
     }
   } catch {
-    console.log('PostHog: not available in this environment');
+    log('PostHog: not available in this environment');
   }
 }
 

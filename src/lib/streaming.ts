@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { API_URL } from './constants';
+import { log } from './debug';
 
 export interface StreamCallbacks {
   onToken: (token: string) => void;
@@ -24,7 +25,7 @@ export async function streamChat(
 
   try {
     const effectiveLanguage = language || 'fr';
-    console.log('[CHAT] Sending to', `${API_URL}/chat`, { documentId, question: question.slice(0, 50), language: effectiveLanguage });
+    log('[CHAT] Sending to', `${API_URL}/chat`, { documentId, question: question.slice(0, 50), language: effectiveLanguage });
 
     // System hint removed — backend prompt already contains strict no-repeat rules
 
@@ -44,11 +45,11 @@ export async function streamChat(
       signal: abortSignal,
     });
 
-    console.log('[CHAT] Response status:', response.status);
+    log('[CHAT] Response status:', response.status);
     if (!response.ok) {
       const status = response.status;
       const errorBody = await response.text().catch(() => '');
-      console.log('[CHAT] Error body:', errorBody);
+      log('[CHAT] Error body:', errorBody);
       if (status === 529) {
         throw new Error('AI_OVERLOADED');
       }
@@ -106,12 +107,12 @@ export async function streamChat(
         }
         return;
       } catch (streamErr) {
-        console.log('[CHAT] Streaming failed, falling back to full body read:', streamErr);
+        log('[CHAT] Streaming failed, falling back to full body read:', streamErr);
       }
     }
 
     // Fallback: read full response body (non-streaming)
-    console.log('[CHAT] Using non-streaming fallback');
+    log('[CHAT] Using non-streaming fallback');
     const text = await response.text();
     // Parse SSE format from full text
     let fullText = '';
