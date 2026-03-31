@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import * as Linking from 'expo-linking';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH } from '../src/lib/constants';
 import { useAuth } from '../src/hooks/useAuth';
+import { useAuthStore } from '../src/store/auth.store';
 import { Button } from '../src/components/ui/Button';
 import { PageContainer } from '../src/components/layout/PageContainer';
 import { getOfferings, purchasePackage, restorePurchases } from '../src/lib/purchases';
@@ -52,6 +53,8 @@ export default function PaywallScreen() {
 
       const result = await purchasePackage(pkg);
       if (result) {
+        // Update plan in Zustand after successful purchase
+        useAuthStore.getState().setPlan(selected === 'annual' ? 'year' : 'pro');
         track('subscription_started', { plan: selected });
         router.back();
       }
@@ -69,6 +72,12 @@ export default function PaywallScreen() {
     try {
       const info = await restorePurchases();
       if (info) {
+        // Check entitlements and update plan in Zustand
+        const entitlements = (info as any).entitlements?.active;
+        const isPro = entitlements?.pro || entitlements?.premium;
+        if (isPro) {
+          useAuthStore.getState().setPlan('pro');
+        }
         Alert.alert(t('paywall.restored'), t('paywall.restored_desc'));
         router.back();
       } else {

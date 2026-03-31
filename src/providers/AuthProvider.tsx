@@ -1,4 +1,5 @@
 import React, { useEffect, type ReactNode } from 'react';
+import { AppState, Platform } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/auth.store';
 import type { Plan } from '../store/auth.store';
@@ -88,8 +89,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     });
 
+    // RevenueCat: listen for subscription changes (cancellation, renewal)
+    let rcListenerRemover: (() => void) | undefined;
+    if (Platform.OS !== 'web') {
+      import('react-native-purchases')
+        .then(({ default: Purchases }) => {
+          // @ts-ignore — RevenueCat types say void but actually returns remover
+          rcListenerRemover = Purchases.addCustomerInfoUpdateListener((info: any) => {
+            const entitlements = info?.entitlements?.active;
+            const isPro = entitlements?.pro || entitlements?.premium;
+            useAuthStore.getState().setPlan(isPro ? 'pro' : 'free');
+          });
+        })
+        .catch(() => {});
+    }
+
+    // AppState: re-check subscription when app comes to foreground
+    const appStateSubscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active' && Platform.OS !== 'web') {
+        import('react-native-purchases')
+          .then(({ default: Purchases }) => Purchases.getCustomerInfo())
+          .then((info: any) => {
+            const entitlements = info?.entitlements?.active;
+            const isPro = entitlements?.pro || entitlements?.premium;
+            useAuthStore.getState().setPlan(isPro ? 'pro' : 'free');
+          })
+          .catch(() => {});
+      }
+    });
+
     return () => {
       subscription.unsubscribe();
+      rcListenerRemover?.();
+      appStateSubscription.remove();
     };
   }, [setSession, setUser, setLoading]);
 

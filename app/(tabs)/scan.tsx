@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { log } from '../../src/lib/debug';
 import {
   View,
@@ -79,6 +79,7 @@ export default function ScanScreen() {
   const [files, setFiles] = useState<SelectedFile[]>([]);
   const [step, setStep] = useState<AnalysisStep>('idle');
   const [error, setError] = useState<string | null>(null);
+  const isAnalyzingRef = useRef(false);
 
   const checkLimitAndProceed = useCallback((): boolean => {
     const can = useAuthStore.getState().canUpload();
@@ -305,6 +306,9 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
   // Core analysis function (no consent check — called directly after consent granted)
   // Accepts optional fileList override for consent-return flow (avoids stale closure)
   const analyzeFilesDirectly = useCallback(async (fileListOverride?: SelectedFile[]) => {
+    if (isAnalyzingRef.current) return;
+    isAnalyzingRef.current = true;
+    try {
     if (networkOffline) {
       Alert.alert(t('common.error'), t('errors.offline') || 'No internet connection. Please try again when online.');
       return;
@@ -469,6 +473,9 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
       log('[SCAN] ERROR:', message, err);
       setError(message);
       setStep('error');
+    }
+    } finally {
+      isAnalyzingRef.current = false;
     }
   }, [files, user, locale, router, t, networkOffline]);
 
@@ -724,7 +731,8 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
             <Button
               title={t('scan.analyze')}
               onPress={analyzeFiles}
-              style={{ marginTop: 12 }}
+              disabled={step !== 'idle' && step !== 'error'}
+              style={{ marginTop: 12, opacity: (step !== 'idle' && step !== 'error') ? 0.5 : 1 }}
             />
           </View>
         ) : null}

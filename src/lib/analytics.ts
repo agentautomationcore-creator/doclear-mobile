@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import { log } from './debug';
+import { mmkvStorage } from './mmkv';
 
 type EventName =
   | 'app_opened'
@@ -24,6 +25,13 @@ type EventName =
 let posthogClient: any = null;
 
 export async function initAnalytics(): Promise<void> {
+  // Don't initialize until user has given analytics consent (GDPR)
+  const consent = mmkvStorage.getString('analytics_consent');
+  if (consent !== 'true') {
+    log('PostHog: waiting for user consent, skipping initialization');
+    return;
+  }
+
   const posthogKey = process.env.EXPO_PUBLIC_POSTHOG_KEY;
 
   if (!posthogKey || posthogKey.includes('placeholder')) {
@@ -42,6 +50,24 @@ export async function initAnalytics(): Promise<void> {
     log('PostHog: not available in this environment');
     if (__DEV__) console.error('[Analytics] init error:', e);
   }
+}
+
+/**
+ * Call after user grants analytics consent.
+ * Stores consent flag and initializes PostHog.
+ */
+export async function grantAnalyticsConsent(): Promise<void> {
+  mmkvStorage.setString('analytics_consent', 'true');
+  await initAnalytics();
+}
+
+/**
+ * Call when user revokes analytics consent.
+ */
+export function revokeAnalyticsConsent(): void {
+  mmkvStorage.setString('analytics_consent', 'false');
+  posthogClient?.reset();
+  posthogClient = null;
 }
 
 export function track(event: EventName, properties?: Record<string, unknown>): void {

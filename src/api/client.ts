@@ -91,6 +91,19 @@ async function request<T = unknown>(
     } catch (error) {
       lastError = error as Error;
 
+      // 401 Unauthorized — try refreshing the token once
+      if (error instanceof ApiError && error.status === 401 && attempt === 0) {
+        try {
+          const { data: refreshData } = await supabase.auth.refreshSession();
+          if (refreshData.session?.access_token) {
+            headers['Authorization'] = `Bearer ${refreshData.session.access_token}`;
+            continue; // Retry with refreshed token
+          }
+        } catch {
+          // Refresh failed — fall through to throw
+        }
+      }
+
       // Don't retry client errors (4xx)
       // 429 with limit_reached = plan limit (not retryable), without = burst rate limit (retryable)
       if (error instanceof ApiError && error.status >= 400 && error.status < 500) {

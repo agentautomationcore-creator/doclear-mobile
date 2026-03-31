@@ -34,6 +34,14 @@ export function isOffline(status: NetworkStatus): boolean {
 // ==================== Document Caching ====================
 
 const CACHE_DOCS_KEY = '@doclear/cached_documents';
+const MAX_CACHED_DOCS = 50;
+
+/**
+ * Trim heavy fields from cached documents to save storage space.
+ */
+function trimDocForCache(d: Document): Document {
+  return { ...d, rawText: undefined as any, pageTexts: undefined as any };
+}
 
 /**
  * Cache a document's metadata to AsyncStorage.
@@ -47,7 +55,12 @@ export async function cacheDocument(doc: Document): Promise<void> {
     } else {
       existing.unshift(doc);
     }
-    await AsyncStorage.setItem(CACHE_DOCS_KEY, JSON.stringify(existing));
+    // Limit cache size
+    if (existing.length > MAX_CACHED_DOCS) {
+      existing.length = MAX_CACHED_DOCS;
+    }
+    const trimmed = existing.map(trimDocForCache);
+    await AsyncStorage.setItem(CACHE_DOCS_KEY, JSON.stringify(trimmed));
   } catch {
     // Silent — caching is best-effort
   }
@@ -63,7 +76,13 @@ export async function cacheDocuments(docs: Document[]): Promise<void> {
     for (const doc of docs) {
       map.set(doc.id, doc);
     }
-    await AsyncStorage.setItem(CACHE_DOCS_KEY, JSON.stringify(Array.from(map.values())));
+    let all = Array.from(map.values());
+    // Limit cache size
+    if (all.length > MAX_CACHED_DOCS) {
+      all = all.slice(0, MAX_CACHED_DOCS);
+    }
+    const trimmed = all.map(trimDocForCache);
+    await AsyncStorage.setItem(CACHE_DOCS_KEY, JSON.stringify(trimmed));
   } catch {
     // Silent
   }
