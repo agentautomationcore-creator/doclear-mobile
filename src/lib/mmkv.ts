@@ -57,7 +57,7 @@ export async function loadMMKVCache(): Promise<void> {
     try {
       const value = await AsyncStorage.getItem(`mmkv_${key}`);
       if (value !== null) memoryCache.set(key, value);
-    } catch { /* silent */ }
+    } catch (e) { if (__DEV__) console.error('[MMKV] loadCache error for key:', key, e); }
   }
 }
 

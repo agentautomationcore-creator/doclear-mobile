@@ -21,8 +21,8 @@ async function loadUserProfile(userId: string) {
       store.setPlan((data.plan as Plan) ?? 'free');
       store.setScanCount(data.scan_count ?? 0);
     }
-  } catch {
-    // Profile not found — keep defaults
+  } catch (e) {
+    if (__DEV__) console.error('[AuthProvider] profile load error:', e);
   }
 
   // Check trial status for registered (non-anonymous) users

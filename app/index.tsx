@@ -517,7 +517,7 @@ function WebLandingPage() {
               <Text
                 style={{
                   fontSize: 13,
-                  color: '#9CA3AF',
+                  color: '#6B7280',
                   marginBottom: 24,
                 }}
               >
@@ -706,7 +706,7 @@ function NativeWelcomeScreen({ onStart, onLogin }: { onStart: () => void; onLogi
         </Pressable>
 
         {/* Free limit hint */}
-        <Text style={{ fontSize: 13, color: '#94A3B8', textAlign: 'center' }}>
+        <Text style={{ fontSize: 13, color: '#64748B', textAlign: 'center' }}>
           {t('welcome.free_limit')}
         </Text>
 

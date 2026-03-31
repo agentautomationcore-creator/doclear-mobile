@@ -38,31 +38,32 @@ export async function initAnalytics(): Promise<void> {
         host: 'https://eu.posthog.com',
       });
     }
-  } catch {
+  } catch (e) {
     log('PostHog: not available in this environment');
+    if (__DEV__) console.error('[Analytics] init error:', e);
   }
 }
 
 export function track(event: EventName, properties?: Record<string, unknown>): void {
   try {
     posthogClient?.capture(event, properties);
-  } catch {
-    // Silent — analytics is non-blocking
+  } catch (e) {
+    if (__DEV__) console.error('[Analytics] track error:', e);
   }
 }
 
 export function identify(userId: string, traits?: Record<string, unknown>): void {
   try {
     posthogClient?.identify(userId, traits);
-  } catch {
-    // Silent
+  } catch (e) {
+    if (__DEV__) console.error('[Analytics] identify error:', e);
   }
 }
 
 export function resetAnalytics(): void {
   try {
     posthogClient?.reset();
-  } catch {
-    // Silent
+  } catch (e) {
+    if (__DEV__) console.error('[Analytics] reset error:', e);
   }
 }

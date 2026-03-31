@@ -125,7 +125,7 @@
       ],
       "expo-apple-authentication",
       "expo-font",
-      "@sentry/react-native"
+      ["@sentry/react-native/expo", {"organization": "doclear", "project": "doclear-mobile"}]
     ],
     "updates": {
       "url": "https://u.expo.dev/6456e134-bd4c-49cb-b234-8f343d9d8d6a"

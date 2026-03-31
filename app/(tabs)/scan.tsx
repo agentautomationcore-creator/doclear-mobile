@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
-// expo-file-system: dynamic import only on native (crashes on web)
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   useSharedValue,
@@ -753,13 +752,34 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
               <Ionicons name="document-text-outline" size={48} color="#4F46E5" />
             </View>
 
+            {/* Progress steps */}
+            <View style={{ flexDirection: 'row', gap: 6, marginTop: 32, justifyContent: 'center' }}>
+              {['uploading', 'extracting', 'analyzing'].map((s, i) => {
+                const stepOrder = ['uploading', 'extracting', 'analyzing', 'done'];
+                const currentIdx = stepOrder.indexOf(step);
+                const isActive = i <= currentIdx;
+                return (
+                  <View
+                    key={s}
+                    style={{
+                      height: 4,
+                      flex: 1,
+                      maxWidth: 60,
+                      borderRadius: 2,
+                      backgroundColor: isActive ? '#4F46E5' : '#E5E7EB',
+                    }}
+                  />
+                );
+              })}
+            </View>
+
             {/* Rotating text */}
-            <Text style={{ fontSize: 17, color: '#374151', fontWeight: '500', marginTop: 32, textAlign: 'center' }}>
+            <Text style={{ fontSize: 17, color: '#374151', fontWeight: '500', marginTop: 16, textAlign: 'center' }}>
               {step === 'done' ? LOADING_MESSAGES[LOADING_MESSAGES.length - 1] : LOADING_MESSAGES[loadingMsgIndex]}
             </Text>
 
             {/* Subtext */}
-            <Text style={{ fontSize: 13, color: '#9CA3AF', marginTop: 8 }}>
+            <Text style={{ fontSize: 13, color: '#6B7280', marginTop: 8 }}>
               {t('scanner.usually_takes')}
             </Text>
           </View>

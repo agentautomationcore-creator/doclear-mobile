@@ -40,8 +40,8 @@ export function SoftRegistrationModal({ visible, onDismiss }: SoftRegistrationMo
         });
         onDismiss();
       }
-    } catch {
-      // User cancelled or error
+    } catch (e) {
+      if (__DEV__) console.error('[SoftReg] Apple sign-in error:', e);
     } finally {
       setLoading(false);
     }
@@ -57,8 +57,8 @@ export function SoftRegistrationModal({ visible, onDismiss }: SoftRegistrationMo
         },
       });
       if (!error) onDismiss();
-    } catch {
-      // Silent
+    } catch (e) {
+      if (__DEV__) console.error('[SoftReg] Google sign-in error:', e);
     } finally {
       setLoading(false);
     }

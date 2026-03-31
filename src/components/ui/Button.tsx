@@ -11,6 +11,7 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
+  accessibilityHint?: string;
 }
 
 export function Button({
@@ -20,6 +21,7 @@ export function Button({
   disabled = false,
   loading = false,
   style,
+  accessibilityHint,
 }: ButtonProps) {
   const [pressed, setPressed] = useState(false);
 
@@ -54,6 +56,7 @@ export function Button({
       }}
       accessibilityRole="button"
       accessibilityLabel={title}
+      accessibilityHint={accessibilityHint}
     >
       {loading ? (
         <ActivityIndicator color={textColor} size="small" />
@@ -61,7 +64,7 @@ export function Button({
         <Text
           allowFontScaling
           style={{
-            color: disabled ? '#9CA3AF' : textColor,
+            color: disabled ? '#6B7280' : textColor,
             fontSize: 16,
             fontWeight: '600',
           }}

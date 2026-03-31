@@ -109,7 +109,7 @@ export async function savePushToken(userId: string): Promise<void> {
         .update({ push_token: token.data, updated_at: new Date().toISOString() })
         .eq('id', userId);
     }
-  } catch {
-    // Silent — push token is best-effort
+  } catch (e) {
+    if (__DEV__) console.error('[Notifications] savePushToken error:', e);
   }
 }

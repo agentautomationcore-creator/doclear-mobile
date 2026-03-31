@@ -1,7 +1,9 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { MAX_GUEST_SCANS, MAX_GUEST_QUESTIONS } from '../types';
+import { zustandMMKVStorage } from '../lib/mmkv';
 
 export type Plan = 'free' | 'trial' | 'pro' | 'year';
 
@@ -51,7 +53,7 @@ function calculateTrialDaysLeft(trialStartedAt: string | null): number {
   return Math.max(0, TRIAL_DAYS - elapsed);
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>()(persist((set, get) => ({
   user: null,
   session: null,
   isAuthenticated: false,
@@ -134,8 +136,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (!error && count !== null) {
         set({ dailyQuestions: count });
       }
-    } catch {
-      // Silent
+    } catch (e) {
+      if (__DEV__) console.error('[AuthStore] fetchDailyQuestions error:', e);
     }
   },
 
@@ -184,8 +186,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           scanLimit: Infinity,
         });
       }
-    } catch {
-      // Silent — don't block app on profile fetch failure
+    } catch (e) {
+      if (__DEV__) console.error('[AuthStore] checkTrialStatus error:', e);
     }
   },
 
@@ -204,6 +206,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       trialStartedAt: null,
       trialDaysLeft: 0,
     }),
+}), {
+  name: 'auth-store',
+  storage: createJSONStorage(() => zustandMMKVStorage),
+  partialize: (state) => ({
+    plan: state.plan,
+    scanCount: state.scanCount,
+    trialStartedAt: state.trialStartedAt,
+    trialDaysLeft: state.trialDaysLeft,
+  }),
 }));
 
 export { FREE_DOC_LIMIT, FREE_QUESTION_LIMIT, TRIAL_DAYS };

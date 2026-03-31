@@ -21,7 +21,7 @@ export default function AIConsentScreen() {
     try {
       const AS = (await import('@react-native-async-storage/async-storage')).default;
       await AS.setItem('mmkv_ai_consent_accepted', 'true');
-    } catch {}
+    } catch (e) { if (__DEV__) console.error('[AIConsent] AsyncStorage error:', e); }
 
     // Check if onboarding is needed (first launch) or returning user
     const onboardingDone = mmkvStorage.getBoolean(MMKV_KEYS.ONBOARDING_DONE);

@@ -5,8 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-// KeyboardProvider — requires native build with keyboard-controller
-// import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { AuthProvider } from '../src/providers/AuthProvider';
@@ -30,8 +28,8 @@ if (SENTRY_DSN && !SENTRY_DSN.includes('placeholder') && Platform.OS !== 'web') 
       tracesSampleRate: 0.2,
       enableAutoSessionTracking: true,
     });
-  } catch {
-    // Sentry not available in dev build
+  } catch (e) {
+    if (__DEV__) console.error('[Sentry] init error:', e);
   }
 }
 

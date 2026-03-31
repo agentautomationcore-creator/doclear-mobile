@@ -83,8 +83,8 @@ export default function OverviewScreen() {
         if (res.ok) {
           setSummaryData(await res.json());
         }
-      } catch {
-        // Silent
+      } catch (e) {
+        if (__DEV__) console.error('[Overview] summary fetch error:', e);
       } finally {
         setSummaryLoading(false);
       }

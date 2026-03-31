@@ -37,7 +37,8 @@ export async function getOfferings() {
     const { default: Purchases } = await import('react-native-purchases');
     const offerings = await Purchases.getOfferings();
     return offerings;
-  } catch {
+  } catch (e) {
+    if (__DEV__) console.error('[Purchases] getOfferings error:', e);
     return null;
   }
 }
@@ -60,7 +61,8 @@ export async function restorePurchases() {
     const { default: Purchases } = await import('react-native-purchases');
     const info = await Purchases.restorePurchases();
     return info;
-  } catch {
+  } catch (e) {
+    if (__DEV__) console.error('[Purchases] restorePurchases error:', e);
     return null;
   }
 }
@@ -70,7 +72,8 @@ export async function getCustomerInfo() {
     const { default: Purchases } = await import('react-native-purchases');
     const info = await Purchases.getCustomerInfo();
     return info;
-  } catch {
+  } catch (e) {
+    if (__DEV__) console.error('[Purchases] getCustomerInfo error:', e);
     return null;
   }
 }

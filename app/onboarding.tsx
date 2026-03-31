@@ -147,6 +147,7 @@ export default function OnboardingScreen() {
           style={{ paddingVertical: 8, paddingHorizontal: 12, minHeight: MIN_TOUCH, justifyContent: 'center' }}
           accessibilityRole="button"
           accessibilityLabel={currentStep === TOTAL_STEPS - 1 ? t('onboarding.start') : t('onboarding.skip')}
+          accessibilityHint={currentStep === TOTAL_STEPS - 1 ? 'Double tap to start using the app' : 'Double tap to skip the onboarding setup'}
         >
           <Text style={{ fontSize: FONT_SIZE.caption, color: currentStep === TOTAL_STEPS - 1 ? COLORS.accent : COLORS.textSecondary, fontWeight: currentStep === TOTAL_STEPS - 1 ? '700' : '500' }}>
             {currentStep === TOTAL_STEPS - 1 ? t('onboarding.start') : t('onboarding.skip')}
@@ -159,6 +160,8 @@ export default function OnboardingScreen() {
         style={{ flex: 1 }}
         initialPage={0}
         onPageSelected={(e) => setCurrentStep(e.nativeEvent.position)}
+        accessibilityLabel="Onboarding steps"
+        accessibilityHint="Swipe left or right to navigate between setup steps"
       >
         {/* Step 1: Language */}
         <View key="lang" style={{ flex: 1, paddingHorizontal: 24 }}>
@@ -184,6 +187,7 @@ export default function OnboardingScreen() {
                 }}
                 accessibilityRole="button"
                 accessibilityLabel={LOCALE_NAMES[lang]}
+                accessibilityHint="Double tap to select this language"
               >
                 <Text style={{ fontSize: FONT_SIZE.body, fontWeight: selectedLang === lang ? '700' : '400', color: selectedLang === lang ? COLORS.accent : COLORS.textPrimary, flex: 1 }}>
                   {LOCALE_NAMES[lang]}
@@ -198,6 +202,7 @@ export default function OnboardingScreen() {
         </View>
 
         {/* Step 2: Country */}
+
         <View key="country" style={{ flex: 1, paddingHorizontal: 24 }}>
           <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary, marginBottom: 8 }}>
             {t('onboarding.country_title')}
@@ -336,7 +341,7 @@ export default function OnboardingScreen() {
           <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textSecondary, textAlign: 'center', marginBottom: 40 }}>
             {t('onboarding.ready_desc')}
           </Text>
-          <Button title={t('onboarding.start')} onPress={handleComplete} style={{ width: '100%' }} />
+          <Button title={t('onboarding.start')} onPress={handleComplete} style={{ width: '100%' }} accessibilityHint="Double tap to finish setup and start scanning documents" />
         </View>
       </PagerView>
     </SafeAreaView>
