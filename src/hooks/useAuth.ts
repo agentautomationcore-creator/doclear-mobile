@@ -12,6 +12,7 @@ export function useAuth() {
   const canUpload = useAuthStore((s) => s.canUpload);
   const canAskQuestion = useAuthStore((s) => s.canAskQuestion);
   const dailyQuestions = useAuthStore((s) => s.dailyQuestions);
+  const trialDaysLeft = useAuthStore((s) => s.trialDaysLeft);
 
   return {
     user,
@@ -25,5 +26,6 @@ export function useAuth() {
     canUpload,
     canAskQuestion,
     dailyQuestions,
+    trialDaysLeft,
   };
 }

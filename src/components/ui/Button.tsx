@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, Text, ActivityIndicator, type ViewStyle, type TextStyle } from 'react-native';
 import { COLORS, RADIUS, MIN_TOUCH, FONT_SIZE } from '../../lib/constants';
-import { useResponsive } from '../../hooks/useResponsive';
 
 type Variant = 'primary' | 'secondary' | 'danger';
 
@@ -14,24 +13,6 @@ interface ButtonProps {
   style?: ViewStyle;
 }
 
-const VARIANT_BG: Record<Variant, string> = {
-  primary: COLORS.accent,
-  secondary: 'transparent',
-  danger: COLORS.danger,
-};
-
-const VARIANT_TEXT: Record<Variant, string> = {
-  primary: '#FFFFFF',
-  secondary: COLORS.accent,
-  danger: '#FFFFFF',
-};
-
-const VARIANT_BORDER: Record<Variant, string> = {
-  primary: COLORS.accent,
-  secondary: COLORS.accent,
-  danger: COLORS.danger,
-};
-
 export function Button({
   title,
   onPress,
@@ -40,47 +21,53 @@ export function Button({
   loading = false,
   style,
 }: ButtonProps) {
-  const { isDesktop } = useResponsive();
-  const bgColor = VARIANT_BG[variant];
-  const textColor = VARIANT_TEXT[variant];
-  const borderColor = VARIANT_BORDER[variant];
+  const [pressed, setPressed] = useState(false);
 
-  const containerStyle: ViewStyle = {
-    minHeight: MIN_TOUCH,
-    borderRadius: RADIUS.button,
-    backgroundColor: disabled ? '#D1D5DB' : bgColor,
-    borderWidth: variant === 'secondary' ? 1.5 : 0,
-    borderColor: disabled ? '#D1D5DB' : borderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    opacity: disabled ? 0.6 : 1,
-    ...(isDesktop ? { maxWidth: 400, alignSelf: 'center' as const, width: '100%' as any } : {}),
-    ...style,
-  };
+  const bgColor = variant === 'primary' ? '#1E293B'
+    : variant === 'secondary' ? '#FFFFFF'
+    : COLORS.danger;
 
-  const textStyle: TextStyle = {
-    color: disabled ? '#9CA3AF' : textColor,
-    fontSize: FONT_SIZE.body,
-    fontWeight: '600',
-  };
+  const textColor = variant === 'secondary' ? '#1E293B' : '#FFFFFF';
+
+  const borderColor = variant === 'primary' ? '#1E293B'
+    : variant === 'secondary' ? '#E5E7EB'
+    : COLORS.danger;
 
   return (
     <Pressable
       onPress={onPress}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
       disabled={disabled || loading}
-      style={({ pressed }) => [
-        containerStyle,
-        pressed && !disabled && { opacity: 0.85 },
-      ]}
+      style={{
+        minHeight: 52,
+        borderRadius: 12,
+        backgroundColor: disabled ? '#D1D5DB' : bgColor,
+        borderWidth: variant === 'secondary' ? 1.5 : 0,
+        borderColor: disabled ? '#D1D5DB' : borderColor,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        opacity: disabled ? 0.6 : pressed ? 0.85 : 1,
+        ...style,
+      }}
       accessibilityRole="button"
       accessibilityLabel={title}
     >
       {loading ? (
         <ActivityIndicator color={textColor} size="small" />
       ) : (
-        <Text allowFontScaling style={textStyle}>{title}</Text>
+        <Text
+          allowFontScaling
+          style={{
+            color: disabled ? '#9CA3AF' : textColor,
+            fontSize: 16,
+            fontWeight: '600',
+          }}
+        >
+          {title}
+        </Text>
       )}
     </Pressable>
   );

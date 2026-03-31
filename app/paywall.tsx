@@ -4,69 +4,46 @@ import {
   Text,
   ScrollView,
   Pressable,
-  Platform,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import * as Linking from 'expo-linking';
-import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH, API_URL } from '../src/lib/constants';
+import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH } from '../src/lib/constants';
 import { useAuth } from '../src/hooks/useAuth';
-import { supabase } from '../src/lib/supabase';
 import { Button } from '../src/components/ui/Button';
 import { PageContainer } from '../src/components/layout/PageContainer';
 import { getOfferings, purchasePackage, restorePurchases } from '../src/lib/purchases';
 import { track } from '../src/lib/analytics';
 
-type SelectedPlan = 'monthly' | 'annual' | 'lifetime';
-
-const FEATURES = [
-  'Unlimited documents',
-  'Unlimited AI chat questions',
-  'PDF + Excel export',
-  'Multi-upload',
-  'All formats (PDF, DOCX, XLSX, PPTX, photos)',
-  'Priority support',
-];
+type SelectedPlan = 'monthly' | 'annual';
 
 export default function PaywallScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { user } = useAuth();
+  const { plan, trialDaysLeft, isAnonymous } = useAuth();
   const [selected, setSelected] = useState<SelectedPlan>('annual');
   const [loading, setLoading] = useState(false);
   const [offerings, setOfferings] = useState<any>(null);
 
   useEffect(() => {
     track('paywall_shown');
-    // Load RevenueCat offerings on ALL platforms (iOS, Android, Web)
     getOfferings().then(setOfferings).catch(() => {});
   }, []);
 
   const handlePurchase = async () => {
     setLoading(true);
     try {
-      // RevenueCat on ALL platforms (iOS, Android, Web)
-      // Web uses RevenueCat Web Billing with Stripe as billing provider
       const currentOffering = offerings?.current;
       if (!currentOffering) {
-        Alert.alert('Store not available', 'Please try again later.');
+        Alert.alert(t('common.error'), t('paywall.store_unavailable'));
         setLoading(false);
         return;
       }
 
-      let pkg;
-      if (selected === 'monthly') {
-        pkg = currentOffering.monthly;
-      } else if (selected === 'annual') {
-        pkg = currentOffering.annual;
-      } else {
-        pkg = currentOffering.lifetime;
-      }
-
+      const pkg = selected === 'monthly' ? currentOffering.monthly : currentOffering.annual;
       if (!pkg) {
-        Alert.alert('Package not available', 'Please try again later.');
+        Alert.alert(t('common.error'), t('paywall.store_unavailable'));
         setLoading(false);
         return;
       }
@@ -78,7 +55,7 @@ export default function PaywallScreen() {
       }
     } catch (error: any) {
       if (!error?.userCancelled) {
-        Alert.alert('Error', 'Purchase failed. Please try again.');
+        Alert.alert(t('common.error'), t('paywall.purchase_failed'));
       }
     } finally {
       setLoading(false);
@@ -90,62 +67,61 @@ export default function PaywallScreen() {
     try {
       const info = await restorePurchases();
       if (info) {
-        Alert.alert('Restored', 'Your purchases have been restored.');
+        Alert.alert(t('paywall.restored'), t('paywall.restored_desc'));
         router.back();
       } else {
-        Alert.alert('No purchases found', 'No active subscriptions were found.');
+        Alert.alert(t('paywall.no_purchases'), t('paywall.no_purchases_desc'));
       }
     } catch {
-      Alert.alert('Error', 'Could not restore purchases.');
+      Alert.alert(t('common.error'), t('common.retry'));
     } finally {
       setLoading(false);
     }
   };
 
+  const trialExpired = !isAnonymous && plan === 'free' && trialDaysLeft === 0;
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
     <PageContainer>
       {/* Header */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 12,
-          paddingVertical: 8,
-        }}
-      >
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8 }}>
         <Pressable
           onPress={() => router.back()}
           style={{ width: MIN_TOUCH, height: MIN_TOUCH, justifyContent: 'center' }}
           accessibilityRole="button"
-          accessibilityLabel="Close"
+          accessibilityLabel={t('common.close')}
         >
           <Text style={{ fontSize: 20, color: COLORS.textSecondary }}>{'\u2715'}</Text>
         </Pressable>
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }}>
-        <Text
-          style={{
-            fontSize: 28,
-            fontWeight: '800',
-            color: COLORS.textPrimary,
-            textAlign: 'center',
-            marginBottom: 8,
-          }}
-        >
-          Upgrade to DocLear Pro
+        {/* Title */}
+        <Text style={{ fontSize: 28, fontWeight: '800', color: COLORS.textPrimary, textAlign: 'center', marginBottom: 8 }}>
+          {t('paywall.pro_title')}
         </Text>
-        <Text
-          style={{
-            fontSize: FONT_SIZE.body,
-            color: COLORS.textSecondary,
-            textAlign: 'center',
-            marginBottom: 32,
-          }}
-        >
-          Unlimited documents and AI questions
+        <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textSecondary, textAlign: 'center', marginBottom: 8 }}>
+          {t('paywall.pro_desc')}
         </Text>
+
+        {/* Anon: create account for trial */}
+        {isAnonymous ? (
+          <View style={{ backgroundColor: '#dbeafe', borderRadius: 12, padding: 14, marginBottom: 20 }}>
+            <Text style={{ fontSize: FONT_SIZE.caption, fontWeight: '600', color: '#1e40af', textAlign: 'center' }}>
+              {t('paywall.anon_trial_hint')}
+            </Text>
+          </View>
+        ) : null}
+
+        {/* Trial expired banner */}
+        {trialExpired ? (
+          <View style={{ backgroundColor: '#FEF3C7', borderRadius: 12, padding: 14, marginBottom: 20 }}>
+            <Text style={{ fontSize: FONT_SIZE.caption, fontWeight: '600', color: '#92400E', textAlign: 'center' }}>
+              {t('trial.expired')}
+            </Text>
+          </View>
+        ) : null}
 
         {/* Monthly Card */}
         <Pressable
@@ -156,43 +132,32 @@ export default function PaywallScreen() {
             borderRadius: RADIUS.card,
             padding: 20,
             marginBottom: 12,
+            marginTop: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
           }}
           accessibilityRole="button"
+          accessibilityLabel={t('paywall.monthly')}
         >
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <View>
-              <Text style={{ fontSize: FONT_SIZE.headingSm, fontWeight: '700', color: COLORS.textPrimary }}>
-                Monthly
-              </Text>
-            </View>
+          {/* Radio left */}
+          <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: selected === 'monthly' ? COLORS.accent : '#D1D5DB', alignItems: 'center', justifyContent: 'center', marginRight: 14 }}>
+            {selected === 'monthly' ? <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.accent }} /> : null}
+          </View>
+          {/* Content */}
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={{ fontSize: FONT_SIZE.headingSm, fontWeight: '700', color: COLORS.textPrimary }}>
+              {t('paywall.monthly')}
+            </Text>
             <View style={{ alignItems: 'flex-end' }}>
               <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary }}>
                 {'\u20AC'}9.99
               </Text>
-              <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>/month</Text>
+              <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>/{t('paywall.per_month')}</Text>
             </View>
-          </View>
-          <View
-            style={{
-              position: 'absolute',
-              top: 12,
-              right: 12,
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              borderWidth: 2,
-              borderColor: selected === 'monthly' ? COLORS.accent : '#D1D5DB',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {selected === 'monthly' ? (
-              <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.accent }} />
-            ) : null}
           </View>
         </Pressable>
 
-        {/* Annual Card (highlighted) */}
+        {/* Annual Card */}
         <Pressable
           onPress={() => setSelected('annual')}
           style={{
@@ -200,147 +165,63 @@ export default function PaywallScreen() {
             borderColor: selected === 'annual' ? COLORS.accent : 'rgba(0,0,0,0.08)',
             borderRadius: RADIUS.card,
             padding: 20,
-            marginBottom: 12,
-            position: 'relative',
+            marginBottom: 24,
             overflow: 'hidden',
+            flexDirection: 'row',
+            alignItems: 'center',
           }}
           accessibilityRole="button"
+          accessibilityLabel={t('paywall.annual')}
         >
           {/* Best value ribbon */}
-          <View
-            style={{
-              position: 'absolute',
-              top: 12,
-              left: -30,
-              backgroundColor: COLORS.success,
-              paddingHorizontal: 40,
-              paddingVertical: 4,
-              transform: [{ rotate: '-30deg' }],
-            }}
-          >
-            <Text style={{ fontSize: 10, fontWeight: '700', color: '#FFFFFF' }}>BEST VALUE</Text>
+          <View style={{ position: 'absolute', top: 12, left: -30, backgroundColor: COLORS.success, paddingHorizontal: 40, paddingVertical: 4, transform: [{ rotate: '-30deg' }], zIndex: 1 }}>
+            <Text style={{ fontSize: 10, fontWeight: '700', color: '#FFFFFF' }}>{t('paywall.best_value')}</Text>
           </View>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <View>
+          {/* Radio left */}
+          <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: selected === 'annual' ? COLORS.accent : '#D1D5DB', alignItems: 'center', justifyContent: 'center', marginRight: 14 }}>
+            {selected === 'annual' ? <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.accent }} /> : null}
+          </View>
+          {/* Content */}
+          <View style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontSize: FONT_SIZE.headingSm, fontWeight: '700', color: COLORS.textPrimary }}>
-                Annual
+                {t('paywall.annual')}
               </Text>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary }}>
+                  {'\u20AC'}69.99
+                </Text>
+                <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>/{t('paywall.per_year')} ({'\u20AC'}5.83/{t('paywall.per_month')})</Text>
+              </View>
             </View>
-            <View style={{ alignItems: 'flex-end' }}>
-              <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary }}>
-                {'\u20AC'}69.99
-              </Text>
-              <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>/year ({'\u20AC'}5.83/mo)</Text>
+            <View style={{ marginTop: 8, backgroundColor: COLORS.success + '15', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' }}>
+              <Text style={{ fontSize: 12, fontWeight: '600', color: COLORS.success }}>{t('paywall.save_42')}</Text>
             </View>
-          </View>
-          <View
-            style={{
-              marginTop: 8,
-              backgroundColor: COLORS.success + '15',
-              paddingHorizontal: 10,
-              paddingVertical: 4,
-              borderRadius: 6,
-              alignSelf: 'flex-start',
-            }}
-          >
-            <Text style={{ fontSize: 12, fontWeight: '600', color: COLORS.success }}>Save 42%</Text>
-          </View>
-          <View
-            style={{
-              position: 'absolute',
-              top: 12,
-              right: 12,
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              borderWidth: 2,
-              borderColor: selected === 'annual' ? COLORS.accent : '#D1D5DB',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {selected === 'annual' ? (
-              <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.accent }} />
-            ) : null}
-          </View>
-        </Pressable>
-
-        {/* Lifetime Card */}
-        <Pressable
-          onPress={() => setSelected('lifetime')}
-          style={{
-            borderWidth: 2,
-            borderColor: selected === 'lifetime' ? COLORS.accent : 'rgba(0,0,0,0.08)',
-            borderRadius: RADIUS.card,
-            padding: 20,
-            marginBottom: 24,
-          }}
-          accessibilityRole="button"
-        >
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <View>
-              <Text style={{ fontSize: FONT_SIZE.headingSm, fontWeight: '700', color: COLORS.textPrimary }}>
-                Lifetime
-              </Text>
-              <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, marginTop: 2 }}>
-                One-time payment
-              </Text>
-            </View>
-            <View style={{ alignItems: 'flex-end' }}>
-              <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary }}>
-                {'\u20AC'}149.99
-              </Text>
-              <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>forever</Text>
-            </View>
-          </View>
-          <View
-            style={{
-              position: 'absolute',
-              top: 12,
-              right: 12,
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              borderWidth: 2,
-              borderColor: selected === 'lifetime' ? COLORS.accent : '#D1D5DB',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {selected === 'lifetime' ? (
-              <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.accent }} />
-            ) : null}
           </View>
         </Pressable>
 
         {/* Features */}
         <View style={{ marginBottom: 24 }}>
-          {FEATURES.map((feature, i) => (
+          {[
+            t('paywall.feature_unlimited'),
+            t('paywall.feature_questions'),
+            t('paywall.feature_export'),
+            t('paywall.feature_formats'),
+            t('paywall.feature_priority'),
+          ].map((feature, i) => (
             <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-              <View
-                style={{
-                  width: 22,
-                  height: 22,
-                  borderRadius: 11,
-                  backgroundColor: COLORS.accent + '15',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: 10,
-                }}
-              >
+              <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: COLORS.accent + '15', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
                 <Text style={{ fontSize: 12, color: COLORS.accent, fontWeight: '700' }}>{'\u2713'}</Text>
               </View>
-              <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textPrimary, flex: 1 }}>
-                {feature}
-              </Text>
+              <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textPrimary, flex: 1 }}>{feature}</Text>
             </View>
           ))}
         </View>
 
         {/* CTA */}
         <Button
-          title={loading ? 'Processing...' : 'Start 7-day free trial'}
+          title={loading ? t('common.loading') : t('paywall.subscribe')}
           onPress={handlePurchase}
           loading={loading}
           style={{ marginBottom: 16 }}
@@ -351,19 +232,17 @@ export default function PaywallScreen() {
           onPress={handleRestore}
           style={{ alignItems: 'center', paddingVertical: 12, minHeight: MIN_TOUCH }}
           accessibilityRole="button"
+          accessibilityLabel={t('paywall.restore')}
         >
-          <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.accent }}>
-            Restore purchases
-          </Text>
+          <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.accent }}>{t('paywall.restore')}</Text>
         </Pressable>
 
-        {/* Trust signals */}
+        {/* Trust */}
         <View style={{ marginTop: 16, gap: 10 }}>
           {[
-            'Cancel anytime, no hidden charges',
-            '14-day money-back guarantee',
-            'Your documents are not used for AI training',
-            'Trusted by thousands of users',
+            t('paywall.trust_cancel'),
+            t('paywall.trust_guarantee'),
+            t('paywall.trust_no_training'),
           ].map((text, i) => (
             <View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={{ fontSize: 12, color: COLORS.success, marginRight: 6 }}>{'\u2713'}</Text>

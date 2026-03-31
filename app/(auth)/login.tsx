@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../src/lib/supabase';
 import { Button } from '../../src/components/ui/Button';
 import { Input } from '../../src/components/ui/Input';
@@ -42,16 +43,32 @@ export default function LoginScreen() {
     }
   }
 
-  async function handleGoogleSignIn() {
-    // Google OAuth will be implemented with expo-auth-session
-    // Placeholder for Stage 2
-    setError('Google Sign-In coming soon');
-  }
-
   async function handleAppleSignIn() {
-    // Apple Sign In will be implemented with expo-apple-authentication
-    // Placeholder for Stage 2
-    setError('Apple Sign-In coming soon');
+    try {
+      const AppleAuth = await import('expo-apple-authentication');
+      const credential = await AppleAuth.signInAsync({
+        requestedScopes: [
+          AppleAuth.AppleAuthenticationScope.EMAIL,
+          AppleAuth.AppleAuthenticationScope.FULL_NAME,
+        ],
+      });
+
+      if (credential.identityToken) {
+        const { error: authError } = await supabase.auth.signInWithIdToken({
+          provider: 'apple',
+          token: credential.identityToken,
+        });
+        if (authError) {
+          setError(authError.message);
+        } else {
+          router.replace('/(tabs)');
+        }
+      }
+    } catch (e: any) {
+      if (e?.code !== 'ERR_REQUEST_CANCELED') {
+        setError('Apple Sign-In failed');
+      }
+    }
   }
 
   return (
@@ -68,6 +85,16 @@ export default function LoginScreen() {
           }}
           keyboardShouldPersistTaps="handled"
         >
+          {/* Back button */}
+          <Pressable
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            style={{ alignSelf: 'flex-start', paddingVertical: 8, paddingRight: 16, marginBottom: 16 }}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.back')}
+          >
+            <Text style={{ fontSize: 16, color: COLORS.accent }}>{'\u2190'} {t('common.back')}</Text>
+          </Pressable>
+
           <Text
             style={{
               fontSize: FONT_SIZE.heading,
@@ -90,50 +117,37 @@ export default function LoginScreen() {
             {t('auth.subtitle')}
           </Text>
 
-          {/* Social Sign-In Buttons */}
-          <Pressable
-            onPress={handleGoogleSignIn}
-            style={({ pressed }) => ({
-              minHeight: MIN_TOUCH,
-              borderRadius: RADIUS.button,
-              borderWidth: 1.5,
-              borderColor: COLORS.border,
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingVertical: 12,
-              marginBottom: 12,
-              opacity: pressed ? 0.85 : 1,
-            })}
-          >
-            <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textPrimary, fontWeight: '500' }}>
-              {t('auth.with_google')}
-            </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={handleAppleSignIn}
-            style={({ pressed }) => ({
-              minHeight: MIN_TOUCH,
-              borderRadius: RADIUS.button,
-              backgroundColor: '#000000',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingVertical: 12,
-              marginBottom: 24,
-              opacity: pressed ? 0.85 : 1,
-            })}
-          >
-            <Text style={{ fontSize: FONT_SIZE.body, color: '#FFFFFF', fontWeight: '500' }}>
-              {t('auth.with_apple')}
-            </Text>
-          </Pressable>
+          {/* Apple Sign-In — per Apple HIG: black bg, white text, Apple logo */}
+          {Platform.OS === 'ios' ? (
+            <Pressable
+              onPress={handleAppleSignIn}
+              style={{
+                minHeight: 52,
+                borderRadius: 12,
+                backgroundColor: '#000000',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                paddingVertical: 12,
+                marginBottom: 16,
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={t('auth.with_apple')}
+            >
+              <Ionicons name="logo-apple" size={20} color="#FFFFFF" />
+              <Text style={{ fontSize: FONT_SIZE.body, color: '#FFFFFF', fontWeight: '600' }}>
+                {t('auth.with_apple')}
+              </Text>
+            </Pressable>
+          ) : null}
 
           {/* Divider */}
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              marginBottom: 24,
+              marginBottom: 20,
             }}
           >
             <View style={{ flex: 1, height: 1, backgroundColor: COLORS.border }} />

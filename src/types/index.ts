@@ -130,6 +130,8 @@ export interface Document {
   chatHistory: ChatMessage[];
   language: string;
   recommendations?: Recommendation[];
+  specialistType?: string;
+  specialistRecommendation?: string;
 }
 
 export type ImmigrationStatus =

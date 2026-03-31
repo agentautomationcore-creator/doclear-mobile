@@ -25,6 +25,9 @@ async function loadUserProfile(userId: string) {
     // Profile not found — keep defaults
   }
 
+  // Check trial status for registered (non-anonymous) users
+  store.checkTrialStatus().catch(() => {});
+
   // Fetch daily question count
   store.fetchDailyQuestions().catch(() => {});
 }

@@ -1,14 +1,13 @@
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
- * MMKV instance for non-sensitive app cache.
+ * App cache for non-sensitive data.
  * Auth tokens go to expo-secure-store, NOT here.
  *
+ * Uses AsyncStorage as fallback (MMKV requires native module that may not be available).
  * Used for: locale, theme, AI consent flag, onboarding flag,
  * anonymous_user_id (for migration), cached preferences.
  */
-// @ts-expect-error MMKV is a native TurboModule, type resolution works at build time
-export const mmkv: InstanceType<typeof MMKV> = new MMKV({ id: 'doclear-cache' });
 
 // Keys
 export const MMKV_KEYS = {
@@ -20,31 +19,59 @@ export const MMKV_KEYS = {
   LAST_SYNC_AT: 'last_sync_at',
 } as const;
 
-// Typed helpers
+// In-memory cache for sync access
+const memoryCache = new Map<string, string>();
+
+// Typed helpers — sync API backed by in-memory cache, persisted to AsyncStorage
 export const mmkvStorage = {
-  getString: (key: string): string | undefined => mmkv.getString(key),
-  setString: (key: string, value: string): void => mmkv.set(key, value),
-  getBoolean: (key: string): boolean => mmkv.getBoolean(key) ?? false,
-  setBoolean: (key: string, value: boolean): void => mmkv.set(key, value),
-  getNumber: (key: string): number => mmkv.getNumber(key) ?? 0,
-  setNumber: (key: string, value: number): void => mmkv.set(key, value),
-  delete: (key: string): void => mmkv.delete(key),
-  clearAll: (): void => mmkv.clearAll(),
+  getString: (key: string): string | undefined => memoryCache.get(key),
+  setString: (key: string, value: string): void => {
+    memoryCache.set(key, value);
+    AsyncStorage.setItem(`mmkv_${key}`, value).catch(() => {});
+  },
+  getBoolean: (key: string): boolean => memoryCache.get(key) === 'true',
+  setBoolean: (key: string, value: boolean): void => {
+    memoryCache.set(key, value ? 'true' : 'false');
+    AsyncStorage.setItem(`mmkv_${key}`, value ? 'true' : 'false').catch(() => {});
+  },
+  getNumber: (key: string): number => {
+    const v = memoryCache.get(key);
+    return v ? Number(v) : 0;
+  },
+  setNumber: (key: string, value: number): void => {
+    memoryCache.set(key, String(value));
+    AsyncStorage.setItem(`mmkv_${key}`, String(value)).catch(() => {});
+  },
+  delete: (key: string): void => {
+    memoryCache.delete(key);
+    AsyncStorage.removeItem(`mmkv_${key}`).catch(() => {});
+  },
+  clearAll: (): void => {
+    memoryCache.clear();
+  },
 };
 
+// Load persisted values into memory cache on startup
+export async function loadMMKVCache(): Promise<void> {
+  for (const key of Object.values(MMKV_KEYS)) {
+    try {
+      const value = await AsyncStorage.getItem(`mmkv_${key}`);
+      if (value !== null) memoryCache.set(key, value);
+    } catch { /* silent */ }
+  }
+}
+
 /**
- * Zustand persist storage adapter for MMKV.
- * Use with zustand/middleware persist().
+ * Zustand persist storage adapter.
  */
 export const zustandMMKVStorage = {
-  getItem: (name: string): string | null => {
-    const value = mmkv.getString(name);
-    return value ?? null;
-  },
+  getItem: (name: string): string | null => memoryCache.get(name) ?? null,
   setItem: (name: string, value: string): void => {
-    mmkv.set(name, value);
+    memoryCache.set(name, value);
+    AsyncStorage.setItem(`mmkv_${name}`, value).catch(() => {});
   },
   removeItem: (name: string): void => {
-    mmkv.delete(name);
+    memoryCache.delete(name);
+    AsyncStorage.removeItem(`mmkv_${name}`).catch(() => {});
   },
 };

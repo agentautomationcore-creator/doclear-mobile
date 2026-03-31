@@ -81,15 +81,15 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="assistant"
           options={{
-            title: t('tabs.assistant'),
+            title: t('tabs.overview'),
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
-                name="chatbubble-outline"
+                name="bar-chart-outline"
                 size={22}
                 color={color}
               />
             ),
-            tabBarAccessibilityLabel: t('tabs.assistant'),
+            tabBarAccessibilityLabel: t('tabs.overview'),
           }}
         />
         <Tabs.Screen

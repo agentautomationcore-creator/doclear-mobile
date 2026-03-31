@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH } from '../../src/lib/constants';
 import { useDocumentsList } from '../../src/hooks/useDocuments';
 import { useAuth } from '../../src/hooks/useAuth';
@@ -96,7 +97,7 @@ export default function DashboardScreen() {
             marginBottom: 16,
           }}
         >
-          <Text style={{ fontSize: 28 }}>{'\u2B1C'}</Text>
+          <Ionicons name="document-text-outline" size={28} color={COLORS.textSecondary} />
         </View>
         <Text
           allowFontScaling
@@ -163,7 +164,7 @@ export default function DashboardScreen() {
             </Text>
           </View>
         ) : null}
-        {(plan === 'free' || plan === 'starter') && <ScanCounter />}
+        {plan === 'free' && <ScanCounter />}
         {/* Search */}
         <View style={{ paddingHorizontal: 16, marginBottom: 12 }}>
           <TextInput
@@ -194,44 +195,7 @@ export default function DashboardScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
     <PageContainer>
-      {/* Header */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-        }}
-      >
-        <Pressable onPress={() => router.push('/')} accessibilityRole="button">
-          <Text
-            allowFontScaling
-            style={{
-              fontSize: FONT_SIZE.heading,
-              fontWeight: '800',
-              color: COLORS.textPrimary,
-            }}
-          >
-            DocLear
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => router.push('/(tabs)/profile')}
-          style={{
-            width: MIN_TOUCH,
-            height: MIN_TOUCH,
-            borderRadius: MIN_TOUCH / 2,
-            backgroundColor: '#F3F4F6',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={t('tabs.profile')}
-        >
-          <Text style={{ fontSize: 18, color: COLORS.textSecondary }}>{'\u2699'}</Text>
-        </Pressable>
-      </View>
+      {/* Header removed — title "Documents" is already in tab bar header */}
 
       {isLoading ? (
         <ListSkeleton count={4} />
@@ -258,33 +222,7 @@ export default function DashboardScreen() {
         />
       )}
 
-      {/* FAB */}
-      <Pressable
-        onPress={() => router.push('/(tabs)/scan')}
-        style={{
-          position: 'absolute',
-          bottom: Platform.OS === 'ios' ? 100 : 80,
-          right: 20,
-          width: 56,
-          height: 56,
-          borderRadius: 28,
-          backgroundColor: COLORS.accent,
-          alignItems: 'center',
-          justifyContent: 'center',
-          ...(Platform.OS === 'ios'
-            ? {
-                shadowColor: COLORS.accent,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-              }
-            : { elevation: 6 }),
-        }}
-        accessibilityRole="button"
-        accessibilityLabel={t('scan.upload_file')}
-      >
-        <Text style={{ fontSize: 28, color: '#FFFFFF', fontWeight: '300' }}>+</Text>
-      </Pressable>
+      {/* FAB removed — Scanner tab handles document upload */}
     </PageContainer>
     </SafeAreaView>
   );

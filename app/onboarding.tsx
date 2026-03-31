@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import PagerView from 'react-native-pager-view';
 import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH } from '../src/lib/constants';
 import { useUIStore } from '../src/store/ui.store';
 import { useAuthStore } from '../src/store/auth.store';
@@ -39,9 +40,9 @@ const STATUS_OPTIONS: { key: ImmigrationStatus; labelKey: string }[] = [
 ];
 
 const USE_CASES = [
-  { key: 'study', icon: 'S' },
-  { key: 'work', icon: 'W' },
-  { key: 'personal', icon: 'P' },
+  { key: 'study', icon: 'school-outline' as const, labelKey: 'onboarding.usecase_study' },
+  { key: 'work', icon: 'briefcase-outline' as const, labelKey: 'onboarding.usecase_work' },
+  { key: 'personal', icon: 'home-outline' as const, labelKey: 'onboarding.usecase_personal' },
 ];
 
 export default function OnboardingScreen() {
@@ -139,16 +140,16 @@ export default function OnboardingScreen() {
         ))}
       </View>
 
-      {/* Skip button */}
+      {/* Skip / Start button */}
       <View style={{ alignItems: 'flex-end', paddingHorizontal: 24, paddingTop: 8 }}>
         <Pressable
-          onPress={handleSkip}
+          onPress={currentStep === TOTAL_STEPS - 1 ? handleComplete : handleSkip}
           style={{ paddingVertical: 8, paddingHorizontal: 12, minHeight: MIN_TOUCH, justifyContent: 'center' }}
           accessibilityRole="button"
-          accessibilityLabel={t('onboarding.skip')}
+          accessibilityLabel={currentStep === TOTAL_STEPS - 1 ? t('onboarding.start') : t('onboarding.skip')}
         >
-          <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, fontWeight: '500' }}>
-            {t('onboarding.skip')}
+          <Text style={{ fontSize: FONT_SIZE.caption, color: currentStep === TOTAL_STEPS - 1 ? COLORS.accent : COLORS.textSecondary, fontWeight: currentStep === TOTAL_STEPS - 1 ? '700' : '500' }}>
+            {currentStep === TOTAL_STEPS - 1 ? t('onboarding.start') : t('onboarding.skip')}
           </Text>
         </Pressable>
       </View>
@@ -164,7 +165,7 @@ export default function OnboardingScreen() {
           <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary, marginBottom: 8 }}>
             {t('onboarding.choose_language')}
           </Text>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }} style={{ flex: 1 }}>
             {LANGUAGES.map((lang) => (
               <Pressable
                 key={lang}
@@ -191,7 +192,7 @@ export default function OnboardingScreen() {
               </Pressable>
             ))}
           </ScrollView>
-          <View style={{ position: 'absolute', bottom: 24, start: 24, end: 24 }}>
+          <View style={{ paddingVertical: 16 }}>
             <Button title={t('onboarding.next')} onPress={goNext} />
           </View>
         </View>
@@ -201,7 +202,7 @@ export default function OnboardingScreen() {
           <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary, marginBottom: 8 }}>
             {t('onboarding.country_title')}
           </Text>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }} style={{ flex: 1 }}>
             {COUNTRIES.map((code) => (
               <Pressable
                 key={code}
@@ -229,7 +230,7 @@ export default function OnboardingScreen() {
               </Pressable>
             ))}
           </ScrollView>
-          <View style={{ position: 'absolute', bottom: 24, start: 24, end: 24 }}>
+          <View style={{ paddingVertical: 16 }}>
             <Button title={t('onboarding.next')} onPress={goNext} />
           </View>
         </View>
@@ -239,7 +240,7 @@ export default function OnboardingScreen() {
           <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary, marginBottom: 8 }}>
             {t('onboarding.status_title')}
           </Text>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }} style={{ flex: 1 }}>
             {STATUS_OPTIONS.map((opt) => (
               <Pressable
                 key={opt.key}
@@ -266,7 +267,7 @@ export default function OnboardingScreen() {
               </Pressable>
             ))}
           </ScrollView>
-          <View style={{ position: 'absolute', bottom: 24, start: 24, end: 24 }}>
+          <View style={{ paddingVertical: 16 }}>
             <Button title={t('onboarding.next')} onPress={goNext} />
           </View>
         </View>
@@ -274,7 +275,7 @@ export default function OnboardingScreen() {
         {/* Step 4: Use Case */}
         <View key="usecase" style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 32 }}>
           <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary, textAlign: 'center', marginBottom: 32 }}>
-            {t('onboarding.slide1_title')}
+            {t('onboarding.usecase_title')}
           </Text>
           <View style={{ gap: 12, marginBottom: 32 }}>
             {USE_CASES.map((uc) => (
@@ -303,12 +304,10 @@ export default function OnboardingScreen() {
                     marginEnd: 14,
                   }}
                 >
-                  <Text style={{ fontSize: 18, fontWeight: '700', color: selectedUseCase === uc.key ? COLORS.accent : COLORS.textSecondary }}>
-                    {uc.icon}
-                  </Text>
+                  <Ionicons name={uc.icon} size={20} color={selectedUseCase === uc.key ? COLORS.accent : COLORS.textSecondary} />
                 </View>
                 <Text style={{ fontSize: FONT_SIZE.body, fontWeight: selectedUseCase === uc.key ? '700' : '500', color: COLORS.textPrimary }}>
-                  {uc.key.charAt(0).toUpperCase() + uc.key.slice(1)}
+                  {t(uc.labelKey)}
                 </Text>
               </Pressable>
             ))}
@@ -332,10 +331,10 @@ export default function OnboardingScreen() {
             <Text style={{ fontSize: 40, color: COLORS.success }}>{'\u2713'}</Text>
           </View>
           <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary, textAlign: 'center', marginBottom: 12 }}>
-            {t('onboarding.slide3_title')}
+            {t('onboarding.ready_title')}
           </Text>
           <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textSecondary, textAlign: 'center', marginBottom: 40 }}>
-            {t('onboarding.slide3_desc')}
+            {t('onboarding.ready_desc')}
           </Text>
           <Button title={t('onboarding.start')} onPress={handleComplete} style={{ width: '100%' }} />
         </View>

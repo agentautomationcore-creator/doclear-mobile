@@ -9,18 +9,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#1a56db',
-        danger: '#dc2626',
-        warning: '#f59e0b',
-        success: '#16a34a',
-        'text-primary': '#1A1A2E',
-        'text-secondary': '#6B7280',
+        primary: '#1E293B',
+        danger: '#EF4444',
+        warning: '#F59E0B',
+        success: '#10B981',
+        'text-primary': '#0F172A',
+        'text-secondary': '#64748B',
         'card-bg': '#F8FAFC',
-        border: 'rgba(0,0,0,0.06)',
+        border: '#E5E7EB',
       },
       borderRadius: {
-        card: '20px',
-        btn: '14px',
+        card: '12px',
+        btn: '12px',
       },
       fontSize: {
         body: ['16px', '24px'],

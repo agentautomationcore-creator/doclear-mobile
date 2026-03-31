@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
+import { useAuthStore } from '../../src/store/auth.store';
 import { Button } from '../../src/components/ui/Button';
 import { Input } from '../../src/components/ui/Input';
 import { COLORS, FONT_SIZE, MIN_TOUCH } from '../../src/lib/constants';
@@ -26,28 +27,82 @@ export default function RegisterScreen() {
   async function handleRegister() {
     if (!email || !password) return;
     if (password.length < 6) {
-      setError(t('auth.password_min_length', { defaultValue: 'Password must be at least 6 characters' }));
+      setError(t('auth.password_min_length'));
       return;
     }
 
     setLoading(true);
     setError('');
 
-    const { data, error: authError } = await supabase.auth.signUp({
+    const isAnonymous = useAuthStore.getState().isAnonymous;
+
+    if (isAnonymous) {
+      // Convert anonymous user → preserve user_id and all documents
+      const { error: emailError } = await supabase.auth.updateUser({
+        email: email.trim(),
+      });
+
+      if (emailError) {
+        setLoading(false);
+        setError(emailError.message.includes('already been registered') ? t('auth.email_taken') : emailError.message);
+        return;
+      }
+
+      // Set password
+      const { error: pwError } = await supabase.auth.updateUser({
+        password,
+      });
+
+      if (pwError) {
+        setLoading(false);
+        setError(pwError.message);
+        return;
+      }
+
+      // Check if email confirmation is needed
+      const { data: { session } } = await supabase.auth.getSession();
+      setLoading(false);
+
+      if (session && !session.user.is_anonymous) {
+        // No email confirmation — user is now permanent
+        router.replace('/(tabs)');
+      } else {
+        // Email confirmation sent — show check email screen
+        setSuccess(true);
+      }
+    } else {
+      // New user (not anonymous) — standard signUp
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+      });
+
+      setLoading(false);
+
+      if (authError) {
+        setError(authError.message);
+      } else if (data.session) {
+        // Email confirmation disabled — user is logged in immediately
+        router.replace('/(tabs)');
+      } else {
+        // Email confirmation required
+        setSuccess(true);
+      }
+    }
+  }
+
+  async function handleRetryLogin() {
+    setLoading(true);
+    setError('');
+    const { error: authError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
-
     setLoading(false);
-
-    if (authError) {
-      setError(authError.message);
-    } else if (data.session) {
-      // Email confirmation disabled — user is logged in immediately
+    if (!authError) {
       router.replace('/(tabs)');
     } else {
-      // Email confirmation required — show check email screen
-      setSuccess(true);
+      setError(t('auth.check_email'));
     }
   }
 
@@ -62,31 +117,25 @@ export default function RegisterScreen() {
             paddingHorizontal: 24,
           }}
         >
-          <Text
-            style={{
-              fontSize: FONT_SIZE.heading,
-              fontWeight: '700',
-              color: COLORS.textPrimary,
-              textAlign: 'center',
-              marginBottom: 16,
-            }}
-          >
+          <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '700', color: COLORS.textPrimary, textAlign: 'center', marginBottom: 8 }}>
             {t('auth.check_email')}
           </Text>
-          <Text
-            style={{
-              fontSize: FONT_SIZE.body,
-              color: COLORS.textSecondary,
-              textAlign: 'center',
-              marginBottom: 32,
-            }}
-          >
+          <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textSecondary, textAlign: 'center', marginBottom: 32 }}>
             {email}
           </Text>
           <Button
-            title={t('auth.sign_in')}
-            onPress={() => router.replace('/(auth)/login')}
+            title={t('auth.confirmed_login')}
+            onPress={handleRetryLogin}
+            loading={loading}
           />
+          <Pressable
+            onPress={() => router.replace('/(auth)/login')}
+            style={{ marginTop: 16, paddingVertical: 12 }}
+          >
+            <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.accent }}>
+              {t('auth.sign_in')}
+            </Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     );
@@ -106,6 +155,16 @@ export default function RegisterScreen() {
           }}
           keyboardShouldPersistTaps="handled"
         >
+          {/* Back button */}
+          <Pressable
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            style={{ alignSelf: 'flex-start', paddingVertical: 8, paddingRight: 16, marginBottom: 16 }}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.back')}
+          >
+            <Text style={{ fontSize: 16, color: COLORS.accent }}>{'\u2190'} {t('common.back')}</Text>
+          </Pressable>
+
           <Text
             style={{
               fontSize: FONT_SIZE.heading,
