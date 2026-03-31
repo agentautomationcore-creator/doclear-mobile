@@ -91,9 +91,14 @@ async function request<T = unknown>(
     } catch (error) {
       lastError = error as Error;
 
-      // Don't retry client errors (4xx) except 429
-      if (error instanceof ApiError && error.status >= 400 && error.status < 500 && error.status !== 429) {
-        throw error;
+      // Don't retry client errors (4xx)
+      // 429 with limit_reached = plan limit (not retryable), without = burst rate limit (retryable)
+      if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
+        if (error.status === 429 && !(error.data as Record<string, unknown>)?.limit_reached) {
+          // Burst rate limit — allow retry with backoff
+        } else {
+          throw error;
+        }
       }
 
       // Don't retry if out of attempts

@@ -32,9 +32,18 @@ async function loadUserProfile(userId: string) {
   store.fetchDailyQuestions().catch(() => {});
 }
 
-// TODO: DS5 — Prevent infinite anonymous account creation.
-// Server-side solution needed: rate-limit signInAnonymously by IP/device fingerprint.
-// Client cannot reliably prevent this — must be enforced in Supabase Edge Function or middleware.
+// DS5: Anonymous account creation is rate-limited server-side via /api/auth/anonymous
+// (max 5 accounts/hour per IP). Client calls this endpoint before signInAnonymously.
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://doclear.app/api';
+
+async function checkAnonymousRateLimit(): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_URL}/auth/anonymous`, { method: 'POST' });
+    return res.status !== 429;
+  } catch {
+    return true; // Network error — allow fallback
+  }
+}
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const setSession = useAuthStore((s) => s.setSession);
@@ -43,12 +52,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
 
       if (session?.user) {
         loadUserProfile(session.user.id);
+      } else {
+        // No session — create anonymous user (rate-limited by server)
+        const allowed = await checkAnonymousRateLimit();
+        if (allowed) {
+          const { data, error } = await supabase.auth.signInAnonymously();
+          if (!error && data?.user) {
+            setUser(data.user);
+            loadUserProfile(data.user.id);
+          }
+        }
       }
 
       setLoading(false);

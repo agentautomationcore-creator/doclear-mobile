@@ -198,43 +198,7 @@ export default function DocumentDetailScreen() {
     setMenuVisible(false);
   }, [doc]);
 
-  // Export Excel
-  const handleExportExcel = useCallback(async () => {
-    if (!doc) return;
-    track('document_exported', { format: 'xlsx' });
-    try {
-      const XLSX = await import('xlsx');
-      const wb = XLSX.utils.book_new();
-
-      const factsData = (doc.keyFacts ?? []).map((f, i) => ({ '#': i + 1, Fact: f }));
-      const ws1 = XLSX.utils.json_to_sheet(factsData);
-      XLSX.utils.book_append_sheet(wb, ws1, 'Key Facts');
-
-      const risksData = (doc.riskFlags ?? []).map((r) => ({
-        Severity: r.severity.toUpperCase(),
-        Title: r.title,
-        Description: r.description,
-        Page: r.page ?? '',
-        Recommendation: r.recommendation ?? '',
-      }));
-      const ws2 = XLSX.utils.json_to_sheet(risksData);
-      XLSX.utils.book_append_sheet(wb, ws2, 'Risk Flags');
-
-      const wbout = XLSX.write(wb, { type: 'base64', bookType: 'xlsx' });
-      const LegacyFS = await import('expo-file-system/legacy');
-      const uri = LegacyFS.documentDirectory + `${doc.title}.xlsx`;
-      await LegacyFS.writeAsStringAsync(uri, wbout, {
-        encoding: LegacyFS.EncodingType.Base64,
-      });
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri);
-      }
-    } catch (e) {
-      if (__DEV__) console.error('[DocDetail] Excel export error:', e);
-      Alert.alert(t('common.error'), t('common.retry'));
-    }
-    setMenuVisible(false);
-  }, [doc]);
+  // Excel export removed — xlsx package had High CVE. Use PDF export instead.
 
   // Delete
   const handleDelete = useCallback(() => {
@@ -510,13 +474,13 @@ export default function DocumentDetailScreen() {
                 </Text>
               </Pressable>
               <Pressable
-                onPress={handleExportExcel}
+                onPress={handleExportPDF}
                 style={{ padding: 12, minHeight: MIN_TOUCH, justifyContent: 'center' }}
                 accessibilityRole="button"
-                accessibilityLabel={t('document.export_excel')}
+                accessibilityLabel={t('document.share')}
               >
                 <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textPrimary }}>
-                  {t('document.export_excel')}
+                  {t('document.share')}
                 </Text>
               </Pressable>
               <View style={{ height: 1, backgroundColor: 'rgba(0,0,0,0.06)', marginVertical: 2 }} />
