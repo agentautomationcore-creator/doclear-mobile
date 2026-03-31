@@ -63,6 +63,13 @@ export default function DocumentDetailScreen() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const chatListRef = useRef(null);
 
+  // Cleanup: abort in-flight requests when component unmounts
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   // Load chat history from doc
   useEffect(() => {
     if (doc?.chatHistory && doc.chatHistory.length > 0) {
@@ -269,6 +276,11 @@ export default function DocumentDetailScreen() {
   const handleSendMessage = useCallback(
     async (text: string) => {
       if (!doc || !user || isStreaming || !text?.trim()) return;
+
+      if (networkOffline) {
+        Alert.alert(t('common.error'), t('errors.offline') || 'No internet connection. Please try again when online.');
+        return;
+      }
 
       // Check question limit
       const store = useAuthStore.getState();

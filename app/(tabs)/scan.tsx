@@ -30,6 +30,7 @@ import { compressImage, isFileSizeValid, FILE_SIZE_LIMIT_DISPLAY } from '../../s
 import { mmkvStorage, MMKV_KEYS } from '../../src/lib/mmkv';
 import { useAuth } from '../../src/hooks/useAuth';
 import { useAuthStore } from '../../src/store/auth.store';
+import { useNetwork } from '../../src/hooks/useNetwork';
 import { useUIStore } from '../../src/store/ui.store';
 import { supabase } from '../../src/lib/supabase';
 import { Button } from '../../src/components/ui/Button';
@@ -73,6 +74,7 @@ export default function ScanScreen() {
   const router = useRouter();
   const { canUpload, user } = useAuth();
   const { isDesktop } = useResponsive();
+  const { isOffline: networkOffline } = useNetwork();
   const storeLocale = useUIStore((s) => s.locale);
   const locale = i18n.language || storeLocale || 'fr';
   const [files, setFiles] = useState<SelectedFile[]>([]);
@@ -209,6 +211,10 @@ export default function ScanScreen() {
 
   // Demo document — hardcoded French bail contract
   const handleDemo = useCallback(async () => {
+    if (networkOffline) {
+      Alert.alert(t('common.error'), t('errors.offline') || 'No internet connection. Please try again when online.');
+      return;
+    }
     if (!checkLimitAndProceed()) return;
 
     setStep('analyzing');
@@ -277,7 +283,6 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
           textContent: demoText,
           language: locale,
           isPdf: false,
-          userId,
           documentId,
         }),
       });
@@ -292,15 +297,19 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
       store.setScanCount(store.scanCount + 1);
 
       setTimeout(() => router.replace(`/doc/${documentId}`), 500);
-    } catch (err: any) {
-      setError(err?.message ?? t('errors.analysis_failed'));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : t('errors.analysis_failed'));
       setStep('error');
     }
-  }, [user, locale, router, checkLimitAndProceed, t]);
+  }, [user, locale, router, checkLimitAndProceed, t, networkOffline]);
 
   // Core analysis function (no consent check — called directly after consent granted)
   // Accepts optional fileList override for consent-return flow (avoids stale closure)
   const analyzeFilesDirectly = useCallback(async (fileListOverride?: SelectedFile[]) => {
+    if (networkOffline) {
+      Alert.alert(t('common.error'), t('errors.offline') || 'No internet connection. Please try again when online.');
+      return;
+    }
     const filesToProcess = fileListOverride || files;
     log('[SCAN] analyzeFilesDirectly called', { filesCount: filesToProcess.length, userId: user?.id, isOverride: !!fileListOverride });
     if (filesToProcess.length === 0) {
@@ -404,7 +413,6 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
             isPdf,
             type: isPdf ? 'pdf' : isImage ? 'image' : 'text',
             textContent: file.type === 'text' ? atob(base64) : undefined,
-            userId,
             documentId,
           }),
         });
@@ -457,12 +465,13 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
         }, 500);
         return;
       }
-    } catch (err: any) {
-      log('[SCAN] ERROR:', err?.message, err);
-      setError(err?.message ?? t('errors.analysis_failed'));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : t('errors.analysis_failed');
+      log('[SCAN] ERROR:', message, err);
+      setError(message);
       setStep('error');
     }
-  }, [files, user, locale, router, t]);
+  }, [files, user, locale, router, t, networkOffline]);
 
   // Public analyze function — consent already granted at app startup
   const analyzeFiles = useCallback(async () => {

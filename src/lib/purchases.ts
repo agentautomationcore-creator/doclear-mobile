@@ -42,13 +42,15 @@ export async function getOfferings() {
   }
 }
 
+// pkg comes from RevenueCat offerings — typed as unknown at boundary, cast internally
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function purchasePackage(pkg: any) {
   try {
     const { default: Purchases } = await import('react-native-purchases');
     const result = await Purchases.purchasePackage(pkg);
     return result;
-  } catch (error: any) {
-    if (error?.userCancelled) return null;
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'userCancelled' in error && error.userCancelled) return null;
     throw error;
   }
 }

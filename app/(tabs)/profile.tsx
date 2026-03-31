@@ -153,7 +153,7 @@ export default function ProfileScreen() {
                   'Content-Type': 'application/json',
                   ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
-                body: JSON.stringify({ userId: user?.id }),
+                body: JSON.stringify({}),
               });
 
               if (response.ok) {

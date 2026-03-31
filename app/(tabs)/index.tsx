@@ -49,7 +49,7 @@ export default function DashboardScreen() {
   }, [data]);
 
   const isFromCache = useMemo(() => {
-    return data?.pages?.some((p: any) => p._fromCache) ?? false;
+    return data?.pages?.some((p: Record<string, unknown>) => p._fromCache) ?? false;
   }, [data]);
 
   const handleRefresh = useCallback(() => {
@@ -63,7 +63,7 @@ export default function DashboardScreen() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const getItemLayout = useCallback(
-    (_data: any, index: number) => ({
+    (_data: unknown, index: number) => ({
       length: CARD_HEIGHT,
       offset: CARD_HEIGHT * index,
       index,

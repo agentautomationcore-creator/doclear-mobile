@@ -19,6 +19,8 @@ type EventName =
   | 'demo_document_used'
   | 'onboarding_skipped';
 
+// PostHog client — comes from dynamic import, uses structural typing
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let posthogClient: any = null;
 
 export async function initAnalytics(): Promise<void> {
@@ -41,7 +43,7 @@ export async function initAnalytics(): Promise<void> {
   }
 }
 
-export function track(event: EventName, properties?: Record<string, any>): void {
+export function track(event: EventName, properties?: Record<string, unknown>): void {
   try {
     posthogClient?.capture(event, properties);
   } catch {
@@ -49,7 +51,7 @@ export function track(event: EventName, properties?: Record<string, any>): void 
   }
 }
 
-export function identify(userId: string, traits?: Record<string, any>): void {
+export function identify(userId: string, traits?: Record<string, unknown>): void {
   try {
     posthogClient?.identify(userId, traits);
   } catch {

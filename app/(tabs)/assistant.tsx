@@ -30,7 +30,7 @@ export default function OverviewScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { data: docsData, isLoading } = useDocumentsList('all', '');
-  const [summaryData, setSummaryData] = useState<any>(null);
+  const [summaryData, setSummaryData] = useState<{ totalToPay?: string; totalToReceive?: string; aiRecommendation?: string } | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
 
   const documents = React.useMemo(() => {
@@ -78,7 +78,7 @@ export default function OverviewScreen() {
             'Content-Type': 'application/json',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify({ userId: user.id }),
+          body: JSON.stringify({}),
         });
         if (res.ok) {
           setSummaryData(await res.json());

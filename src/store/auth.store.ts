@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { MAX_GUEST_SCANS, MAX_GUEST_QUESTIONS } from '../types';
 
 export type Plan = 'free' | 'trial' | 'pro' | 'year';
 
-const FREE_DOC_LIMIT = 3;           // Anonymous + free registered (after trial)
-const FREE_QUESTION_LIMIT = 10;
+// Canonical limits defined in src/types/index.ts
+const FREE_DOC_LIMIT = MAX_GUEST_SCANS;
+const FREE_QUESTION_LIMIT = MAX_GUEST_QUESTIONS;
 const TRIAL_DAYS = 7;
 
 const PAID_PLANS: Plan[] = ['pro', 'year'];
@@ -98,15 +100,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }),
 
   canUpload: () => {
-    const { plan, scanCount, user } = get();
-    if (user?.email === 'review@doclear.app') return true; // Apple reviewer bypass
+    const { plan, scanCount } = get();
     if (PAID_PLANS.includes(plan) || plan === 'trial') return true;
     return scanCount < FREE_DOC_LIMIT;
   },
 
   canAskQuestion: () => {
-    const { plan, dailyQuestions, user } = get();
-    if (user?.email === 'review@doclear.app') return true; // Apple reviewer bypass
+    const { plan, dailyQuestions } = get();
     if (PAID_PLANS.includes(plan) || plan === 'trial') return true;
     return dailyQuestions < FREE_QUESTION_LIMIT;
   },

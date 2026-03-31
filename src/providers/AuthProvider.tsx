@@ -32,6 +32,10 @@ async function loadUserProfile(userId: string) {
   store.fetchDailyQuestions().catch(() => {});
 }
 
+// TODO: DS5 — Prevent infinite anonymous account creation.
+// Server-side solution needed: rate-limit signInAnonymously by IP/device fingerprint.
+// Client cannot reliably prevent this — must be enforced in Supabase Edge Function or middleware.
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const setSession = useAuthStore((s) => s.setSession);
   const setUser = useAuthStore((s) => s.setUser);

@@ -64,8 +64,8 @@ export default function LoginScreen() {
           router.replace('/(tabs)');
         }
       }
-    } catch (e: any) {
-      if (e?.code !== 'ERR_REQUEST_CANCELED') {
+    } catch (e: unknown) {
+      if (!(e && typeof e === 'object' && 'code' in e && e.code === 'ERR_REQUEST_CANCELED')) {
         setError('Apple Sign-In failed');
       }
     }

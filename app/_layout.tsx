@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Platform } from 'react-native';
@@ -8,12 +8,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // KeyboardProvider — requires native build with keyboard-controller
 // import { KeyboardProvider } from 'react-native-keyboard-controller';
 
+import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { AuthProvider } from '../src/providers/AuthProvider';
 import { QueryProvider } from '../src/providers/QueryProvider';
 import { I18nProvider } from '../src/providers/I18nProvider';
 import { initAnalytics, track } from '../src/lib/analytics';
 import { configurePurchases } from '../src/lib/purchases';
-import '../global.css';
+import { loadMMKVCache } from '../src/lib/mmkv';
 
 // Prevent splash screen from auto-hiding — we control it manually
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -36,6 +37,9 @@ if (SENTRY_DSN && !SENTRY_DSN.includes('placeholder') && Platform.OS !== 'web') 
 
 export default function RootLayout() {
   useEffect(() => {
+    // Load MMKV cache from AsyncStorage into memory
+    loadMMKVCache().catch(() => {});
+
     // Initialize analytics
     initAnalytics().catch(() => {});
     track('app_opened');
@@ -59,16 +63,18 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutReady}>
+      <ErrorBoundary>
         <SafeAreaProvider>
           <I18nProvider>
             <QueryProvider>
               <AuthProvider>
                 <StatusBar style="dark" />
-                <Slot />
+                <Stack screenOptions={{ headerShown: false }} />
               </AuthProvider>
             </QueryProvider>
           </I18nProvider>
         </SafeAreaProvider>
+      </ErrorBoundary>
     </GestureHandlerRootView>
   );
 }

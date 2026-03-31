@@ -52,8 +52,8 @@ Generated: 30.03.2026
 - ✅ AI Consent screen at first launch
 
 ## App Review
-- 🔧 Reviewer bypass: review@doclear.app skips limits (c034264)
-- ✅ app-review-notes.txt created with demo account + test steps
+- ✅ Reviewer bypass removed (limits enforced server-side via plan)
+- ✅ App review notes: provide demo account via App Store Connect metadata (not in repo)
 - 👤 Дима: создать аккаунт review@doclear.app в Supabase Dashboard
 - 👤 Дима: подтвердить ascAppId 6761265052 в App Store Connect
 
@@ -89,7 +89,7 @@ Generated: 30.03.2026
 - ⚠️ OTA: test `eas update --channel preview --message "test"` after first build
 
 ## Actions for Дима (👤)
-1. Создать аккаунт review@doclear.app / DocLear2026Review! в Supabase Dashboard
+1. Создать аккаунт review@doclear.app в Supabase Dashboard (set password via dashboard, never commit credentials)
 2. Дать этому аккаунту plan: 'pro' в таблице profiles
 3. Подтвердить ascAppId 6761265052 в App Store Connect (или создать App Record)
 4. 1 апреля: запускаю `eas build --platform ios --profile production`

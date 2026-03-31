@@ -24,13 +24,20 @@
         "credentialsSource": "remote"
       },
       "channel": "production",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://cklxkdujzpdkdbsxaikz.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "SET_VIA_EAS_SECRETS",
+        "EXPO_PUBLIC_REVENUECAT_IOS_KEY": "SET_VIA_EAS_SECRETS",
+        "EXPO_PUBLIC_REVENUECAT_ANDROID_KEY": "SET_VIA_EAS_SECRETS",
+        "EXPO_PUBLIC_SENTRY_DSN": "SET_VIA_EAS_SECRETS",
+        "EXPO_PUBLIC_POSTHOG_KEY": "SET_VIA_EAS_SECRETS"
+      }
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "appleId": "sergeevspo@yahoo.com",
         "ascAppId": "6761265052",
         "appleTeamId": "PT88KA7TD8"
       }

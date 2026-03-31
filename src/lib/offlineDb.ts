@@ -79,54 +79,6 @@ export async function clearDocumentCache(): Promise<void> {
   await database.runAsync(`DELETE FROM cached_documents`);
 }
 
-// --- Outbox (offline sync) ---
-
-export interface OutboxAction {
-  id: number;
-  action: string;
-  payload: string;
-  idempotency_key: string;
-  created_at: number;
-  attempts: number;
-  last_error: string | null;
-}
-
-export async function addToOutbox(
-  action: string,
-  payload: Record<string, unknown>
-): Promise<void> {
-  const database = await getDb();
-  const idempotencyKey = `${action}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-  await database.runAsync(
-    `INSERT INTO outbox (action, payload, idempotency_key, created_at) VALUES (?, ?, ?, ?)`,
-    [action, JSON.stringify(payload), idempotencyKey, Date.now()]
-  );
-}
-
-export async function getPendingOutboxActions(): Promise<OutboxAction[]> {
-  const database = await getDb();
-  return database.getAllAsync<OutboxAction>(
-    `SELECT * FROM outbox WHERE attempts < 5 ORDER BY created_at ASC`
-  );
-}
-
-export async function markOutboxActionDone(id: number): Promise<void> {
-  const database = await getDb();
-  await database.runAsync(`DELETE FROM outbox WHERE id = ?`, [id]);
-}
-
-export async function markOutboxActionFailed(id: number, error: string): Promise<void> {
-  const database = await getDb();
-  await database.runAsync(
-    `UPDATE outbox SET attempts = attempts + 1, last_error = ? WHERE id = ?`,
-    [error, id]
-  );
-}
-
-export async function getOutboxCount(): Promise<number> {
-  const database = await getDb();
-  const row = await database.getFirstAsync<{ count: number }>(
-    `SELECT COUNT(*) as count FROM outbox WHERE attempts < 5`
-  );
-  return row?.count ?? 0;
-}
+// Outbox/sync queue removed — was dead code (never called from app).
+// If offline sync is needed in the future, implement it with proper
+// background task scheduling (expo-background-fetch).

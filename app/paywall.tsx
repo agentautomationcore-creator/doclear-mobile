@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import * as Linking from 'expo-linking';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH } from '../src/lib/constants';
 import { useAuth } from '../src/hooks/useAuth';
 import { Button } from '../src/components/ui/Button';
@@ -24,7 +25,8 @@ export default function PaywallScreen() {
   const { plan, trialDaysLeft, isAnonymous } = useAuth();
   const [selected, setSelected] = useState<SelectedPlan>('annual');
   const [loading, setLoading] = useState(false);
-  const [offerings, setOfferings] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- RevenueCat offerings type from dynamic import
+  const [offerings, setOfferings] = useState<Record<string, any> | null>(null);
 
   useEffect(() => {
     track('paywall_shown');
@@ -53,8 +55,8 @@ export default function PaywallScreen() {
         track('subscription_started', { plan: selected });
         router.back();
       }
-    } catch (error: any) {
-      if (!error?.userCancelled) {
+    } catch (error: unknown) {
+      if (!(error && typeof error === 'object' && 'userCancelled' in error && error.userCancelled)) {
         Alert.alert(t('common.error'), t('paywall.purchase_failed'));
       }
     } finally {
@@ -124,6 +126,7 @@ export default function PaywallScreen() {
         ) : null}
 
         {/* Monthly Card */}
+        {/* Prices below are fallback values. In production, actual prices come from RevenueCat offerings. */}
         <Pressable
           onPress={() => setSelected('monthly')}
           style={{
@@ -249,6 +252,25 @@ export default function PaywallScreen() {
               <Text style={{ fontSize: 13, color: COLORS.textSecondary }}>{text}</Text>
             </View>
           ))}
+        </View>
+
+        {/* Auto-renewal disclosure (required by Apple) */}
+        <Text style={{ fontSize: 11, color: COLORS.textSecondary, textAlign: 'center', marginTop: 20, lineHeight: 16 }}>
+          {t('paywall.auto_renewal') || 'Subscription automatically renews unless auto-renew is turned off at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions in your App Store account settings.'}
+        </Text>
+
+        {/* TOS / Privacy links (required by Apple) */}
+        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 12, marginBottom: 8 }}>
+          <Pressable onPress={() => Linking.openURL('https://doclear.app/terms')} accessibilityRole="link">
+            <Text style={{ fontSize: 12, color: COLORS.accent, textDecorationLine: 'underline' }}>
+              {t('settings.terms') || 'Terms of Service'}
+            </Text>
+          </Pressable>
+          <Pressable onPress={() => Linking.openURL('https://doclear.app/privacy')} accessibilityRole="link">
+            <Text style={{ fontSize: 12, color: COLORS.accent, textDecorationLine: 'underline' }}>
+              {t('settings.privacy') || 'Privacy Policy'}
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </PageContainer>

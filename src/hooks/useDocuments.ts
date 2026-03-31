@@ -2,7 +2,7 @@ import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tansta
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/auth.store';
 import { cacheDocuments, cacheDocument, getCachedDocuments, getCachedDocument } from '../lib/offline';
-import type { Document, Category, ChatMessage } from '../types';
+import type { Document, Category, ChatMessage, RiskFlag, PositivePoint, Recommendation } from '../types';
 
 const PAGE_SIZE = 20;
 
@@ -24,8 +24,8 @@ interface SupabaseDocument {
   amounts: string[];
   health_score: number | null;
   health_score_explanation: string | null;
-  risk_flags: any[];
-  positive_points: any[];
+  risk_flags: RiskFlag[];
+  positive_points: PositivePoint[];
   key_facts: string[];
   suggested_questions: string[];
   file_url: string | null;
@@ -35,9 +35,9 @@ interface SupabaseDocument {
   raw_text: string | null;
   page_texts: Record<string, string> | null;
   language: string;
-  recommendations: any[];
-  entities: any | null;
-  key_entities: any | null;
+  recommendations: Recommendation[];
+  entities: Record<string, unknown> | null;
+  key_entities: Record<string, unknown> | null;
   specialist_type: string | null;
   specialist_recommendation: string | null;
 }
@@ -158,6 +158,7 @@ export function useDocument(id: string | undefined) {
           .from('documents')
           .select('*')
           .eq('id', id)
+          .eq('user_id', userId)
           .single();
 
         if (error) throw error;
@@ -172,10 +173,10 @@ export function useDocument(id: string | undefined) {
           .order('created_at', { ascending: true });
 
         const doc = mapSupabaseDoc(data);
-        doc.chatHistory = (messages ?? []).map((m: any) => ({
-          role: m.role,
-          content: m.content,
-          timestamp: m.created_at,
+        doc.chatHistory = (messages ?? []).map((m) => ({
+          role: m.role as ChatMessage['role'],
+          content: m.content as string,
+          timestamp: m.created_at as string,
         }));
 
         // Cache for offline use
@@ -225,7 +226,7 @@ export function useDocumentsWithChat() {
         .select('id, title, doc_type, doc_type_label')
         .in('id', docIds);
 
-      return (docs ?? []).map((d: any) => ({
+      return (docs ?? []).map((d: { id: string; title: string; doc_type: string; doc_type_label?: string }) => ({
         id: d.id,
         title: d.title,
         docType: d.doc_type,
@@ -239,10 +240,12 @@ export function useDocumentsWithChat() {
 
 export function useDeleteDocument() {
   const queryClient = useQueryClient();
+  const userId = useAuthStore((s) => s.user?.id);
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('documents').delete().eq('id', id);
+      if (!userId) throw new Error('Not authenticated');
+      const { error } = await supabase.from('documents').delete().eq('id', id).eq('user_id', userId);
       if (error) throw error;
     },
     onSuccess: () => {
