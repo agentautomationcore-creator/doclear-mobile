@@ -7,7 +7,7 @@ interface CardProps {
   style?: ViewStyle;
 }
 
-export function Card({ children, style }: CardProps) {
+export const Card = React.memo(function Card({ children, style }: CardProps) {
   const shadowStyle: ViewStyle = Platform.select({
     ios: {
       shadowColor: '#000',
@@ -43,4 +43,4 @@ export function Card({ children, style }: CardProps) {
       {children}
     </View>
   );
-}
+});

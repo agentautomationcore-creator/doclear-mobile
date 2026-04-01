@@ -32,7 +32,7 @@ function renderContent(
   });
 }
 
-export function ChatBubble({ role, content, isStreaming, onCitationPress }: ChatBubbleProps) {
+export const ChatBubble = React.memo(function ChatBubble({ role, content, isStreaming, onCitationPress }: ChatBubbleProps) {
   const isUser = role === 'user';
   const [showReport, setShowReport] = useState(false);
   const { t } = useTranslation();
@@ -115,4 +115,4 @@ export function ChatBubble({ role, content, isStreaming, onCitationPress }: Chat
       ) : null}
     </View>
   );
-}
+});

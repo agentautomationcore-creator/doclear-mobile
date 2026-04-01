@@ -42,7 +42,7 @@ const shadowStyle: ViewStyle = Platform.select({
   },
 }) as ViewStyle;
 
-export function DocumentCard({ document, onPress, showOfflineBadge = false }: DocumentCardProps) {
+export const DocumentCard = React.memo(function DocumentCard({ document, onPress, showOfflineBadge = false }: DocumentCardProps) {
   const docTypeColors = DOC_TYPE_COLORS[document.docType ?? 'other'] ?? DOC_TYPE_COLORS.other;
   const dateStr = (() => {
     try {
@@ -142,4 +142,4 @@ export function DocumentCard({ document, onPress, showOfflineBadge = false }: Do
       </Text>
     </Pressable>
   );
-}
+});
