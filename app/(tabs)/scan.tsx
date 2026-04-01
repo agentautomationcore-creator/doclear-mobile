@@ -24,7 +24,8 @@ import Animated, {
   withDelay,
   Easing,
 } from 'react-native-reanimated';
-import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH, API_URL } from '../../src/lib/constants';
+import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH } from '../../src/lib/constants';
+import { api } from '../../src/api/client';
 import { compressImage, isFileSizeValid, FILE_SIZE_LIMIT_DISPLAY } from '../../src/lib/imageCompression';
 import { mmkvStorage, MMKV_KEYS } from '../../src/lib/mmkv';
 import { useAuth } from '../../src/hooks/useAuth';
@@ -269,27 +270,13 @@ Amiante: Négatif. Plomb: Négatif.
 
 Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
 
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-
-      const response = await fetch(`${API_URL}/analyze`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          type: 'text',
-          textContent: demoText,
-          language: locale,
-          isPdf: false,
-          documentId,
-        }),
-      });
-
-      if (!response.ok) throw new Error('Demo analysis failed');
-
-      const result = await response.json();
+      const result = await api.post('/analyze', {
+        type: 'text',
+        textContent: demoText,
+        language: locale,
+        isPdf: false,
+        documentId,
+      }, { timeout: 60000 });
       track('demo_document_used');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
@@ -399,35 +386,15 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
 
         setStep('analyzing');
 
-        // Get auth token
-        const { data: sessionData } = await supabase.auth.getSession();
-        const token = sessionData?.session?.access_token;
-
-        log('[SCAN] Sending to API:', `${API_URL}/analyze`, { documentId, fileType: file.type, base64Length: base64.length });
-        const response = await fetch(`${API_URL}/analyze`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({
-            image: imageData,
-            language: locale,
-            isPdf,
-            type: isPdf ? 'pdf' : isImage ? 'image' : 'text',
-            textContent: file.type === 'text' ? atob(base64) : undefined,
-            documentId,
-          }),
-        });
-
-        log('[SCAN] API response status:', response.status);
-        if (!response.ok) {
-          const errData = await response.json().catch(() => null);
-          log('[SCAN] API error:', errData);
-          throw new Error(errData?.error ?? 'Analysis failed');
-        }
-
-        const analysisResult = await response.json().catch(() => null);
+        log('[SCAN] Sending to API via apiClient', { documentId, fileType: file.type, base64Length: base64.length });
+        const analysisResult = await api.post('/analyze', {
+          image: imageData,
+          language: locale,
+          isPdf,
+          type: isPdf ? 'pdf' : isImage ? 'image' : 'text',
+          textContent: file.type === 'text' ? atob(base64) : undefined,
+          documentId,
+        }, { timeout: 60000 });
         log('[SCAN] Analysis result:', analysisResult ? 'OK' : 'null', analysisResult?.document_title);
 
         setStep('done');
