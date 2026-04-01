@@ -20,6 +20,7 @@
         "NSCameraUsageDescription": "DocLear needs camera access to scan documents",
         "NSPhotoLibraryUsageDescription": "DocLear needs photo library access to upload documents",
         "NSMicrophoneUsageDescription": "Microphone access is not used by DocLear but is required by the camera framework",
+        "NSUserTrackingUsageDescription": "DocLear uses anonymous analytics to improve the app experience. Your data is never sold.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "privacyManifests": {
@@ -124,6 +125,12 @@
         }
       ],
       "expo-apple-authentication",
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "DocLear uses anonymous analytics to improve the app experience. Your data is never sold."
+        }
+      ],
       "expo-font",
       ["@sentry/react-native/expo", {"organization": "doclear", "project": "doclear-mobile"}]
     ],

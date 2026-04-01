@@ -17,11 +17,16 @@ import { loadMMKVCache } from '../src/lib/mmkv';
 // Prevent splash screen from auto-hiding — we control it manually
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-// Initialize Sentry
+// Initialize Sentry only with analytics consent (GDPR)
 const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN ?? '';
 
-if (SENTRY_DSN && !SENTRY_DSN.includes('placeholder') && Platform.OS !== 'web') {
+function initSentryIfConsented() {
+  if (!SENTRY_DSN || SENTRY_DSN.includes('placeholder') || Platform.OS === 'web') return;
   try {
+    const { mmkvStorage } = require('../src/lib/mmkv');
+    const consent = mmkvStorage.getString('analytics_consent');
+    if (consent !== 'true') return;
+
     const Sentry = require('@sentry/react-native');
     Sentry.init({
       dsn: SENTRY_DSN,
@@ -38,11 +43,14 @@ export default function RootLayout() {
     // Load MMKV cache from AsyncStorage into memory
     loadMMKVCache().catch(() => {});
 
+    // Init Sentry only after consent check
+    initSentryIfConsented();
+
     // Initialize analytics
     initAnalytics().catch(() => {});
     track('app_opened');
 
-    // Initialize RevenueCat
+    // Subscription SDK setup
     configurePurchases().catch(() => {});
 
     // Safety timeout: hide splash after 3 seconds no matter what

@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import { log } from './debug';
 import { mmkvStorage } from './mmkv';
+import { requestTrackingPermissionsAsync, getTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 type EventName =
   | 'app_opened'
@@ -41,6 +42,15 @@ export async function initAnalytics(): Promise<void> {
 
   try {
     if (Platform.OS !== 'web') {
+      // GDPR-4: Request ATT permission on iOS before initializing tracking
+      if (Platform.OS === 'ios') {
+        const { status } = await requestTrackingPermissionsAsync();
+        if (status !== 'granted') {
+          log('PostHog: ATT permission denied, skipping initialization');
+          return;
+        }
+      }
+
       const { PostHog } = await import('posthog-react-native');
       posthogClient = new PostHog(posthogKey, {
         host: 'https://eu.posthog.com',
