@@ -165,7 +165,7 @@ export default function OverviewScreen() {
                         height: 8,
                         borderRadius: 4,
                         backgroundColor: CATEGORY_COLORS[cat] || COLORS.textSecondary,
-                        marginRight: 10,
+                        marginEnd: 10,
                       }}
                     />
                     <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textPrimary }}>
@@ -204,7 +204,7 @@ export default function OverviewScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={`${d.title} — ${d.deadline}`}
                 >
-                  <View style={{ flex: 1, marginRight: 12 }}>
+                  <View style={{ flex: 1, marginEnd: 12 }}>
                     <Text numberOfLines={1} style={{ fontSize: FONT_SIZE.caption, fontWeight: '600', color: COLORS.textPrimary }}>
                       {d.title}
                     </Text>

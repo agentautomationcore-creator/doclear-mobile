@@ -92,7 +92,7 @@ export function DocumentCard({ document, onPress, showOfflineBadge = false }: Do
               paddingHorizontal: 6,
               paddingVertical: 2,
               borderRadius: 4,
-              marginLeft: 8,
+              marginStart: 8,
             }}
           >
             <Text allowFontScaling style={{ fontSize: 10, fontWeight: '600', color: '#6B7280' }}>

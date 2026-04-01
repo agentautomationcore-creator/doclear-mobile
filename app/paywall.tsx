@@ -26,7 +26,7 @@ export default function PaywallScreen() {
   const { plan, trialDaysLeft, isAnonymous } = useAuth();
   const [selected, setSelected] = useState<SelectedPlan>('annual');
   const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- RevenueCat offerings type from dynamic import
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- offerings type from dynamic import
   const [offerings, setOfferings] = useState<Record<string, any> | null>(null);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function PaywallScreen() {
 
       const result = await purchasePackage(pkg);
       if (result) {
-        // Update plan in Zustand after successful purchase
+        // Sync plan to Zustand store after successful transaction
         useAuthStore.getState().setPlan(selected === 'annual' ? 'year' : 'pro');
         track('subscription_started', { plan: selected });
         router.back();
@@ -72,7 +72,7 @@ export default function PaywallScreen() {
     try {
       const info = await restorePurchases();
       if (info) {
-        // Check entitlements and update plan in Zustand
+        // Check active entitlements and sync to Zustand
         const entitlements = (info as any).entitlements?.active;
         const isPro = entitlements?.pro || entitlements?.premium;
         if (isPro) {
@@ -152,7 +152,7 @@ export default function PaywallScreen() {
           accessibilityLabel={t('paywall.monthly')}
         >
           {/* Radio left */}
-          <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: selected === 'monthly' ? COLORS.accent : '#D1D5DB', alignItems: 'center', justifyContent: 'center', marginRight: 14 }}>
+          <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: selected === 'monthly' ? COLORS.accent : '#D1D5DB', alignItems: 'center', justifyContent: 'center', marginEnd: 14 }}>
             {selected === 'monthly' ? <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.accent }} /> : null}
           </View>
           {/* Content */}
@@ -191,7 +191,7 @@ export default function PaywallScreen() {
           </View>
 
           {/* Radio left */}
-          <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: selected === 'annual' ? COLORS.accent : '#D1D5DB', alignItems: 'center', justifyContent: 'center', marginRight: 14 }}>
+          <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: selected === 'annual' ? COLORS.accent : '#D1D5DB', alignItems: 'center', justifyContent: 'center', marginEnd: 14 }}>
             {selected === 'annual' ? <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.accent }} /> : null}
           </View>
           {/* Content */}
@@ -223,7 +223,7 @@ export default function PaywallScreen() {
             t('paywall.feature_priority'),
           ].map((feature, i) => (
             <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-              <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: COLORS.accent + '15', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
+              <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: COLORS.accent + '15', alignItems: 'center', justifyContent: 'center', marginEnd: 10 }}>
                 <Text style={{ fontSize: 12, color: COLORS.accent, fontWeight: '700' }}>{'\u2713'}</Text>
               </View>
               <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textPrimary, flex: 1 }}>{feature}</Text>
@@ -257,7 +257,7 @@ export default function PaywallScreen() {
             t('paywall.trust_no_training'),
           ].map((text, i) => (
             <View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 12, color: COLORS.success, marginRight: 6 }}>{'\u2713'}</Text>
+              <Text style={{ fontSize: 12, color: COLORS.success, marginEnd: 6 }}>{'\u2713'}</Text>
               <Text style={{ fontSize: 13, color: COLORS.textSecondary }}>{text}</Text>
             </View>
           ))}

@@ -13,6 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as Linking from 'expo-linking';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import * as Updates from 'expo-updates';
 import Constants from 'expo-constants';
 import { I18nManager } from 'react-native';
@@ -61,6 +63,7 @@ export default function ProfileScreen() {
   const [countryModalVisible, setCountryModalVisible] = useState(false);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
+  const [downloadingData, setDownloadingData] = useState(false);
   const [userCountry, setUserCountry] = useState<CountryCode>('FR');
   const [userCity, setUserCity] = useState('');
   const [userStatus, setUserStatus] = useState<ImmigrationStatus>('citizen');
@@ -112,6 +115,40 @@ export default function ProfileScreen() {
       await supabase.from('profiles').update({ status, updated_at: new Date().toISOString() }).eq('id', user.id);
     }
   }, [user?.id]);
+
+  const handleDownloadData = useCallback(async () => {
+    setDownloadingData(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) return;
+
+      const res = await fetch('https://doclear.app/api/export-data', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Export failed');
+
+      const data = await res.json();
+      const fileUri = FileSystem.cacheDirectory + `doclear-data-${new Date().toISOString().slice(0, 10)}.json`;
+      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(data, null, 2), {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType: 'application/json',
+          dialogTitle: t('profile.download_my_data'),
+        });
+      } else {
+        Alert.alert(t('common.error'), t('profile.download_failed'));
+      }
+    } catch {
+      Alert.alert(t('common.error'), t('profile.download_failed'));
+    } finally {
+      setDownloadingData(false);
+    }
+  }, [t]);
 
   const handleSignOut = useCallback(() => {
     Alert.alert(
@@ -227,7 +264,7 @@ export default function ProfileScreen() {
               backgroundColor: COLORS.accent,
               alignItems: 'center',
               justifyContent: 'center',
-              marginRight: 14,
+              marginEnd: 14,
             }}
           >
             <Text style={{ fontSize: 18, fontWeight: '700', color: '#FFFFFF' }}>{initials}</Text>
@@ -288,7 +325,7 @@ export default function ProfileScreen() {
                     {t('trial.badge')}
                   </Text>
                 </View>
-                <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, marginLeft: 8 }}>
+                <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary, marginStart: 8 }}>
                   {t('trial.days_left', { count: trialDaysLeft })}
                 </Text>
               </View>
@@ -361,7 +398,7 @@ export default function ProfileScreen() {
               <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.textSecondary }}>
                 {LOCALE_NAMES[locale]}
               </Text>
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginLeft: 8 }}>{'\u203A'}</Text>
+              <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginStart: 8 }}>{'\u203A'}</Text>
             </View>
           </Pressable>
         </Card>
@@ -471,7 +508,7 @@ export default function ProfileScreen() {
                   backgroundColor: COLORS.success + '15',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginRight: 12,
+                  marginEnd: 12,
                 }}
               >
                 <Text style={{ fontSize: 12, color: COLORS.success }}>{'\u2713'}</Text>
@@ -516,6 +553,25 @@ export default function ProfileScreen() {
           >
             <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textPrimary }}>
               {t('settings.terms')}
+            </Text>
+            <Text style={{ color: COLORS.textSecondary }}>{'\u203A'}</Text>
+          </Pressable>
+          <Pressable
+            onPress={handleDownloadData}
+            disabled={downloadingData}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              minHeight: MIN_TOUCH,
+              borderBottomWidth: 1,
+              borderBottomColor: 'rgba(0,0,0,0.04)',
+              opacity: downloadingData ? 0.5 : 1,
+            }}
+            accessibilityRole="button"
+          >
+            <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textPrimary }}>
+              {downloadingData ? t('profile.downloading_data') : t('profile.download_my_data')}
             </Text>
             <Text style={{ color: COLORS.textSecondary }}>{'\u203A'}</Text>
           </Pressable>

@@ -10,7 +10,7 @@ import { useResponsive } from '../../src/hooks/useResponsive';
 
 function HeaderRight() {
   return (
-    <View style={{ marginRight: 12 }}>
+    <View style={{ marginEnd: 12 }}>
       <LanguagePicker compact />
     </View>
   );

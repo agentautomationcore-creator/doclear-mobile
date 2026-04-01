@@ -209,7 +209,7 @@ export default function ScanScreen() {
 
   const scanCount = useAuthStore((s) => s.scanCount);
 
-  // Demo document — hardcoded French bail contract
+  // Demo document — sample French bail contract (built-in)
   const handleDemo = useCallback(async () => {
     if (networkOffline) {
       Alert.alert(t('common.error'), t('errors.offline') || 'No internet connection. Please try again when online.');
@@ -697,7 +697,7 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
                     backgroundColor: COLORS.accent + '15',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    marginRight: 12,
+                    marginEnd: 12,
                   }}
                 >
                   <Text style={{ fontSize: 12, fontWeight: '700', color: COLORS.accent }}>

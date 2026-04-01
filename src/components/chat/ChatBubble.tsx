@@ -107,7 +107,7 @@ export function ChatBubble({ role, content, isStreaming, onCitationPress }: Chat
             fontSize: 11,
             color: COLORS.textSecondary,
             marginTop: 4,
-            marginLeft: 4,
+            marginStart: 4,
           }}
         >
           {t('chat.ai_generated')} {'\u00B7'} {t('chat.verify')}

@@ -249,7 +249,7 @@ function WebLandingPage() {
                           fontSize: 14,
                           color: DARK,
                           fontWeight: '700',
-                          marginRight: 8,
+                          marginEnd: 8,
                           minWidth: 18,
                         }}
                       >
@@ -485,7 +485,7 @@ function WebLandingPage() {
                     marginBottom: 12,
                   }}
                 >
-                  <Text style={{ fontSize: 16, color: '#16A34A', marginRight: 10 }}>
+                  <Text style={{ fontSize: 16, color: '#16A34A', marginEnd: 10 }}>
                     {'\u2713'}
                   </Text>
                   <Text style={{ fontSize: 14, color: DARK }}>{feat}</Text>
@@ -540,7 +540,7 @@ function WebLandingPage() {
                     marginBottom: 12,
                   }}
                 >
-                  <Text style={{ fontSize: 16, color: '#4ADE80', marginRight: 10 }}>
+                  <Text style={{ fontSize: 16, color: '#4ADE80', marginEnd: 10 }}>
                     {'\u2713'}
                   </Text>
                   <Text style={{ fontSize: 14, color: '#FFFFFF' }}>{feat}</Text>
@@ -680,7 +680,7 @@ function NativeWelcomeScreen({ onStart, onLogin }: { onStart: () => void; onLogi
             t('welcome.signal_instant'),
           ].map((text, i) => (
             <View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 14, color: '#10B981', marginRight: 8 }}>{'\u2713'}</Text>
+              <Text style={{ fontSize: 14, color: '#10B981', marginEnd: 8 }}>{'\u2713'}</Text>
               <Text style={{ fontSize: 15, color: '#CBD5E1' }}>{text}</Text>
             </View>
           ))}

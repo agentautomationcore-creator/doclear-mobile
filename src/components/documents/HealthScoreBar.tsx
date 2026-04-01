@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, Animated } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { COLORS, FONT_SIZE, RADIUS } from '../../lib/constants';
 
 interface HealthScoreBarProps {
@@ -21,16 +22,16 @@ function getScoreBg(score: number): string {
 }
 
 export function HealthScoreBar({ score, explanation, compact = false }: HealthScoreBarProps) {
-  const animatedWidth = useRef(new Animated.Value(0)).current;
+  const progress = useSharedValue(0);
   const color = getScoreColor(score);
 
   useEffect(() => {
-    Animated.timing(animatedWidth, {
-      toValue: score,
-      duration: 800,
-      useNativeDriver: false,
-    }).start();
-  }, [score, animatedWidth]);
+    progress.value = withTiming(score, { duration: 800 });
+  }, [score, progress]);
+
+  const animatedBarStyle = useAnimatedStyle(() => ({
+    width: `${progress.value}%` as any,
+  }));
 
   if (compact) {
     return (
@@ -44,15 +45,14 @@ export function HealthScoreBar({ score, explanation, compact = false }: HealthSc
           }}
         >
           <Animated.View
-            style={{
-              height: 4,
-              borderRadius: 2,
-              backgroundColor: color,
-              width: animatedWidth.interpolate({
-                inputRange: [0, 100],
-                outputRange: ['0%', '100%'],
-              }),
-            }}
+            style={[
+              {
+                height: 4,
+                borderRadius: 2,
+                backgroundColor: color,
+              },
+              animatedBarStyle,
+            ]}
           />
         </View>
         <Text
@@ -90,7 +90,7 @@ export function HealthScoreBar({ score, explanation, compact = false }: HealthSc
           style={{
             fontSize: FONT_SIZE.body,
             color: COLORS.textSecondary,
-            marginLeft: 4,
+            marginStart: 4,
             marginTop: 8,
           }}
         >
@@ -106,15 +106,14 @@ export function HealthScoreBar({ score, explanation, compact = false }: HealthSc
         }}
       >
         <Animated.View
-          style={{
-            height: 8,
-            borderRadius: 4,
-            backgroundColor: color,
-            width: animatedWidth.interpolate({
-              inputRange: [0, 100],
-              outputRange: ['0%', '100%'],
-            }),
-          }}
+          style={[
+            {
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: color,
+            },
+            animatedBarStyle,
+          ]}
         />
       </View>
       {explanation ? (
