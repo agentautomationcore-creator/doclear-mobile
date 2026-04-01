@@ -234,7 +234,8 @@
     "trust_cancel": "Annulez à tout moment",
     "trust_guarantee": "Garantie satisfait ou remboursé 14 jours",
     "trust_no_training": "Documents non utilisés pour l'entraînement IA",
-    "anon_trial_hint": "Créez un compte et obtenez 7 jours Pro gratuit"
+    "anon_trial_hint": "Créez un compte et obtenez 7 jours Pro gratuit",
+    "auto_renewal": "L'abonnement se renouvelle automatiquement sauf si le renouvellement automatique est desactive au moins 24 heures avant la fin de la periode en cours. Votre compte sera debite pour le renouvellement dans les 24 heures precedant la fin de la periode en cours. Vous pouvez gerer et annuler vos abonnements dans les reglages de votre compte App Store."
   },
   "scan_counter": {
     "docs_month": "documents gratuits / mois"

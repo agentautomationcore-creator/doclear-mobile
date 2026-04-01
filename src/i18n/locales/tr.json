@@ -234,7 +234,8 @@
     "trust_cancel": "İstediğiniz zaman iptal edin",
     "trust_guarantee": "14 gün para iade garantisi",
     "trust_no_training": "Belgeler yapay zeka eğitimi için kullanılmaz",
-    "anon_trial_hint": "Hesap oluşturun ve 7 gün ücretsiz Pro kazanın"
+    "anon_trial_hint": "Hesap oluşturun ve 7 gün ücretsiz Pro kazanın",
+    "auto_renewal": "Abonelik, mevcut donem bitmeden en az 24 saat once otomatik yenileme kapatilmadigi surece otomatik olarak yenilenir. Hesabinizdan mevcut donemin bitmesinden 24 saat once yenileme ucreti alinir. Aboneliklerinizi App Store hesap ayarlarindan yonetebilir ve iptal edebilirsiniz."
   },
   "scan_counter": {
     "docs_month": "ücretsiz belge / ay"

@@ -231,7 +231,8 @@
     "trust_cancel": "随时可取消",
     "trust_guarantee": "14天退款保证",
     "trust_no_training": "文档不会用于AI训练",
-    "anon_trial_hint": "创建账户，免费获得7天Pro体验"
+    "anon_trial_hint": "创建账户，免费获得7天Pro体验",
+    "auto_renewal": "除非在当前订阅期结束前至少24小时关闭自动续订，否则订阅将自动续订。系统将在当前订阅期结束前24小时内从您的账户扣款。您可以在App Store账户设置中管理和取消订阅。"
   },
   "scan_counter": {
     "docs_month": "免费文档 / 月"

@@ -234,7 +234,8 @@
     "trust_cancel": "Annulla in qualsiasi momento",
     "trust_guarantee": "Garanzia soddisfatti o rimborsati 14 giorni",
     "trust_no_training": "I documenti non vengono usati per addestrare l'IA",
-    "anon_trial_hint": "Crea un account e ottieni 7 giorni di Pro gratis"
+    "anon_trial_hint": "Crea un account e ottieni 7 giorni di Pro gratis",
+    "auto_renewal": "L'abbonamento si rinnova automaticamente a meno che il rinnovo automatico non venga disattivato almeno 24 ore prima della fine del periodo corrente. L'addebito per il rinnovo avverra entro 24 ore dalla fine del periodo corrente. Puoi gestire e annullare i tuoi abbonamenti nelle impostazioni dell'account App Store."
   },
   "scan_counter": {
     "docs_month": "documenti gratuiti / mese"

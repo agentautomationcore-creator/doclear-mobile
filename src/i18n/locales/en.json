@@ -238,7 +238,8 @@
     "trust_cancel": "Cancel anytime, no hidden charges",
     "trust_guarantee": "14-day money-back guarantee",
     "trust_no_training": "Documents not used for AI training",
-    "anon_trial_hint": "Create an account and get 7 days of Pro for free"
+    "anon_trial_hint": "Create an account and get 7 days of Pro for free",
+    "auto_renewal": "Subscription automatically renews unless auto-renew is turned off at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions in your App Store account settings."
   },
   "scan_counter": {
     "docs_month": "free documents / month"

@@ -234,7 +234,8 @@
     "trust_cancel": "Jederzeit kündbar",
     "trust_guarantee": "14 Tage Geld-zurück-Garantie",
     "trust_no_training": "Dokumente werden nicht für KI-Training verwendet",
-    "anon_trial_hint": "Erstellen Sie ein Konto und erhalten Sie 7 Tage Pro gratis"
+    "anon_trial_hint": "Erstellen Sie ein Konto und erhalten Sie 7 Tage Pro gratis",
+    "auto_renewal": "Das Abonnement verlaengert sich automatisch, es sei denn, die automatische Verlaengerung wird mindestens 24 Stunden vor Ende des aktuellen Zeitraums deaktiviert. Ihr Konto wird innerhalb von 24 Stunden vor Ende des aktuellen Zeitraums fuer die Verlaengerung belastet. Sie koennen Ihre Abonnements in den App Store-Kontoeinstellungen verwalten und kuendigen."
   },
   "scan_counter": {
     "docs_month": "kostenlose Dokumente / Monat"

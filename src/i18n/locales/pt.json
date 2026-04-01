@@ -234,7 +234,8 @@
     "trust_cancel": "Cancele a qualquer momento",
     "trust_guarantee": "Garantia de reembolso de 14 dias",
     "trust_no_training": "Documentos não são usados para treinar a IA",
-    "anon_trial_hint": "Crie uma conta e ganhe 7 dias de Pro grátis"
+    "anon_trial_hint": "Crie uma conta e ganhe 7 dias de Pro grátis",
+    "auto_renewal": "A assinatura e renovada automaticamente a menos que a renovacao automatica seja desativada pelo menos 24 horas antes do final do periodo atual. Sua conta sera cobrada pela renovacao dentro de 24 horas antes do final do periodo atual. Voce pode gerenciar e cancelar suas assinaturas nas configuracoes da conta da App Store."
   },
   "scan_counter": {
     "docs_month": "documentos grátis / mês"
