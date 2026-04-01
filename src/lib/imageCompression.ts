@@ -2,7 +2,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 
 const MAX_DIMENSION = 2048;
 const QUALITY = 0.7;
-const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export interface CompressedImage {
   uri: string;
@@ -49,4 +49,4 @@ export function formatFileSize(bytes: number): string {
 }
 
 export const FILE_SIZE_LIMIT = MAX_FILE_SIZE;
-export const FILE_SIZE_LIMIT_DISPLAY = '15MB';
+export const FILE_SIZE_LIMIT_DISPLAY = '5MB';

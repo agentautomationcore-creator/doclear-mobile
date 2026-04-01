@@ -66,7 +66,7 @@ export default function LoginScreen() {
       }
     } catch (e: unknown) {
       if (!(e && typeof e === 'object' && 'code' in e && e.code === 'ERR_REQUEST_CANCELED')) {
-        setError('Apple Sign-In failed');
+        setError(t('errors.apple_signin_failed'));
       }
     }
   }

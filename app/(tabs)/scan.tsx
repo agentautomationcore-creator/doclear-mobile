@@ -81,6 +81,7 @@ export default function ScanScreen() {
   const [step, setStep] = useState<AnalysisStep>('idle');
   const [error, setError] = useState<string | null>(null);
   const isAnalyzingRef = useRef(false);
+  const analyzeAbortRef = useRef<AbortController | null>(null);
 
   const checkLimitAndProceed = useCallback((): boolean => {
     const can = useAuthStore.getState().canUpload();
@@ -386,6 +387,9 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
 
         setStep('analyzing');
 
+        const abortController = new AbortController();
+        analyzeAbortRef.current = abortController;
+
         log('[SCAN] Sending to API via apiClient', { documentId, fileType: file.type, base64Length: base64.length });
         const analysisResult = await api.post('/analyze', {
           image: imageData,
@@ -445,6 +449,14 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
       isAnalyzingRef.current = false;
     }
   }, [files, user, locale, router, t, networkOffline]);
+
+  const handleCancelAnalysis = useCallback(() => {
+    analyzeAbortRef.current?.abort();
+    analyzeAbortRef.current = null;
+    isAnalyzingRef.current = false;
+    setStep('idle');
+    setError(null);
+  }, []);
 
   // Public analyze function — consent already granted at app startup
   const analyzeFiles = useCallback(async () => {
@@ -757,6 +769,18 @@ Fait à Nice, le 10 mars 2026, en deux exemplaires.`;
             <Text style={{ fontSize: 13, color: '#6B7280', marginTop: 8 }}>
               {t('scanner.usually_takes')}
             </Text>
+
+            {/* Cancel button */}
+            <Pressable
+              onPress={handleCancelAnalysis}
+              style={{ marginTop: 24, paddingVertical: 12, paddingHorizontal: 24, minHeight: MIN_TOUCH }}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.cancel')}
+            >
+              <Text style={{ fontSize: FONT_SIZE.body, color: COLORS.textSecondary }}>
+                {t('common.cancel')}
+              </Text>
+            </Pressable>
           </View>
         ) : null}
 

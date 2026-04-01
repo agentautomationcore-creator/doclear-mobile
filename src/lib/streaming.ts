@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { API_URL } from './constants';
 import { log } from './debug';
+import { fetch as expoFetch } from 'expo/fetch';
 
 export interface StreamCallbacks {
   onToken: (token: string) => void;
@@ -23,13 +24,22 @@ export async function streamChat(
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;
 
+  // Mandatory 60s timeout composed with user cancel signal
+  const timeoutController = new AbortController();
+  const timeoutId = setTimeout(() => timeoutController.abort(), 60_000);
+
+  let composedSignal: AbortSignal;
+  if (abortSignal) {
+    composedSignal = AbortSignal.any([abortSignal, timeoutController.signal]);
+  } else {
+    composedSignal = timeoutController.signal;
+  }
+
   try {
     const effectiveLanguage = language || 'fr';
     log('[CHAT] Sending to', `${API_URL}/chat`, { documentId, question: question.slice(0, 50), language: effectiveLanguage });
 
-    // System hint removed — backend prompt already contains strict no-repeat rules
-
-    const response = await fetch(`${API_URL}/chat`, {
+    const response = await expoFetch(`${API_URL}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,7 +52,7 @@ export async function streamChat(
         language: effectiveLanguage,
         useSupabase: true,
       }),
-      signal: abortSignal,
+      signal: composedSignal,
     });
 
     log('[CHAT] Response status:', response.status);
@@ -59,62 +69,57 @@ export async function streamChat(
       throw new Error(`HTTP_${status}`);
     }
 
-    // Try streaming first, fallback to full body read
-    if (response.body && typeof response.body.getReader === 'function') {
-      try {
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullText = '';
-        let buffer = '';
+    // Stream via expo/fetch ReadableStream (works in React Native SDK 55+)
+    if (response.body) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      let buffer = '';
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() ?? '';
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') {
-                callbacks.onDone(fullText);
-                return;
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') {
+              callbacks.onDone(fullText);
+              return;
+            }
+            try {
+              const parsed = JSON.parse(data);
+              const tkn = parsed.choices?.[0]?.delta?.content
+                ?? parsed.content
+                ?? parsed.text
+                ?? data;
+              if (typeof tkn === 'string' && tkn.length > 0) {
+                fullText += tkn;
+                callbacks.onToken(tkn);
               }
-              try {
-                const parsed = JSON.parse(data);
-                const token = parsed.choices?.[0]?.delta?.content
-                  ?? parsed.content
-                  ?? parsed.text
-                  ?? data;
-                if (typeof token === 'string' && token.length > 0) {
-                  fullText += token;
-                  callbacks.onToken(token);
-                }
-              } catch {
-                if (data.length > 0) {
-                  fullText += data;
-                  callbacks.onToken(data);
-                }
+            } catch {
+              if (data.length > 0) {
+                fullText += data;
+                callbacks.onToken(data);
               }
             }
           }
         }
-
-        if (fullText.length > 0) {
-          callbacks.onDone(fullText);
-        }
-        return;
-      } catch (streamErr) {
-        log('[CHAT] Streaming failed, falling back to full body read:', streamErr);
       }
+
+      if (fullText.length > 0) {
+        callbacks.onDone(fullText);
+      }
+      return;
     }
 
     // Fallback: read full response body (non-streaming)
     log('[CHAT] Using non-streaming fallback');
     const text = await response.text();
-    // Parse SSE format from full text
     let fullText = '';
     const lines = text.split('\n');
     for (const line of lines) {
@@ -123,12 +128,12 @@ export async function streamChat(
         if (data === '[DONE]') continue;
         try {
           const parsed = JSON.parse(data);
-          const token = parsed.choices?.[0]?.delta?.content
+          const tkn = parsed.choices?.[0]?.delta?.content
             ?? parsed.content
             ?? parsed.text
-            ?? parsed.type === 'delta' ? parsed.text : '';
-          if (typeof token === 'string' && token.length > 0) {
-            fullText += token;
+            ?? '';
+          if (typeof tkn === 'string' && tkn.length > 0) {
+            fullText += tkn;
           }
         } catch {
           if (data.length > 0 && data !== '[DONE]') {
@@ -152,7 +157,13 @@ export async function streamChat(
       callbacks.onError(new Error('Empty response'));
     }
   } catch (error) {
-    if (abortSignal?.aborted) return;
+    if (composedSignal.aborted) {
+      if (abortSignal?.aborted) return; // User cancelled — silent
+      callbacks.onError(new Error('TIMEOUT'));
+      return;
+    }
     callbacks.onError(error instanceof Error ? error : new Error(String(error)));
+  } finally {
+    clearTimeout(timeoutId);
   }
 }

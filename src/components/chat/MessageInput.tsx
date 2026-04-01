@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Pressable, Text, Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { COLORS, FONT_SIZE, MIN_TOUCH } from '../../lib/constants';
 
 interface MessageInputProps {
@@ -9,6 +10,7 @@ interface MessageInputProps {
 }
 
 export function MessageInput({ placeholder, onSend, disabled = false }: MessageInputProps) {
+  const { t } = useTranslation();
   const [text, setText] = useState('');
   const canSend = text.trim().length > 0 && !disabled;
 
@@ -71,7 +73,7 @@ export function MessageInput({ placeholder, onSend, disabled = false }: MessageI
           justifyContent: 'center',
         }}
         accessibilityRole="button"
-        accessibilityLabel="Send"
+        accessibilityLabel={t('common.send')}
       >
         <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '700' }}>
           {'\u2191'}

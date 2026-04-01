@@ -63,7 +63,12 @@ export async function getCachedDocument(id: string): Promise<Document | null> {
     `SELECT data FROM cached_documents WHERE id = ?`,
     [id]
   );
-  return row ? JSON.parse(row.data) : null;
+  if (!row) return null;
+  try {
+    return JSON.parse(row.data);
+  } catch {
+    return null;
+  }
 }
 
 export async function getCachedDocuments(): Promise<Document[]> {
@@ -71,7 +76,14 @@ export async function getCachedDocuments(): Promise<Document[]> {
   const rows = await database.getAllAsync<{ data: string }>(
     `SELECT data FROM cached_documents ORDER BY cached_at DESC`
   );
-  return rows.map((row) => JSON.parse(row.data));
+  return rows.reduce<Document[]>((acc, row) => {
+    try {
+      acc.push(JSON.parse(row.data));
+    } catch {
+      // Skip corrupted cache entries
+    }
+    return acc;
+  }, []);
 }
 
 export async function clearDocumentCache(): Promise<void> {

@@ -180,6 +180,7 @@
     "support": "Support",
     "terms": "Conditions d'utilisation",
     "privacy": "Politique de confidentialité",
+    "privacy_section": "Confidentialité",
     "country": "Pays",
     "city": "Ville",
     "city_placeholder": "Votre ville (ex: Nice, Paris...)",
@@ -268,7 +269,11 @@
     "unsupported_format": "Format de fichier non pris en charge",
     "zip_too_large": "Fichier ZIP trop volumineux (max 50 Mo)",
     "zip_too_many": "Trop de fichiers dans le ZIP (max 20)",
-    "zip_pro_only": "Analyse ZIP disponible dans DocLear Pro"
+    "zip_pro_only": "Analyse ZIP disponible dans DocLear Pro",
+    "something_went_wrong": "Une erreur est survenue",
+    "unexpected_error": "L'application a rencontré une erreur. Veuillez recharger.",
+    "reload": "Recharger",
+    "apple_signin_failed": "Connexion Apple échouée"
   },
   "error": {
     "no_internet": "Pas de connexion internet",
@@ -425,6 +430,11 @@
     "eu_title": "Protection des données UE",
     "eu_desc": "Résultats stockés sur des serveurs UE. Conforme au RGPD.",
     "agree": "J'accepte",
+    "decline": "Refuser",
+    "toggle_ai": "Analyse IA des documents",
+    "toggle_ai_desc": "Requis pour scanner et analyser les documents",
+    "toggle_analytics": "Analyses d'utilisation",
+    "toggle_analytics_desc": "Aidez-nous à améliorer l'application (optionnel)",
     "learn_more": "En savoir plus sur notre politique de confidentialité"
   },
   "trial": {
@@ -483,5 +493,11 @@
   },
   "offline": {
     "banner": "Pas de connexion internet — documents en cache"
+  },
+  "plan": {
+    "free": "Gratuit",
+    "pro": "Pro",
+    "year": "Pro (Annuel)",
+    "trial": "Essai Pro"
   }
 }

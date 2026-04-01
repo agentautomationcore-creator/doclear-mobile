@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, type ViewStyle, Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { formatDistanceToNow } from 'date-fns';
 import { COLORS, FONT_SIZE, RADIUS, MIN_TOUCH } from '../../lib/constants';
 import { HealthScoreBar } from './HealthScoreBar';
@@ -43,6 +44,7 @@ const shadowStyle: ViewStyle = Platform.select({
 }) as ViewStyle;
 
 export const DocumentCard = React.memo(function DocumentCard({ document, onPress, showOfflineBadge = false }: DocumentCardProps) {
+  const { t } = useTranslation();
   const docTypeColors = DOC_TYPE_COLORS[document.docType ?? 'other'] ?? DOC_TYPE_COLORS.other;
   const dateStr = (() => {
     try {
@@ -96,7 +98,7 @@ export const DocumentCard = React.memo(function DocumentCard({ document, onPress
             }}
           >
             <Text allowFontScaling style={{ fontSize: 10, fontWeight: '600', color: '#6B7280' }}>
-              Offline
+              {t('common.offline')}
             </Text>
           </View>
         ) : null}

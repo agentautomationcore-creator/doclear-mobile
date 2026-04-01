@@ -1,6 +1,7 @@
 import React, { Component, type ReactNode } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import * as Updates from 'expo-updates';
+import i18n from 'i18next';
 
 interface Props {
   children: ReactNode;
@@ -58,7 +59,7 @@ export class ErrorBoundary extends Component<Props, State> {
               textAlign: 'center',
             }}
           >
-            Something went wrong
+            {i18n.t('errors.something_went_wrong', { defaultValue: 'Something went wrong' })}
           </Text>
           <Text
             style={{
@@ -69,7 +70,7 @@ export class ErrorBoundary extends Component<Props, State> {
               lineHeight: 20,
             }}
           >
-            The app encountered an unexpected error. Please try reloading.
+            {i18n.t('errors.unexpected_error', { defaultValue: 'The app encountered an unexpected error. Please try reloading.' })}
           </Text>
           {__DEV__ && this.state.error ? (
             <Text
@@ -95,7 +96,7 @@ export class ErrorBoundary extends Component<Props, State> {
             }}
           >
             <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>
-              Reload
+              {i18n.t('errors.reload', { defaultValue: 'Reload' })}
             </Text>
           </Pressable>
         </View>

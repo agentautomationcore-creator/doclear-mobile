@@ -178,6 +178,7 @@
     "support": "支持",
     "terms": "使用条款",
     "privacy": "隐私政策",
+    "privacy_section": "隐私设置",
     "country": "国家",
     "status": "身份",
     "sign_in_google": "使用Google登录",
@@ -265,7 +266,11 @@
     "unsupported_format": "不支持的文件格式",
     "zip_too_large": "ZIP文件过大（最大50MB）",
     "zip_too_many": "ZIP中文件过多（最多20个）",
-    "zip_pro_only": "ZIP分析仅在DocLear Pro中可用"
+    "zip_pro_only": "ZIP分析仅在DocLear Pro中可用",
+    "something_went_wrong": "出错了",
+    "unexpected_error": "应用遇到错误，请重新加载。",
+    "reload": "重新加载",
+    "apple_signin_failed": "Apple登录失败"
   },
   "error": {
     "no_internet": "无网络连接",
@@ -357,6 +362,11 @@
     "eu_title": "欧盟数据保护",
     "eu_desc": "结果存储在欧盟服务器。符合GDPR规定。",
     "agree": "我同意",
+    "decline": "拒绝",
+    "toggle_ai": "AI文档分析",
+    "toggle_ai_desc": "扫描和分析文档所需",
+    "toggle_analytics": "使用分析",
+    "toggle_analytics_desc": "帮助我们改进应用（可选）",
     "learn_more": "了解更多关于我们的隐私政策"
   },
   "trial": {
@@ -476,5 +486,11 @@
   },
   "offline": {
     "banner": "无网络连接 — 显示缓存文档"
+  },
+  "plan": {
+    "free": "免费",
+    "pro": "Pro",
+    "year": "Pro (年度)",
+    "trial": "Pro 试用"
   }
 }

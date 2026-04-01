@@ -180,6 +180,7 @@
     "support": "Destek",
     "terms": "Kullanım koşulları",
     "privacy": "Gizlilik politikası",
+    "privacy_section": "Gizlilik",
     "country": "Ulke",
     "status": "Durum",
     "sign_in_google": "Google ile giriş yap",
@@ -268,7 +269,11 @@
     "unsupported_format": "Desteklenmeyen dosya formati",
     "zip_too_large": "ZIP dosyasi cok buyuk (maks 50 MB)",
     "zip_too_many": "ZIP'te cok fazla dosya var (maks 20)",
-    "zip_pro_only": "ZIP analizi DocLear Pro'da mevcut"
+    "zip_pro_only": "ZIP analizi DocLear Pro'da mevcut",
+    "something_went_wrong": "Bir sorun oluştu",
+    "unexpected_error": "Uygulama bir hata ile karşılaştı. Lütfen yeniden yükleyin.",
+    "reload": "Yeniden yükle",
+    "apple_signin_failed": "Apple ile giriş başarısız"
   },
   "error": {
     "no_internet": "İnternet bağlantısı yok",
@@ -361,6 +366,11 @@
     "eu_title": "AB Veri Koruması",
     "eu_desc": "Sonuçlar AB sunucularında saklanır. KVKK uyumlu.",
     "agree": "Kabul ediyorum",
+    "decline": "Reddet",
+    "toggle_ai": "Yapay Zeka Belge Analizi",
+    "toggle_ai_desc": "Belgeleri taramak ve analiz etmek için gereklidir",
+    "toggle_analytics": "Kullanım Analitiği",
+    "toggle_analytics_desc": "Uygulamayı geliştirmemize yardımcı olun (isteğe bağlı)",
     "learn_more": "Gizlilik politikamız hakkında daha fazla bilgi edinin"
   },
   "trial": {
@@ -480,5 +490,11 @@
   },
   "offline": {
     "banner": "İnternet bağlantısı yok — önbellek belgeler"
+  },
+  "plan": {
+    "free": "Ücretsiz",
+    "pro": "Pro",
+    "year": "Pro (Yıllık)",
+    "trial": "Pro Deneme"
   }
 }

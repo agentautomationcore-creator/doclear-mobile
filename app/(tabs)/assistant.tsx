@@ -32,6 +32,7 @@ export default function OverviewScreen() {
   const { data: docsData, isLoading } = useDocumentsList('all', '');
   const [summaryData, setSummaryData] = useState<{ totalToPay?: string; totalToReceive?: string; aiRecommendation?: string } | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState(false);
 
   const documents = React.useMemo(() => {
     if (!docsData?.pages) return [];
@@ -85,6 +86,7 @@ export default function OverviewScreen() {
         }
       } catch (e) {
         if (__DEV__) console.error('[Overview] summary fetch error:', e);
+        setSummaryError(true);
       } finally {
         setSummaryLoading(false);
       }
@@ -276,6 +278,15 @@ export default function OverviewScreen() {
           {summaryLoading ? (
             <View style={{ alignItems: 'center', paddingVertical: 20 }}>
               <ActivityIndicator size="small" color={COLORS.accent} />
+            </View>
+          ) : null}
+
+          {/* Summary error */}
+          {summaryError ? (
+            <View style={{ backgroundColor: '#fef2f2', borderRadius: 12, padding: 12, marginTop: 8 }}>
+              <Text style={{ fontSize: FONT_SIZE.caption, color: COLORS.danger }}>
+                {t('errors.analysis_failed')}
+              </Text>
             </View>
           ) : null}
         </ScrollView>

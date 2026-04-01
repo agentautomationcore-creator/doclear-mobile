@@ -17,6 +17,7 @@ import { Button } from '../src/components/ui/Button';
 import { PageContainer } from '../src/components/layout/PageContainer';
 import { getOfferings, purchasePackage, restorePurchases } from '../src/lib/purchases';
 import { track } from '../src/lib/analytics';
+import { supabase } from '../src/lib/supabase';
 
 type SelectedPlan = 'monthly' | 'annual';
 
@@ -64,8 +65,13 @@ export default function PaywallScreen() {
 
       const result = await purchasePackage(pkg);
       if (result) {
-        // Sync plan to Zustand store after successful transaction
-        useAuthStore.getState().setPlan(selected === 'annual' ? 'year' : 'pro');
+        const newPlan = selected === 'annual' ? 'year' : 'pro';
+        // Best-effort DB update; authoritative sync via server webhook
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from('profiles').update({ plan: newPlan }).eq('id', user.id);
+        }
+        useAuthStore.getState().setPlan(newPlan);
         track('subscription_started', { plan: selected });
         router.back();
       }
@@ -83,10 +89,14 @@ export default function PaywallScreen() {
     try {
       const info = await restorePurchases();
       if (info) {
-        // Check active entitlements and sync to Zustand
         const entitlements = (info as any).entitlements?.active;
         const isPro = entitlements?.pro || entitlements?.premium;
         if (isPro) {
+          // Best-effort DB update; authoritative sync via server webhook
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await supabase.from('profiles').update({ plan: 'pro' }).eq('id', user.id);
+          }
           useAuthStore.getState().setPlan('pro');
         }
         Alert.alert(t('paywall.restored'), t('paywall.restored_desc'));
@@ -197,7 +207,7 @@ export default function PaywallScreen() {
           accessibilityLabel={t('paywall.annual')}
         >
           {/* Best value ribbon */}
-          <View style={{ position: 'absolute', top: 12, left: -30, backgroundColor: COLORS.success, paddingHorizontal: 40, paddingVertical: 4, transform: [{ rotate: '-30deg' }], zIndex: 1 }}>
+          <View style={{ position: 'absolute', top: 12, start: -30, backgroundColor: COLORS.success, paddingHorizontal: 40, paddingVertical: 4, transform: [{ rotate: '-30deg' }], zIndex: 1 }}>
             <Text style={{ fontSize: 10, fontWeight: '700', color: '#FFFFFF' }}>{t('paywall.best_value')}</Text>
           </View>
 

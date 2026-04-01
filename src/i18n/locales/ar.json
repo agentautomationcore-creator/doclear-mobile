@@ -188,6 +188,7 @@
     "support": "الدعم",
     "terms": "شروط الاستخدام",
     "privacy": "سياسة الخصوصية",
+    "privacy_section": "الخصوصية",
     "country": "البلد",
     "city": "المدينة",
     "city_placeholder": "مدينتك (مثال: الرياض، دبي...)",
@@ -280,7 +281,11 @@
     "unsupported_format": "صيغة ملف غير مدعومة",
     "zip_too_large": "ملف ZIP كبير جداً (الحد 50 ميغا)",
     "zip_too_many": "عدد كبير جداً من الملفات في ZIP (الحد 20)",
-    "zip_pro_only": "تحليل ZIP متاح في DocLear Pro"
+    "zip_pro_only": "تحليل ZIP متاح في DocLear Pro",
+    "something_went_wrong": "حدث خطأ ما",
+    "unexpected_error": "واجه التطبيق خطأ. يرجى إعادة التحميل.",
+    "reload": "إعادة تحميل",
+    "apple_signin_failed": "فشل تسجيل الدخول بـ Apple"
   },
   "error": {
     "no_internet": "لا يوجد اتصال بالإنترنت",
@@ -438,6 +443,11 @@
     "eu_title": "حماية بيانات أوروبية",
     "eu_desc": "النتائج مخزنة على خوادم أوروبية. متوافق مع GDPR.",
     "agree": "أوافق",
+    "decline": "رفض",
+    "toggle_ai": "تحليل المستندات بالذكاء الاصطناعي",
+    "toggle_ai_desc": "مطلوب لمسح وتحليل المستندات",
+    "toggle_analytics": "تحليلات الاستخدام",
+    "toggle_analytics_desc": "ساعدنا في تحسين التطبيق (اختياري)",
     "learn_more": "اعرف المزيد عن سياسة الخصوصية"
   },
   "trial": {
@@ -496,5 +506,11 @@
   },
   "offline": {
     "banner": "لا اتصال بالإنترنت — مستندات مخزنة"
+  },
+  "plan": {
+    "free": "مجاني",
+    "pro": "Pro",
+    "year": "Pro (سنوي)",
+    "trial": "تجربة Pro"
   }
 }

@@ -184,6 +184,7 @@
     "support": "Support",
     "terms": "Terms of use",
     "privacy": "Privacy policy",
+    "privacy_section": "Privacy",
     "country": "Country",
     "city": "City",
     "city_placeholder": "Your city (e.g. London, Berlin...)",
@@ -272,7 +273,11 @@
     "unsupported_format": "Unsupported file format",
     "zip_too_large": "ZIP file too large (max 50MB)",
     "zip_too_many": "Too many files in ZIP (max 20)",
-    "zip_pro_only": "ZIP analysis available in DocLear Pro"
+    "zip_pro_only": "ZIP analysis available in DocLear Pro",
+    "something_went_wrong": "Something went wrong",
+    "unexpected_error": "The app encountered an unexpected error. Please try reloading.",
+    "reload": "Reload",
+    "apple_signin_failed": "Apple Sign-In failed"
   },
   "error": {
     "no_internet": "No internet connection",
@@ -429,6 +434,11 @@
     "eu_title": "EU data protection",
     "eu_desc": "Results stored on EU servers. GDPR compliant.",
     "agree": "I agree",
+    "decline": "Decline",
+    "toggle_ai": "AI Document Analysis",
+    "toggle_ai_desc": "Required to scan and analyze documents",
+    "toggle_analytics": "Usage Analytics",
+    "toggle_analytics_desc": "Help us improve the app (optional)",
     "learn_more": "Learn more about our privacy practices"
   },
   "trial": {
@@ -492,5 +502,11 @@
     "title": "Page not found",
     "description": "The page you are looking for does not exist.",
     "go_home": "Go home"
+  },
+  "plan": {
+    "free": "Free",
+    "pro": "Pro",
+    "year": "Pro (Annual)",
+    "trial": "Pro Trial"
   }
 }

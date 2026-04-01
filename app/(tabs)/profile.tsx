@@ -23,9 +23,12 @@ import { useAuth } from '../../src/hooks/useAuth';
 import { useAuthStore, type Plan, FREE_DOC_LIMIT, FREE_QUESTION_LIMIT, TRIAL_DAYS } from '../../src/store/auth.store';
 import { useUIStore } from '../../src/store/ui.store';
 import { supabase } from '../../src/lib/supabase';
+import { Switch } from 'react-native';
 import { Card } from '../../src/components/ui/Card';
 import { Button } from '../../src/components/ui/Button';
 import { PageContainer } from '../../src/components/layout/PageContainer';
+import { mmkvStorage, MMKV_KEYS } from '../../src/lib/mmkv';
+import { grantAnalyticsConsent, revokeAnalyticsConsent } from '../../src/lib/analytics';
 import type { Locale, CountryCode, ImmigrationStatus } from '../../src/types';
 import { LOCALE_NAMES, COUNTRY_NAMES, COUNTRY_FLAGS } from '../../src/types';
 
@@ -44,12 +47,15 @@ const STATUS_OPTIONS: { key: ImmigrationStatus; labelKey: string }[] = [
   { key: 'pending', labelKey: 'onboarding.status_pending' },
 ];
 
-const PLAN_LABELS: Record<Plan, string> = {
-  free: 'Free',
-  pro: 'Pro',
-  year: 'Pro (Annual)',
-  trial: 'Pro Trial',
-};
+function getPlanLabel(plan: Plan, t: (key: string) => string): string {
+  const labels: Record<Plan, string> = {
+    free: t('plan.free'),
+    pro: t('plan.pro'),
+    year: t('plan.year'),
+    trial: t('plan.trial'),
+  };
+  return labels[plan] || plan;
+}
 
 export default function ProfileScreen() {
   const { t, i18n } = useTranslation();
@@ -64,6 +70,8 @@ export default function ProfileScreen() {
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [downloadingData, setDownloadingData] = useState(false);
+  const [aiConsentEnabled, setAiConsentEnabled] = useState(() => mmkvStorage.getBoolean(MMKV_KEYS.AI_CONSENT));
+  const [analyticsConsentEnabled, setAnalyticsConsentEnabled] = useState(() => mmkvStorage.getBoolean('analytics_consent' as any));
   const [userCountry, setUserCountry] = useState<CountryCode>('FR');
   const [userCity, setUserCity] = useState('');
   const [userStatus, setUserStatus] = useState<ImmigrationStatus>('citizen');
@@ -113,6 +121,32 @@ export default function ProfileScreen() {
     setStatusModalVisible(false);
     if (user?.id) {
       await supabase.from('profiles').update({ status, updated_at: new Date().toISOString() }).eq('id', user.id);
+    }
+  }, [user?.id]);
+
+  const handleAiConsentToggle = useCallback(async (value: boolean) => {
+    setAiConsentEnabled(value);
+    mmkvStorage.setBoolean(MMKV_KEYS.AI_CONSENT, value);
+    if (user?.id) {
+      await supabase.from('profiles').update({
+        ai_consent: value,
+        ai_consent_at: value ? new Date().toISOString() : null,
+      }).eq('id', user.id);
+    }
+  }, [user?.id]);
+
+  const handleAnalyticsConsentToggle = useCallback(async (value: boolean) => {
+    setAnalyticsConsentEnabled(value);
+    if (value) {
+      await grantAnalyticsConsent();
+    } else {
+      revokeAnalyticsConsent();
+    }
+    if (user?.id) {
+      await supabase.from('profiles').update({
+        analytics_consent: value,
+        analytics_consent_at: value ? new Date().toISOString() : null,
+      }).eq('id', user.id);
     }
   }, [user?.id]);
 
@@ -289,7 +323,7 @@ export default function ProfileScreen() {
                     color: plan === 'free' ? COLORS.textSecondary : COLORS.accent,
                   }}
                 >
-                  {PLAN_LABELS[plan]}
+                  {getPlanLabel(plan, t)}
                 </Text>
               </View>
             </View>
@@ -483,6 +517,41 @@ export default function ProfileScreen() {
             </Pressable>
           </Card>
         ) : null}
+
+        {/* Privacy — consent toggles */}
+        <Card style={{ marginBottom: 16 }}>
+          <Text style={{ fontSize: FONT_SIZE.body, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 12 }}>
+            {t('settings.privacy_section')}
+          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: MIN_TOUCH, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.04)', paddingVertical: 8 }}>
+            <View style={{ flex: 1, marginEnd: 12 }}>
+              <Text style={{ fontSize: FONT_SIZE.caption, fontWeight: '600', color: COLORS.textPrimary }}>
+                {t('consent.toggle_ai')}
+              </Text>
+              <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>{t('consent.toggle_ai_desc')}</Text>
+            </View>
+            <Switch
+              value={aiConsentEnabled}
+              onValueChange={handleAiConsentToggle}
+              trackColor={{ false: '#D1D5DB', true: COLORS.accent }}
+              accessibilityLabel={t('consent.toggle_ai')}
+            />
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: MIN_TOUCH, paddingVertical: 8 }}>
+            <View style={{ flex: 1, marginEnd: 12 }}>
+              <Text style={{ fontSize: FONT_SIZE.caption, fontWeight: '600', color: COLORS.textPrimary }}>
+                {t('consent.toggle_analytics')}
+              </Text>
+              <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>{t('consent.toggle_analytics_desc')}</Text>
+            </View>
+            <Switch
+              value={analyticsConsentEnabled}
+              onValueChange={handleAnalyticsConsentToggle}
+              trackColor={{ false: '#D1D5DB', true: COLORS.accent }}
+              accessibilityLabel={t('consent.toggle_analytics')}
+            />
+          </View>
+        </Card>
 
         {/* Trust signals */}
         <Card style={{ marginBottom: 16 }}>

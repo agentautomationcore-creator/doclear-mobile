@@ -180,6 +180,7 @@
     "support": "Support",
     "terms": "Nutzungsbedingungen",
     "privacy": "Datenschutz",
+    "privacy_section": "Datenschutz",
     "country": "Land",
     "status": "Status",
     "sign_in_google": "Mit Google anmelden",
@@ -268,7 +269,11 @@
     "unsupported_format": "Nicht unterstütztes Dateiformat",
     "zip_too_large": "ZIP-Datei zu groß (max. 50 MB)",
     "zip_too_many": "Zu viele Dateien in ZIP (max. 20)",
-    "zip_pro_only": "ZIP-Analyse in DocLear Pro verfügbar"
+    "zip_pro_only": "ZIP-Analyse in DocLear Pro verfügbar",
+    "something_went_wrong": "Etwas ist schiefgelaufen",
+    "unexpected_error": "Die App hat einen Fehler festgestellt. Bitte neu laden.",
+    "reload": "Neu laden",
+    "apple_signin_failed": "Apple-Anmeldung fehlgeschlagen"
   },
   "error": {
     "no_internet": "Keine Internetverbindung",
@@ -361,6 +366,11 @@
     "eu_title": "EU-Datenschutz",
     "eu_desc": "Ergebnisse auf EU-Servern gespeichert. DSGVO-konform.",
     "agree": "Ich stimme zu",
+    "decline": "Ablehnen",
+    "toggle_ai": "KI-Dokumentenanalyse",
+    "toggle_ai_desc": "Erforderlich zum Scannen und Analysieren von Dokumenten",
+    "toggle_analytics": "Nutzungsanalyse",
+    "toggle_analytics_desc": "Helfen Sie uns, die App zu verbessern (optional)",
     "learn_more": "Mehr über unsere Datenschutzrichtlinie erfahren"
   },
   "trial": {
@@ -480,5 +490,11 @@
   },
   "offline": {
     "banner": "Keine Internetverbindung — Cache-Dokumente"
+  },
+  "plan": {
+    "free": "Kostenlos",
+    "pro": "Pro",
+    "year": "Pro (Jährlich)",
+    "trial": "Pro Testversion"
   }
 }
