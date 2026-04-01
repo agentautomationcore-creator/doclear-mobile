@@ -158,7 +158,7 @@ export default function RegisterScreen() {
           {/* Back button */}
           <Pressable
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-            style={{ alignSelf: 'flex-start', paddingVertical: 8, paddingRight: 16, marginBottom: 16 }}
+            style={{ alignSelf: 'flex-start', paddingVertical: 8, paddingEnd: 16, marginBottom: 16 }}
             accessibilityRole="button"
             accessibilityLabel={t('common.back')}
           >
