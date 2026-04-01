@@ -89,12 +89,12 @@
   "timeline": {
     "title": "我的文件",
     "search": "搜索...",
-    "deadlines_this_week": "本周{count}个截止日期",
+    "deadlines_this_week_other": "本周{count}个截止日期",
     "empty_title": "暂无文件",
     "empty_desc": "扫描你的第一个文件",
     "scan_first": "扫描文件",
     "scan": "扫描",
-    "days_left": "{count}天",
+    "days_left_other": "{count}天",
     "overdue": "已过期",
     "today": "今天",
     "filter_all": "全部"
@@ -211,7 +211,7 @@
     "subscribe": "订阅Pro",
     "coming_soon": "正在跳转到支付...",
     "back_to_docs": "返回文档",
-    "scans_low": "剩余{remaining}次扫描",
+    "scans_low_other": "剩余{remaining}次扫描",
     "upgrade_banner": "Pro——无限扫描",
     "monthly": "月付",
     "annual": "年付",
@@ -309,7 +309,7 @@
   },
   "summary": {
     "title": "摘要",
-    "documents_analyzed": "已分析{count}份文件",
+    "documents_analyzed_other": "已分析{count}份文件",
     "by_category": "按类别",
     "attention": "需要关注",
     "finances": "财务",
