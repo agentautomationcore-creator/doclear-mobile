@@ -1,8 +1,8 @@
 import { Platform } from 'react-native';
 import { log } from './debug';
 
-// RevenueCat setup — ALL platforms (iOS, Android, Web)
-// Web uses RevenueCat Web Billing with Stripe as billing provider
+// IAP setup — ALL platforms (iOS, Android, Web)
+// Web uses Web Billing with Stripe as billing provider
 const IOS_KEY = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY ?? 'appl_PLACEHOLDER';
 const ANDROID_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY ?? 'goog_PLACEHOLDER';
 const WEB_KEY = process.env.EXPO_PUBLIC_REVENUECAT_WEB_KEY ?? 'rcb_PLACEHOLDER';
@@ -43,7 +43,7 @@ export async function getOfferings() {
   }
 }
 
-// pkg comes from RevenueCat offerings — typed as unknown at boundary, cast internally
+// pkg comes from IAP offerings — typed as unknown at boundary, cast internally
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function purchasePackage(pkg: any) {
   try {
@@ -60,6 +60,13 @@ export async function restorePurchases() {
   try {
     const { default: Purchases } = await import('react-native-purchases');
     const info = await Purchases.restorePurchases();
+    // Explicitly sync plan from entitlements — don't rely on listener alone
+    if (info) {
+      const { useAuthStore } = await import('../store/auth.store');
+      const entitlements = info.entitlements?.active;
+      const isPro = entitlements?.pro || entitlements?.premium;
+      useAuthStore.getState().setPlan(isPro ? 'pro' : 'free');
+    }
     return info;
   } catch (e) {
     if (__DEV__) console.error('[Purchases] restorePurchases error:', e);
