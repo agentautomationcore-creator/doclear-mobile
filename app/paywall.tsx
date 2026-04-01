@@ -264,7 +264,6 @@ export default function PaywallScreen() {
         <View style={{ marginTop: 16, gap: 10 }}>
           {[
             t('paywall.trust_cancel'),
-            t('paywall.trust_guarantee'),
             t('paywall.trust_no_training'),
           ].map((text, i) => (
             <View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
