@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { COLORS, FONT_SIZE } from '../../lib/constants';
 
 interface PdfViewerProps {
@@ -9,6 +10,7 @@ interface PdfViewerProps {
 }
 
 export function PdfViewer({ url, pageCount }: PdfViewerProps) {
+  const { t } = useTranslation();
   // On web: use iframe with Google Docs viewer
   const viewerUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`;
 
@@ -32,7 +34,7 @@ export function PdfViewer({ url, pageCount }: PdfViewerProps) {
           }}
         >
           <Text style={{ fontSize: 12, color: '#FFFFFF', fontWeight: '500' }}>
-            {pageCount} pages
+            {pageCount} {t('document.pages')}
           </Text>
         </View>
       ) : null}

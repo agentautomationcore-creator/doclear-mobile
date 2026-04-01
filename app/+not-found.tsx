@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../src/components/ui/Button';
 import { COLORS, FONT_SIZE } from '../src/lib/constants';
 
 export default function NotFoundScreen() {
+  const { t } = useTranslation();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
       <View
@@ -35,7 +37,7 @@ export default function NotFoundScreen() {
             marginBottom: 8,
           }}
         >
-          Page not found
+          {t('not_found.title')}
         </Text>
         <Text
           style={{
@@ -45,10 +47,10 @@ export default function NotFoundScreen() {
             marginBottom: 32,
           }}
         >
-          The page you are looking for does not exist.
+          {t('not_found.description')}
         </Text>
         <Link href="/" asChild>
-          <Button title="Go home" onPress={() => {}} />
+          <Button title={t('not_found.go_home')} onPress={() => {}} />
         </Link>
       </View>
     </SafeAreaView>

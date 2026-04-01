@@ -310,7 +310,10 @@
     "docs_per_month": "documents gratuits / mois",
     "questions_reset_daily": "Les questions se réinitialisent chaque jour",
     "report_problem": "Signaler un problème",
-    "app_version": "Version de l'app"
+    "app_version": "Version de l'app",
+    "download_my_data": "Télécharger mes données",
+    "downloading_data": "Téléchargement...",
+    "download_failed": "Impossible de télécharger les données. Veuillez réessayer."
   },
   "scanner": {
     "title": "Scanner",
