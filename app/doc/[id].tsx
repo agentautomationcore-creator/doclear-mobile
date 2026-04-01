@@ -112,61 +112,62 @@ export default function DocumentDetailScreen() {
   const handleExportPDF = useCallback(async () => {
     if (!doc) return;
     track('document_exported', { format: 'pdf' });
+    const esc = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const sections: string[] = [];
 
     // Title + type
-    sections.push(`<h1>${doc.title}</h1>`);
+    sections.push(`<h1>${esc(doc.title)}</h1>`);
     sections.push(`<p style="color:#6b7280;margin-bottom:16px;">${doc.docTypeLabel ?? doc.docType ?? ''} ${doc.pageCount ? `&middot; ${doc.pageCount} ${t('document.pages')}` : ''}</p>`);
 
     // Health Score
     if (typeof doc.healthScore === 'number') {
       const scoreColor = doc.healthScore >= 80 ? '#16a34a' : doc.healthScore >= 50 ? '#f59e0b' : '#dc2626';
-      sections.push(`<div class="section"><div class="score" style="color:${scoreColor}">${doc.healthScore}/100</div><p>${doc.healthScoreExplanation ?? ''}</p></div>`);
+      sections.push(`<div class="section"><div class="score" style="color:${scoreColor}">${doc.healthScore}/100</div><p>${esc(doc.healthScoreExplanation ?? '')}</p></div>`);
     }
 
     // What Is This
     if (doc.whatIsThis) {
-      sections.push(`<div class="section"><h2>${t('document.what_is_this')}</h2><p>${doc.whatIsThis}</p></div>`);
+      sections.push(`<div class="section"><h2>${t('document.what_is_this')}</h2><p>${esc(doc.whatIsThis)}</p></div>`);
     }
 
     // What It Says
     if (doc.whatItSays) {
-      sections.push(`<div class="section"><h2>${t('document.what_it_says')}</h2><p>${doc.whatItSays}</p></div>`);
+      sections.push(`<div class="section"><h2>${t('document.what_it_says')}</h2><p>${esc(doc.whatItSays)}</p></div>`);
     }
 
     // What To Do
     if (doc.whatToDo && doc.whatToDo.length > 0) {
-      sections.push(`<div class="section"><h2>${t('document.what_to_do')}</h2>${doc.whatToDo.map((s, i) => `<div class="fact"><strong>${i + 1}.</strong> ${s}</div>`).join('')}</div>`);
+      sections.push(`<div class="section"><h2>${t('document.what_to_do')}</h2>${doc.whatToDo.map((s, i) => `<div class="fact"><strong>${i + 1}.</strong> ${esc(s)}</div>`).join('')}</div>`);
     }
 
     // Summary
     if (doc.summary) {
-      sections.push(`<div class="section"><h2>${t('document.what_it_says')}</h2><p>${doc.summary}</p></div>`);
+      sections.push(`<div class="section"><h2>${t('document.what_it_says')}</h2><p>${esc(doc.summary)}</p></div>`);
     }
 
     // Key Facts
     if (doc.keyFacts && doc.keyFacts.length > 0) {
-      sections.push(`<div class="section"><h2>${t('document.key_facts')}</h2>${doc.keyFacts.map((f, i) => `<div class="fact">${i + 1}. ${f}</div>`).join('')}</div>`);
+      sections.push(`<div class="section"><h2>${t('document.key_facts')}</h2>${doc.keyFacts.map((f, i) => `<div class="fact">${i + 1}. ${esc(f)}</div>`).join('')}</div>`);
     }
 
     // Risk Flags
     if (doc.riskFlags && doc.riskFlags.length > 0) {
-      sections.push(`<div class="section"><h2>${t('document.risk_flags')}</h2>${doc.riskFlags.map((r) => `<div class="risk risk-${r.severity}"><strong>${r.title}</strong><p>${r.description}</p>${r.recommendation ? `<p style="font-style:italic;font-size:13px;">${r.recommendation}</p>` : ''}</div>`).join('')}</div>`);
+      sections.push(`<div class="section"><h2>${t('document.risk_flags')}</h2>${doc.riskFlags.map((r) => `<div class="risk risk-${esc(r.severity)}"><strong>${esc(r.title)}</strong><p>${esc(r.description)}</p>${r.recommendation ? `<p style="font-style:italic;font-size:13px;">${esc(r.recommendation)}</p>` : ''}</div>`).join('')}</div>`);
     }
 
     // Positive Points
     if (doc.positivePoints && doc.positivePoints.length > 0) {
-      sections.push(`<div class="section"><h2>${t('document.positive_points')}</h2>${doc.positivePoints.map((p) => `<div class="fact">\u2713 <strong>${p.title}</strong> — ${p.description}</div>`).join('')}</div>`);
+      sections.push(`<div class="section"><h2>${t('document.positive_points')}</h2>${doc.positivePoints.map((p) => `<div class="fact">\u2713 <strong>${esc(p.title)}</strong> — ${esc(p.description)}</div>`).join('')}</div>`);
     }
 
     // Deadline
     if (doc.deadline) {
-      sections.push(`<div class="section" style="background:#fef3c7;padding:16px;border-radius:8px;"><h2 style="color:#92400e;margin-top:0;">${t('document.deadline')}</h2><p style="font-size:20px;font-weight:800;color:#dc2626;">${doc.deadline}</p>${doc.deadlineDescription ? `<p style="color:#92400e;">${doc.deadlineDescription}</p>` : ''}</div>`);
+      sections.push(`<div class="section" style="background:#fef3c7;padding:16px;border-radius:8px;"><h2 style="color:#92400e;margin-top:0;">${t('document.deadline')}</h2><p style="font-size:20px;font-weight:800;color:#dc2626;">${esc(doc.deadline)}</p>${doc.deadlineDescription ? `<p style="color:#92400e;">${esc(doc.deadlineDescription)}</p>` : ''}</div>`);
     }
 
     // Recommendations
     if (doc.recommendations && doc.recommendations.length > 0) {
-      sections.push(`<div class="section"><h2>${t('document.recommendations')}</h2>${doc.recommendations.map((r) => `<div class="fact"><strong>${r.title}</strong><br/>${r.description}${r.url ? `<br/><a href="${r.url}" style="color:#1e293b;">${r.url}</a>` : ''}</div>`).join('')}</div>`);
+      sections.push(`<div class="section"><h2>${t('document.recommendations')}</h2>${doc.recommendations.map((r) => `<div class="fact"><strong>${esc(r.title)}</strong><br/>${esc(r.description)}${r.url ? `<br/><a href="${esc(r.url)}" style="color:#1e293b;">${esc(r.url)}</a>` : ''}</div>`).join('')}</div>`);
     }
 
     const html = `
