@@ -21,8 +21,8 @@
     "free_plan": "Kostenlos",
     "free_desc_long": "2 Dokumente zum Testen. Ohne Anmeldung.",
     "pro_plan": "Starter",
-    "pro_price": "ab 9,99€ / Monat",
-    "pro_annual": "oder 99,99€/Jahr (Pro) — 67% sparen",
+    "pro_price": "ab 7,99€ / Monat",
+    "pro_annual": "oder 49,99€/Jahr (Pro) — 48% sparen",
     "feature_camera": "Kamera + PDF + DOCX Upload",
     "feature_languages": "Automatische Erkennung, 8 Sprachen",
     "feature_deadlines": "Fristenverfolgung & Erinnerungen",
@@ -173,7 +173,7 @@
     "reminder_today": "Am selben Tag",
     "subscription": "Abonnement",
     "unlock_pro": "DocLear Pro freischalten",
-    "pro_price": "ab 9,99€/Monat oder 99,99€/Jahr",
+    "pro_price": "ab 7,99€/Monat oder 49,99€/Jahr",
     "pro_feature1": "Unbegrenzte Scans",
     "pro_feature2": "Prioritäre KI",
     "pro_feature3": "PDF-Export",
@@ -204,8 +204,8 @@
     "guest_bonus": "Konto erstellen um fortzufahren",
     "pro_title": "Auf DocLear upgraden",
     "pro_desc": "Mehr Dokumente mit KI analysieren.",
-    "pro_price": "ab 9,99€ / Monat",
-    "pro_annual": "oder 99,99€/Jahr — 67% sparen",
+    "pro_price": "ab 7,99€ / Monat",
+    "pro_annual": "oder 49,99€/Jahr — 48% sparen",
     "feature_unlimited": "Unbegrenzte Dokumente",
     "feature_priority": "Prioritäre KI-Analyse",
     "feature_history": "Vollständige Dokumentenhistorie",
@@ -221,7 +221,7 @@
     "per_month": "Monat",
     "per_year": "Jahr",
     "best_value": "BESTES ANGEBOT",
-    "save_42": "42% sparen",
+    "save_42": "48% sparen",
     "feature_questions": "Unbegrenzte KI-Fragen",
     "feature_formats": "Alle Formate (PDF, DOCX, XLSX, Fotos)",
     "restore": "Käufe wiederherstellen",
@@ -475,7 +475,7 @@
     "scan_first": "Mein erstes Dokument scannen",
     "try_demo": "Demo testen",
     "have_account": "Bereits ein Konto? Anmelden",
-    "free_limit": "3 kostenlose Analysen · Pro: 9,99€/Monat oder 69,99€/Jahr"
+    "free_limit": "3 kostenlose Analysen · Pro: 7,99€/Monat oder 49,99€/Jahr"
   },
   "offline": {
     "banner": "Keine Internetverbindung — Cache-Dokumente"

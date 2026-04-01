@@ -173,7 +173,7 @@
     "reminder_today": "Il giorno stesso",
     "subscription": "Abbonamento",
     "unlock_pro": "Sblocca DocLear Pro",
-    "pro_price": "7,99€/mese ou o 49,99€/anno",
+    "pro_price": "7,99€/mese o 49,99€/anno",
     "pro_feature1": "Scansioni illimitate",
     "pro_feature2": "IA prioritaria",
     "pro_feature3": "Esporta PDF",
@@ -221,7 +221,7 @@
     "per_month": "mese",
     "per_year": "anno",
     "best_value": "MIGLIOR PREZZO",
-    "save_42": "Risparmia il 42%",
+    "save_42": "Risparmia il 48%",
     "feature_questions": "Domande IA illimitate",
     "feature_formats": "Tutti i formati (PDF, DOCX, XLSX, foto)",
     "restore": "Ripristina acquisti",
@@ -475,7 +475,7 @@
     "scan_first": "Scansiona il mio primo documento",
     "try_demo": "Prova la demo",
     "have_account": "Hai già un account? Accedi",
-    "free_limit": "3 analisi gratuite · Pro: 9,99€/mese o 69,99€/anno"
+    "free_limit": "3 analisi gratuite · Pro: 7,99€/mese o 49,99€/anno"
   },
   "offline": {
     "banner": "Nessuna connessione — documenti in cache"

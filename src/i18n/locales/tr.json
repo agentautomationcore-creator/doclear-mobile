@@ -173,7 +173,7 @@
     "reminder_today": "Aynı gün",
     "subscription": "Abonelik",
     "unlock_pro": "DocLear Pro'yu aç",
-    "pro_price": "€7,99/ay ou veya €49,99/yıl",
+    "pro_price": "€7,99/ay veya €49,99/yıl",
     "pro_feature1": "Sınırsız tarama",
     "pro_feature2": "Öncelikli yapay zeka",
     "pro_feature3": "PDF dışa aktarma",
@@ -221,7 +221,7 @@
     "per_month": "ay",
     "per_year": "yıl",
     "best_value": "EN İYİ FİYAT",
-    "save_42": "%42 tasarruf edin",
+    "save_42": "%48 tasarruf edin",
     "feature_questions": "Sınırsız yapay zeka soruları",
     "feature_formats": "Tüm formatlar (PDF, DOCX, XLSX, fotoğraflar)",
     "restore": "Satın alımları geri yükle",
@@ -475,7 +475,7 @@
     "scan_first": "İlk belgemi tara",
     "try_demo": "Demoyu dene",
     "have_account": "Zaten hesabınız var mı? Giriş yapın",
-    "free_limit": "3 ücretsiz analiz · Pro: 9,99€/ay veya 69,99€/yıl"
+    "free_limit": "3 ücretsiz analiz · Pro: 7,99€/ay veya 49,99€/yıl"
   },
   "offline": {
     "banner": "İnternet bağlantısı yok — önbellek belgeler"

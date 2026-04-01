@@ -27,8 +27,8 @@
     "free_plan": "Gratuit",
     "free_desc_long": "3 documents. Sans inscription.",
     "pro_plan": "Starter",
-    "pro_price": "à partir de 9,99€ / mois",
-    "pro_annual": "ou 99,99€/an — économisez 67%",
+    "pro_price": "à partir de 7,99€ / mois",
+    "pro_annual": "ou 49,99€/an — économisez 48%",
     "feature_camera": "Caméra + PDF + DOCX",
     "feature_languages": "Détection automatique, 8 langues",
     "feature_deadlines": "Suivi des délais et rappels",
@@ -173,7 +173,7 @@
     "reminder_today": "Le jour même",
     "subscription": "Abonnement",
     "unlock_pro": "Débloquer DocLear Pro",
-    "pro_price": "7,99€/mois ou ou 49,99€/an",
+    "pro_price": "7,99€/mois ou 49,99€/an",
     "pro_feature1": "Scans illimités",
     "pro_feature2": "IA prioritaire",
     "pro_feature3": "Export PDF",
@@ -221,7 +221,7 @@
     "per_month": "mois",
     "per_year": "an",
     "best_value": "MEILLEUR PRIX",
-    "save_42": "Économisez 42%",
+    "save_42": "Économisez 48%",
     "feature_questions": "Questions IA illimitées",
     "feature_formats": "Tous formats (PDF, DOCX, XLSX, photos)",
     "restore": "Restaurer les achats",
@@ -439,7 +439,7 @@
     "scan_first": "Scanner mon premier document",
     "try_demo": "Essayer la démo",
     "have_account": "Déjà un compte ? Connexion",
-    "free_limit": "3 analyses gratuites · Pro : 9,99€/mois ou 69,99€/an"
+    "free_limit": "3 analyses gratuites · Pro : 7,99€/mois ou 49,99€/an"
   },
   "overview": {
     "documents_analyzed": "{{count}} documents analysés",

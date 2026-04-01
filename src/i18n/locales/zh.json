@@ -171,7 +171,7 @@
     "reminder_today": "当天",
     "subscription": "订阅",
     "unlock_pro": "解锁 DocLear Pro",
-    "pro_price": "€7.99/月 ou 或€49.99/年",
+    "pro_price": "€7.99/月 或€49.99/年",
     "pro_feature1": "无限扫描",
     "pro_feature2": "优先AI",
     "pro_feature3": "PDF导出",
@@ -218,7 +218,7 @@
     "per_month": "月",
     "per_year": "年",
     "best_value": "最划算",
-    "save_42": "节省42%",
+    "save_42": "节省48%",
     "feature_questions": "无限AI提问",
     "feature_formats": "所有格式（PDF、DOCX、XLSX、照片）",
     "restore": "恢复购买",
@@ -471,7 +471,7 @@
     "scan_first": "扫描我的第一份文档",
     "try_demo": "试用演示",
     "have_account": "已有账户？登录",
-    "free_limit": "3次免费分析 · Pro: €9.99/月 或 €69.99/年"
+    "free_limit": "3次免费分析 · Pro: €7.99/月 或 €49.99/年"
   },
   "offline": {
     "banner": "无网络连接 — 显示缓存文档"

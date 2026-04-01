@@ -21,8 +21,8 @@
     "free_plan": "Gratis",
     "free_desc_long": "2 documentos para probar. Sin registro.",
     "pro_plan": "Starter",
-    "pro_price": "desde 9,99€ / mes",
-    "pro_annual": "o 99,99€/año (Pro) — ahorra 67%",
+    "pro_price": "desde 7,99€ / mes",
+    "pro_annual": "o 49,99€/año (Pro) — ahorra 48%",
     "feature_camera": "Cámara + PDF + DOCX",
     "feature_languages": "Detección automática, 8 idiomas",
     "feature_deadlines": "Seguimiento de plazos y recordatorios",
@@ -173,7 +173,7 @@
     "reminder_today": "El mismo día",
     "subscription": "Suscripción",
     "unlock_pro": "Desbloquear DocLear Pro",
-    "pro_price": "desde 9,99€/mes o 99,99€/año",
+    "pro_price": "desde 7,99€/mes o 49,99€/año",
     "pro_feature1": "Escaneos ilimitados",
     "pro_feature2": "IA prioritaria",
     "pro_feature3": "Exportar PDF",
@@ -204,8 +204,8 @@
     "guest_bonus": "Crear cuenta para continuar",
     "pro_title": "Mejora a DocLear",
     "pro_desc": "Analiza más documentos con IA.",
-    "pro_price": "desde 9,99€ / mes",
-    "pro_annual": "o 99,99€/año — ahorra 67%",
+    "pro_price": "desde 7,99€ / mes",
+    "pro_annual": "o 49,99€/año — ahorra 48%",
     "feature_unlimited": "Documentos ilimitados",
     "feature_priority": "Análisis IA prioritario",
     "feature_history": "Historial completo de documentos",
@@ -221,7 +221,7 @@
     "per_month": "mes",
     "per_year": "año",
     "best_value": "MEJOR PRECIO",
-    "save_42": "Ahorra 42%",
+    "save_42": "Ahorra 48%",
     "feature_questions": "Preguntas IA ilimitadas",
     "feature_formats": "Todos los formatos (PDF, DOCX, XLSX, fotos)",
     "restore": "Restaurar compras",
@@ -475,7 +475,7 @@
     "scan_first": "Escanear mi primer documento",
     "try_demo": "Probar la demo",
     "have_account": "¿Ya tienes cuenta? Iniciar sesión",
-    "free_limit": "3 análisis gratuitos · Pro: 9,99€/mes o 69,99€/año"
+    "free_limit": "3 análisis gratuitos · Pro: 7,99€/mes o 49,99€/año"
   },
   "offline": {
     "banner": "Sin conexión — documentos en caché"

@@ -173,7 +173,7 @@
     "reminder_today": "No dia",
     "subscription": "Assinatura",
     "unlock_pro": "Desbloquear DocLear Pro",
-    "pro_price": "€7,99/mês ou ou €49,99/ano",
+    "pro_price": "€7,99/mês ou €49,99/ano",
     "pro_feature1": "Digitalizações ilimitadas",
     "pro_feature2": "IA prioritária",
     "pro_feature3": "Exportar PDF",
@@ -221,7 +221,7 @@
     "per_month": "mês",
     "per_year": "ano",
     "best_value": "MELHOR PREÇO",
-    "save_42": "Economize 42%",
+    "save_42": "Economize 48%",
     "feature_questions": "Perguntas IA ilimitadas",
     "feature_formats": "Todos os formatos (PDF, DOCX, XLSX, fotos)",
     "restore": "Restaurar compras",
@@ -475,7 +475,7 @@
     "scan_first": "Digitalizar meu primeiro documento",
     "try_demo": "Experimentar a demo",
     "have_account": "Já tem conta? Entrar",
-    "free_limit": "3 análises gratuitas · Pro: 9,99€/mês ou 69,99€/ano"
+    "free_limit": "3 análises gratuitas · Pro: 7,99€/mês ou 49,99€/ano"
   },
   "offline": {
     "banner": "Sem conexão — documentos em cache"

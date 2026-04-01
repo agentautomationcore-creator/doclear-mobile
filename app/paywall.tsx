@@ -173,7 +173,7 @@ export default function PaywallScreen() {
             </Text>
             <View style={{ alignItems: 'flex-end' }}>
               <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary }}>
-                {'\u20AC'}9.99
+                {'\u20AC'}7.99
               </Text>
               <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>/{t('paywall.per_month')}</Text>
             </View>
@@ -213,9 +213,9 @@ export default function PaywallScreen() {
               </Text>
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={{ fontSize: FONT_SIZE.heading, fontWeight: '800', color: COLORS.textPrimary }}>
-                  {'\u20AC'}69.99
+                  {'\u20AC'}49.99
                 </Text>
-                <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>/{t('paywall.per_year')} ({'\u20AC'}5.83/{t('paywall.per_month')})</Text>
+                <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>/{t('paywall.per_year')} ({'\u20AC'}4.17/{t('paywall.per_month')})</Text>
               </View>
             </View>
             <View style={{ marginTop: 8, backgroundColor: COLORS.success + '15', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' }}>

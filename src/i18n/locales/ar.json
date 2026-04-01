@@ -27,8 +27,8 @@
     "free_plan": "مجاني",
     "free_desc_long": "3 مستندات. بدون تسجيل.",
     "pro_plan": "Starter",
-    "pro_price": "ابتداءً من 9.99€ / شهر",
-    "pro_annual": "أو 99.99€/سنة — وفّر 67%",
+    "pro_price": "ابتداءً من 7.99€ / شهر",
+    "pro_annual": "أو 49.99€/سنة — وفّر 48%",
     "feature_camera": "كاميرا + PDF + DOCX",
     "feature_languages": "اكتشاف تلقائي، 8 لغات",
     "feature_deadlines": "تتبع المواعيد والتذكيرات",
@@ -233,7 +233,7 @@
     "per_month": "شهر",
     "per_year": "سنة",
     "best_value": "أفضل سعر",
-    "save_42": "وفّر 42%",
+    "save_42": "وفّر 48%",
     "feature_questions": "أسئلة AI غير محدودة",
     "feature_formats": "جميع الصيغ (PDF، DOCX، XLSX، صور)",
     "restore": "استعادة المشتريات",
@@ -452,7 +452,7 @@
     "scan_first": "امسح مستندي الأول",
     "try_demo": "جرّب العرض",
     "have_account": "لديك حساب؟ تسجيل الدخول",
-    "free_limit": "3 تحليلات مجانية · Pro: 9.99€/شهر أو 69.99€/سنة"
+    "free_limit": "3 تحليلات مجانية · Pro: 7.99€/شهر أو 49.99€/سنة"
   },
   "overview": {
     "documents_analyzed": "{{count}} مستند تم تحليله",
