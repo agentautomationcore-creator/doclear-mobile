@@ -35,6 +35,17 @@ export default function PaywallScreen() {
   }, []);
 
   const handlePurchase = async () => {
+    if (isAnonymous) {
+      Alert.alert(
+        t('paywall.registration_required') || 'Registration Required',
+        t('paywall.register_to_purchase') || 'Please create an account to subscribe.',
+        [
+          { text: t('common.cancel') || 'Cancel', style: 'cancel' },
+          { text: t('paywall.create_account') || 'Create Account', onPress: () => router.push('/(auth)/register') },
+        ]
+      );
+      return;
+    }
     setLoading(true);
     try {
       const currentOffering = offerings?.current;
